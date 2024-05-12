@@ -6,5 +6,5 @@ from django.views.generic import View
 class IndexView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request,
-                      "index_app/index.html",
+                      "index_app/index.html.html",
                       {})
