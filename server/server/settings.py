@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+from enum import Enum
 from pathlib import Path
 import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,12 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    "corsheaders",
+
     'index_app.apps.IndexAppConfig',
+    'index_app.apps.AuthAppConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -127,3 +131,24 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'auth_app.User'
+AUTH_USER_DEFAULT_PASSWORD = "QWEqwe123"
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+# SEND EMAIL SETTINGS
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = config.EMAIL_HOST
+EMAIL_PORT = config.EMAIL_PORT
+EMAIL_HOST_USER = config.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS = config.EMAIL_USE_TLS
+EMAIL_USE_SSL = config.EMAIL_USE_SSL
+
+
+class SEND_MESSAGE_TYPE_CHOICES(Enum):
+    SMS = "SMS"
+    EMAIL = "EMAIL"
+
+
+SEND_MESSAGE_TYPE = SEND_MESSAGE_TYPE_CHOICES.EMAIL
