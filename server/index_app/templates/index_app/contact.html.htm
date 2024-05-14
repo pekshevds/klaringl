@@ -1,0 +1,24 @@
+﻿{% extends "index_app/base.html.htm" %}
+{% load static %}
+
+{% block body %}
+
+<!-- start-page-heading -->
+<div class="atf-page-heading atf-size-md atf-dynamic-bg" style="background-image: url(assets/img/slider/6.jpg); background-size:cover; background-position: center top;">
+	<div class="container">
+		<div class="atf-page-heading-in text-center">
+			<h1 class="atf-page-heading-title">Contact</h1>
+			<div class="atf-post-label">
+				<span><a href="{% url 'index:index' %}">Home</a></span>
+				<span>Contact</span>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- .atf-page-heading -->
+
+{% include "index_app/getintouch.html.htm" %}
+
+{% include "index_app/faq.html.htm" %}
+
+{% endblock %}
