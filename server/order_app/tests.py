@@ -1,4 +1,8 @@
 from django.test import TestCase
+from order_app.models import (
+    City,
+    Rate
+)
 from order_app.services import (
     city_by_name,
     calculate_delivery_cost,
@@ -9,17 +13,20 @@ from order_app.services import (
 class RateTestCase(TestCase):
 
     def setUp(self) -> None:
-        pass
+        self.moskow = City.objects.create(name="Москва")
+        self.belgorod = City.objects.create(name="Белгород")
+        self.rate = Rate.objects.create(
+            city_from=self.moskow, city_to=self.belgorod,
+            cost_by_weight_0_25=900)
 
     def test_find_moskow(self):
         moskow = city_by_name("Москва")
-        self.assertEqual(moskow, not None)
+        self.assertEqual(moskow, self.moskow)
+
+    def test_find_rate(self):
+        rate = rate_by_cities(self.moskow, self.belgorod)
+        self.assertEqual(rate, self.rate)
 
     def test_calculate_delivery_cost(self):
-
         # Москва-Белгород
-        moskow = city_by_name("Москва")
-        belgorod = city_by_name("Белгород")
-        rate = rate_by_cities(moskow, belgorod)
-
-        self.assertEqual(calculate_delivery_cost(rate, 15), 900)
+        self.assertEqual(calculate_delivery_cost(self.rate, 15), 900)
