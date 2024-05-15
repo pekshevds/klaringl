@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 from index_app.forms import GetInTouchForm
@@ -30,6 +30,4 @@ class GetInTouchView(View):
         form = GetInTouchForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-        return render(request,
-                      "index_app/contact.html",
-                      {})
+        return redirect("index:contact")

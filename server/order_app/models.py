@@ -102,13 +102,13 @@ class Rate(Base):
     cost_by_volume_80_120 = models.DecimalField(
         verbose_name="8.0-12.0", max_digits=15, decimal_places=2,
         blank=True, default=0)
-    cost_by_volume_12_20 = models.DecimalField(
+    cost_by_volume_120_200 = models.DecimalField(
         verbose_name="12.0-20.0", max_digits=15, decimal_places=2,
         blank=True, default=0)
-    cost_by_volume_20_40 = models.DecimalField(
+    cost_by_volume_200_400 = models.DecimalField(
         verbose_name="20.0-40.0", max_digits=15, decimal_places=2,
         blank=True, default=0)
-    cost_by_volume_40_inf = models.DecimalField(
+    cost_by_volume_400_inf = models.DecimalField(
         verbose_name=">40.0", max_digits=15, decimal_places=2,
         blank=True, default=0)
 
