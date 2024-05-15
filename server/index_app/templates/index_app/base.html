@@ -126,13 +126,14 @@
 											</ul>
 										</li>
 										<li><a href="about.html.htm">Сборный груз</a></li>
-										<li><a href="{% url 'index:about' %}">О нас <i class="fa fa-chevron-down ms-1 arrow-btn f-13"></i></a>
+										<li><a href="{% url 'index:about-us' %}">О нас <i class="fa fa-chevron-down ms-1 arrow-btn f-13"></i></a>
 											<ul>
-												<li><a href="service.html.htm">Service</a></li>
-												<li><a href="service-details.html.htm">Service Details</a></li>
+												<li><a href="{% url 'index:about-our-company' %}">О нашей компании</a></li>
+												<li><a href="{% url 'index:feedback' %}">Отзывы</a></li>
+												<li><a href="{% url 'index:news' %}">Новости</a></li>
 											</ul>
 										</li>
-										<li><a href="{% url 'index:contact' %}">Контакты</a></li>										
+										<li><a href="{% url 'index:contacts' %}">Контакты</a></li>										
 									</ul>
 								</nav>
 								<div id="mobile_menu"> </div>

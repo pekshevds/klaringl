@@ -11,10 +11,31 @@ class IndexView(View):
                       {})
 
 
-class AboutView(View):
+class AboutUsView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request,
-                      "index_app/about.html",
+                      "index_app/aboutus.html",
+                      {})
+
+
+class AboutOurCompanyView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request,
+                      "index_app/aboutourcompany.html",
+                      {})
+
+
+class NewsView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request,
+                      "index_app/news.html",
+                      {})
+
+
+class FeedbackView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request,
+                      "index_app/feedback.html",
                       {})
 
 
@@ -22,6 +43,13 @@ class ContactView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request,
                       "index_app/contact.html",
+                      {})
+
+
+class PrivacyPolicyView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request,
+                      "index_app/privacypolicy.html",
                       {})
 
 
