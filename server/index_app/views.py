@@ -58,4 +58,4 @@ class GetInTouchView(View):
         form = GetInTouchForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-        return redirect("index:contact")
+        return redirect("index:contacts")
