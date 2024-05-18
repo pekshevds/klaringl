@@ -1,76 +1,37 @@
 from django.contrib import admin
 from order_app.models import (
-    City,
-    Rate,
-    RateItem,
-    LastMileRate
+    Cargo,
+    Order,
+    ItemOrder
 )
 
 
-@admin.register(City)
-class CityAdmin(admin.ModelAdmin):
-    list_display = ["name"]
-    search_fields = ["name"]
+@admin.register(Cargo)
+class CargoAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "weight",
+                    "length", "width", "height",
+                    "volume", "seats"]
+    search_fields = ["id"]
 
 
-@admin.register(RateItem)
-class RateItemAdmin(admin.ModelAdmin):
-    list_display = ["name"]
-    search_fields = ["name"]
+class ItemOrderInLine(admin.TabularInline):
+    model = ItemOrder
+    raw_id_fields = ["cargo"]
+    # prepopulated_fields = {"name": ["name"]}
 
 
-@admin.register(Rate)
-class RateAdmin(admin.ModelAdmin):
-    list_display = ["__str__"]
-    fieldsets = [
-        ("Города", {
-            "fields": ["city_from", "city_to"]
-        }),
-        ("Прайс ПО ВЕСУ (цена в рублях за 1 кг)", {
-            "fields": ["cost_by_weight_0_25", "cost_by_weight_25_50",
-                       "cost_by_weight_50_150", "cost_by_weight_150_300",
-                       "cost_by_weight_300_500", "cost_by_weight_500_1000",
-                       "cost_by_weight_1000_1500", "cost_by_weight_1500_2000",
-                       "cost_by_weight_2000_3000", "cost_by_weight_3000_5000",
-                       "cost_by_weight_5000_10000", "cost_by_weight_10000_inf"]
-        },),
-        ("Прайс ПО ОБЪЕМУ (цена в рублях за 1 м3)", {
-            "fields": ["cost_by_volume_0_01", "cost_by_volume_01_02",
-                       "cost_by_volume_02_06", "cost_by_volume_06_12",
-                       "cost_by_volume_12_20", "cost_by_volume_20_40",
-                       "cost_by_volume_40_60", "cost_by_volume_60_80",
-                       "cost_by_volume_80_120", "cost_by_volume_120_200",
-                       "cost_by_volume_200_400", "cost_by_volume_400_inf"]
-        },),
-    ]
-    list_filter = ["city_from", "city_to"]
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    inlines = [ItemOrderInLine]
+    list_display = ["__str__", "city_from", "date_from",
+                    "city_to", "date_to", "declared_cost", "cost"]
+    list_filter = ["city_from"]
+    search_fields = ["number"]
+    date_hierarchy = "date"
+    readonly_fields = ("cost",)
 
 
-@admin.register(LastMileRate)
-class LastMileRateAdmin(admin.ModelAdmin):
-    list_display = ["rate_item"]
-    fieldsets = [
-        ("Города", {
-            "fields": ["rate_item"]
-        }),
-        ("Прайс ПО ВЕСУ (цена в рублях за 1 кг)", {
-            "fields": ["cost_by_weight_0_25", "cost_by_weight_25_50",
-                       "cost_by_weight_50_150", "cost_by_weight_150_300",
-                       "cost_by_weight_300_500", "cost_by_weight_500_1000",
-                       "cost_by_weight_1000_1500", "cost_by_weight_1500_2000",
-                       "cost_by_weight_2000_3000", "cost_by_weight_3000_5000",
-                       "cost_by_weight_5000_10000",
-                       "cost_by_weight_10000_20000",
-                       "cost_by_weight_20000_inf"]
-        },),
-        ("Прайс ПО ОБЪЕМУ (цена в рублях за 1 м3)", {
-            "fields": ["cost_by_volume_0_01", "cost_by_volume_01_02",
-                       "cost_by_volume_02_06", "cost_by_volume_06_12",
-                       "cost_by_volume_12_20", "cost_by_volume_20_40",
-                       "cost_by_volume_40_60", "cost_by_volume_60_80",
-                       "cost_by_volume_80_120", "cost_by_volume_120_200",
-                       "cost_by_volume_200_400", "cost_by_volume_400_800",
-                       "cost_by_volume_800_inf"]
-        },),
-    ]
-    list_filter = ["rate_item"]
+"""@admin.register(ItemOrder)
+class ItemOrderAdmin(admin.ModelAdmin):
+    list_display = ["order", "id", "cargo"]
+    search_fields = ["order_number"]"""

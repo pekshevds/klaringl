@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'index_app.apps.IndexAppConfig',
     'auth_app.apps.AuthAppConfig',
+    'calculator_app.apps.CalculatorAppConfig',
     'order_app.apps.OrderAppConfig',
 ]
 

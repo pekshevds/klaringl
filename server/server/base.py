@@ -4,6 +4,29 @@ from django.db import models
 from django.utils.dateformat import format
 
 
+class Item(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
+    )
+    created_at = models.DateTimeField(
+        verbose_name="Дата создания",
+        auto_now_add=True,
+        null=True,
+        blank=True
+    )
+    updated_at = models.DateTimeField(
+        verbose_name="Дата изменения",
+        auto_now=True,
+        null=True,
+        blank=True
+    )
+
+    class Meta:
+        abstract = True
+
+
 class Base(models.Model):
     id = models.UUIDField(
         primary_key=True,

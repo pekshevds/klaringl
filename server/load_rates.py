@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 import csv
-from order_app.models import (
+from calculator_app.models import (
     City,
     Rate
 )
