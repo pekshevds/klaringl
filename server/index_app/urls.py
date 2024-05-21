@@ -1,24 +1,46 @@
 from django.urls import path
 from index_app.views import (
     IndexView,
-    AboutUsView,
-    ContactView,
-    AboutOurCompanyView,
-    FeedbackView,
+    AboutView,
     NewsView,
-    GetInTouchView,
-    PrivacyPolicyView
+    VacanciesView,
+    CooperationView,
+    BlogView,
+    ServicesView,
+    DeliveryOfGroupageCargoView,
+    AdditionalServicesView,
+    CompleteSolutionsForBusinessView,
+    SolutionsForOnlineStoresView,
+    DocumentationView,
+    ContactsView,
+    BranchOfficesView,
 )
 
 app_name = "index"
 
 urlpatterns = [
-    path('', IndexView.as_view(), name="index"),
-    path('about-us/', AboutUsView.as_view(), name="about-us"),
-    path('about-our-company/', AboutOurCompanyView.as_view(), name="about-our-company"),
-    path('contacts/', ContactView.as_view(), name="contacts"),
-    path('get-in-touch/', GetInTouchView.as_view(), name="get-in-touch"),
-    path('feedback/', FeedbackView.as_view(), name="feedback"),
-    path('news/', NewsView.as_view(), name="news"),
-    path('privacy/', PrivacyPolicyView.as_view(), name="privacy"),
+    path("", IndexView.as_view(), name="index"),
+    path("about/", AboutView.as_view(), name="about"),
+    path("about/news/", NewsView.as_view(), name="news"),
+    path("about/vacancies/", VacanciesView.as_view(), name="vacancies"),
+    path("about/cooperation/", CooperationView.as_view(), name="cooperation"),
+    path("about/blog/", BlogView.as_view(), name="blog"),
+
+    path("services/", ServicesView.as_view(), name="services"),
+    path("services/delivery_of_groupage_cargo/",
+         DeliveryOfGroupageCargoView.as_view(),
+         name="delivery-of-groupage-cargo"),
+    path("services/additional_services/",
+         AdditionalServicesView.as_view(),
+         name="additional-services"),
+    path("services/complete_solutions_for_business/",
+         CompleteSolutionsForBusinessView.as_view(),
+         name="complete-solutions-for-business"),
+    path("services/solutions_for_online_stores/",
+         SolutionsForOnlineStoresView.as_view(),
+         name="solutions-for-online-stores"),
+
+    path("documentation/", DocumentationView.as_view(), name="documentation"),
+    path("contacts/", ContactsView.as_view(), name="contacts"),
+    path("branch_offices/", BranchOfficesView.as_view(), name="branch-ffices"),
 ]

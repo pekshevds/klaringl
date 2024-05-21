@@ -113,27 +113,17 @@
 							<div class="header_right me-lg-2">
 								<nav id="main-menu" class="ms-auto">
 									<ul>
-										<li><a href="service.html.htm">Услуги <i class="fa fa-chevron-down ms-1 arrow-btn f-13"></i></a>
+										<li><a href="{% url 'index:about' %}">О компании <i class="fa fa-chevron-down ms-1 arrow-btn f-13"></i></a>
 											<ul>
-												<li><a href="service.html.htm">Service</a></li>
-												<li><a href="service-details.html.htm">Service Details</a></li>
-											</ul>
-										</li>
-										<li><a href="service.html.htm">Направления <i class="fa fa-chevron-down ms-1 arrow-btn f-13"></i></a>
-											<ul>
-												<li><a href="service.html.htm">Service</a></li>
-												<li><a href="service-details.html.htm">Service Details</a></li>
-											</ul>
-										</li>
-										<li><a href="about.html.htm">Сборный груз</a></li>
-										<li><a href="{% url 'index:about-us' %}">О нас <i class="fa fa-chevron-down ms-1 arrow-btn f-13"></i></a>
-											<ul>
-												<li><a href="{% url 'index:about-our-company' %}">О нашей компании</a></li>
-												<li><a href="{% url 'index:feedback' %}">Отзывы</a></li>
 												<li><a href="{% url 'index:news' %}">Новости</a></li>
+												<li><a href="{% url 'index:vacancies' %}">Вакансии</a></li>
+												<li><a href="{% url 'index:cooperation' %}">Сотрудничество</a></li>
+												<li><a href="{% url 'index:blog' %}">Блог</a></li>
 											</ul>
 										</li>
-										<li><a href="{% url 'index:contacts' %}">Контакты</a></li>										
+										<li><a href="{% url 'index:services' %}">Услуги и тарифы</a></li>
+										<li><a href="{% url 'index:documentation' %}">Документы</a></li>
+										<li><a href="{% url 'index:contacts' %}">Контакты</a></li>
 									</ul>
 								</nav>
 								<div id="mobile_menu"> </div>
@@ -335,21 +325,24 @@
 						<div class="col-lg-2 col-6 atf-footer-link" data-aos="fade-up">
 							<h5>Quick Links</h5>
 							<ul class="atf-list-menu">
-								<li> <a href="#"><i class="fas fa-caret-right me-2"></i>Рассчитать стоимость</a></li>
-								<li> <a href="{% url 'index:about-our-company' %}"><i class="fas fa-caret-right me-2"></i>О нашей компании</a></li>
-								<li> <a href="{% url 'index:about-us' %}"><i class="fas fa-caret-right me-2"></i>О Нас</a></li>
-								<li> <a href="#"><i class="fas fa-caret-right me-2"></i>ЧаВо</a></li>
-								<li> <a href="{% url 'index:contacts' %}"><i class="fas fa-caret-right me-2"></i>Контакты</a></li>
+								<li> <a href="{% url 'index:index' %}"><i class="fas fa-caret-right me-2"></i>Главная</a></li>
+								<li> <a href="{% url 'index:services' %}"><i class="fas fa-caret-right me-2"></i>Услуги и тарифы</a></li>
+								<li> <a href="{% url 'index:delivery-of-groupage-cargo' %}"><i class="fas fa-caret-right me-2"></i>Доставка сборного груза</a></li>
+								<li> <a href="{% url 'index:additional-services' %}"><i class="fas fa-caret-right me-2"></i>Дополнительные услуги</a></li>
+								<li> <a href="{% url 'index:complete-solutions-for-business' %}"><i class="fas fa-caret-right me-2"></i>Комплексные решения для бизнеса</a></li>
+								<li> <a href="{% url 'index:solutions-for-online-stores' %}"><i class="fas fa-caret-right me-2"></i>Доставка для интернет-магазинов</a></li>
 							</ul>
 						</div><!--- END COL -->
-						
+
 						<div class="col-lg-2 col-6 atf-footer-link" data-aos="fade-up">
 							<h5>Our Service</h5>
 							<ul class="atf-list-menu">
-								<li><a href="{% url 'index:privacy' %}"><i class="fas fa-caret-right me-2"></i>Соглашение</a></li>
-								<li><a href="#"><i class="fas fa-caret-right me-2"></i>Услуги</a></li>
-								<li><a href="#"><i class="fas fa-caret-right me-2"></i>Our Course</a></li>
-								<li><a href="#"><i class="fas fa-caret-right me-2"></i>Карта сайта</a></li>
+								<li><a href="{% url 'index:documentation' %}"><i class="fas fa-caret-right me-2"></i>Документы</a></li>
+								<li><a href="{% url 'index:branch-ffices' %}"><i class="fas fa-caret-right me-2"></i>Филиальная сеть</a></li>								
+								<li><a href="{% url 'index:cooperation' %}"><i class="fas fa-caret-right me-2"></i>Сотрудничество</a></li>
+								<li><a href="{% url 'index:blog' %}"><i class="fas fa-caret-right me-2"></i>Блог</a></li>
+								<li><a href="{% url 'index:vacancies' %}"><i class="fas fa-caret-right me-2"></i>Вакансии</a></li>
+								<li><a href="{% url 'index:contacts' %}"><i class="fas fa-caret-right me-2"></i>Контакты</a></li>
 								<li><a href="{% url 'index:news' %}"><i class="fas fa-caret-right me-2"></i>Новости</a></li>
 							</ul>
 						</div><!--- END COL -->

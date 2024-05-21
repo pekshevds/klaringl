@@ -1,0 +1,128 @@
+{% extends "index_app/base.html" %}
+
+{% load static %}
+
+{% block body %}
+
+<!-- start-page-heading -->
+<div class="atf-page-heading atf-size-md atf-dynamic-bg" style="background-image: url({% static 'index_app/assets/img/slider/6.jpg' %}); background-size:cover; background-position: center top;">
+	<div class="container">
+		<div class="atf-page-heading-in text-center">
+			<h1 class="atf-page-heading-title">О нас</h1>
+			<div class="atf-post-label">
+				<span><a href="{% url 'index:index' %}">Домой</a></span>
+				<span>О нас</span>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- .atf-page-heading -->
+
+<!-- START ABOUT -->
+<section id="about" class="atf-section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6" data-aos="fade-up">
+				<div class="atf-section-title text-left pe-lg-5">
+					<h5 class="sub-title">About Us</h5>
+					<h2 class="title-color">How to Logistic <span>Activities</span> Solution of Business in the world</h2>
+					<p class="f-15 mt-3 border-left ps-3"><strong>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.</strong></p>
+					
+					<p class="f-15 mt-3">Web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their over infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose injected humour and the liking of all.</p>
+
+					<div class="atf-main-btn mt-4"> 
+						<a class="atf-themes-btn  atf-themes-btn-one" href="{% url 'index:about' %}">
+							<i class="btn-curve"></i>
+							<span class="btn-title">Learn More</span>
+						</a>
+					</div>
+				</div>
+			</div><!--- END COL -->
+			
+			<div class="col-lg-6 col-12">
+				<div class="row atf-md-about align-items-center">
+					<div class="col-12" data-aos="fade-up">
+						<div class="atf-singl-video">
+							<div class="atf-about-img text-lg-center text-center mb-3">
+								<img class="img-fluid" src="{% static 'index_app/assets/img/about/about-3.jpg' %}" alt="about">
+							</div>
+							<div class="waves-box">
+								<a href="https://www.youtube.com/embed/NPfnLKLuJ_U" data-rel="lightcase:myCollection" class="iq-video"> <i class="fi fi-rr-play"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-6" data-aos="fade-up">
+						<img class="img-fluid" src="{% static 'index_app/assets/img/about/about-2.jpg' %}" alt="About">
+					</div>
+					<div class="col-6" data-aos="fade-up">
+						<img class="img-fluid" src="{% static 'index_app/assets/img/about/about-1.jpg' %}" alt="about">
+					</div>
+					
+				</div>
+			</div><!--- END COL -->
+		</div><!--- END ROW -->
+	</div><!--- END CONTAINER -->
+</section>
+<!-- END ABOUT -->
+
+<!-- START COUNTER SECTION  -->
+<section id="counter" class="atf-counter-area bg-light atf-section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-3 col-md-6 col-12" data-aos="fade-up">
+				<div class="counter">
+					<div class="counter-icon">
+						<i class="fi fi-rr-truck-side"></i>
+					</div>
+					<div class="counter-content">
+						<h3>Product Delivery</h3>
+						<span class="counter-value">8567</span>
+					</div>
+				</div>
+			</div><!--- END COL -->
+			
+			<div class="col-lg-3 col-md-6 col-12" data-aos="fade-up">
+				<div class="counter">
+					<div class="counter-icon">
+						<i class="fi fi-rr-ship-side"></i>
+					</div>
+					<div class="counter-content">
+						<h3>Shipping Delivery</h3>
+						<span class="counter-value">6587</span>
+					</div>
+				</div>
+			</div><!--- END COL -->
+			
+			<div class="col-lg-3 col-md-6 col-12" data-aos="fade-up">
+				<div class="counter">
+					<div class="counter-icon">
+						<i class="fi fi-rr-trophy"></i>
+					</div>
+					<div class="counter-content">
+						<h3>Award Winner</h3>
+						<span class="counter-value">2567</span>
+					</div>
+				</div>
+			</div><!--- END COL -->
+			
+			<div class="col-lg-3 col-md-6 col-12" data-aos="fade-up">
+				<div class="counter">
+					<div class="counter-icon">
+						<i class="fi fi-rr-world"></i>
+					</div>
+					<div class="counter-content">
+						<h3>World Branch</h3>
+						<span class="counter-value">5478</span>
+					</div>
+				</div>
+			</div><!--- END COL -->
+		</div><!--- END ROW -->
+	</div><!--- END CONTAINER -->
+</section>
+<!-- END COUNTER SECTION  -->
+
+{% include "index_app/includes/support.html" %}
+
+{% endblock %}
