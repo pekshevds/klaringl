@@ -29,37 +29,14 @@
 </section>
 <!-- END HOME -->
 
-
-{% include "index_app/includes/fiatures.html" %}
-    
-{% include "index_app/includes/aboutus.html" %}
-
-{% include "index_app/includes/support.html" %}
-
-{% include "index_app/includes/ourservices.html" %}
-
 {% include "index_app/includes/booking.html" %}
 
-{% include "index_app/includes/clientreviews.html" %}
+{% include "index_app/includes/checkstatus.html" %}
 
-{% include "index_app/includes/whatwedo.html" %}
+{% include "index_app/includes/aboutus.html" %}
 
-{% include "index_app/includes/ourskills.html" %}
-
-{% include "index_app/includes/ourprojects.html" %}
-
-{% include "index_app/includes/counters.html" %}
-
-{% include "index_app/includes/ourteam.html" %}
-
-{% include "index_app/includes/companybrandlogos.html" %}
-
-{% include "index_app/includes/recentnews.html" %}
-
-{% include "index_app/includes/subcribe.html" %}
-
-{% include "index_app/includes/getintouch.html" %}
-
-{% include "index_app/includes/faq.html" %}
+{% if news %}
+    {% include "index_app/includes/recentnews.html" with news=news %}
+{% endif %}
 
 {% endblock %}

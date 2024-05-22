@@ -2,8 +2,10 @@ from django.urls import path
 from index_app.views import (
     IndexView,
     AboutView,
+    NewsListView,
     NewsView,
-    VacanciesView,
+    VacancyListView,
+    VacancyView,
     CooperationView,
     BlogView,
     ServicesView,
@@ -21,8 +23,10 @@ app_name = "index"
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path("about/", AboutView.as_view(), name="about"),
-    path("about/news/", NewsView.as_view(), name="news"),
-    path("about/vacancies/", VacanciesView.as_view(), name="vacancies"),
+    path("about/news/", NewsListView.as_view(), name="news"),
+    path("about/news/<str:id>", NewsView.as_view(), name="open-news"),
+    path("about/vacancies/", VacancyListView.as_view(), name="vacancies"),
+    path("about/vacancies/<str:id>", VacancyView.as_view(), name="open-vacancy"),
     path("about/cooperation/", CooperationView.as_view(), name="cooperation"),
     path("about/blog/", BlogView.as_view(), name="blog"),
 

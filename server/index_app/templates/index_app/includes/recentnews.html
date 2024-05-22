@@ -15,39 +15,9 @@
         </div><!--- END ROW -->
 
         <div class="row mt-5 pt-4 atf_blog-slider-one-active slick-arrow-1">
-            <!-- Blog Item -->
-            <div class="col-lg-12">
-                <div class="atf_blog-item">
-                    <div class="atf_blog-img">
-                        <a href="#"><img src="{% static 'index_app/assets/img/blog/1.jpg' %}" alt="#"></a>
-                    </div>
-                    <div class="atf_blog-brief">
-                        <div class="atf_blog-meta">
-                            <ul>
-                                <li class="atf_blog-author">
-                                    <a href="#"><i class="far fa-user"></i>by: Admin</a>
-                                </li>
-                                <li class="atf_blog-tags">
-                                    <a href="#"><i class="fas fa-tags"></i>Service</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <h3 class="atf_blog-title"><a href="">15 Best Company Moving & Transportation Service</a></h3>
-                        <div class="atf_blog-meta-btn">
-                            <div class="atf_blog-meta">
-                                <ul>
-                                    <li class="atf_blog-date"><i class="far fa-calendar-alt"></i>Nov 24, 2022</li>
-                                </ul>
-                            </div>
-                            <div class="atf_blog-btn">
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Blog Item -->
             
+            {% for item in news %}
+            <!-- Blog Item -->                        
             <div class="col-lg-12">
                 <div class="atf_blog-item">
                     <div class="atf_blog-img">
@@ -57,90 +27,28 @@
                         <div class="atf_blog-meta">
                             <ul>
                                 <li class="atf_blog-author">
-                                    <a href="#"><i class="far fa-user"></i>by: Admin</a>
+                                    <i class="far fa-user"></i>by: {{ item.author }}
                                 </li>
                                 <li class="atf_blog-tags">
-                                    <a href="#"><i class="fas fa-tags"></i>Moving</a>
+                                    <i class="fas fa-tags"></i>{{ item.tag }}
                                 </li>
                             </ul>
                         </div>
-                        <h3 class="atf_blog-title"><a href="#">The Most Transportation service Of 2022</a></h3>
+                        <h3 class="atf_blog-title"><a href="{% url 'index:open-news' id=item.id %}">{{ item.name }}</a></h3>
                         <div class="atf_blog-meta-btn">
                             <div class="atf_blog-meta">
                                 <ul>
-                                    <li class="atf_blog-date"><i class="far fa-calendar-alt"></i>Sep 22, 2022</li>
+                                    <li class="atf_blog-date"><i class="far fa-calendar-alt"></i>{{ item.created_at }}</li>
                                 </ul>
                             </div>
                             <div class="atf_blog-btn">
-                                <a href="#">Read more</a>
+                                <a href="{% url 'index:open-news' id=item.id %}">Подробнее</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Blog Item -->
-            <div class="col-lg-12">
-                <div class="atf_blog-item">
-                    <div class="atf_blog-img">
-                        <a href="#"><img src="{% static 'index_app/assets/img/blog/3.jpg' %}" alt="#"></a>
-                    </div>
-                    <div class="atf_blog-brief">
-                        <div class="atf_blog-meta">
-                            <ul>
-                                <li class="atf_blog-author">
-                                    <a href="#"><i class="far fa-user"></i>by: Admin</a>
-                                </li>
-                                <li class="atf_blog-tags">
-                                    <a href="#"><i class="fas fa-tags"></i>Transport</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <h3 class="atf_blog-title"><a href="#">Recent Commercial Moving transport in World</a></h3>
-                        <div class="atf_blog-meta-btn">
-                            <div class="atf_blog-meta">
-                                <ul>
-                                    <li class="atf_blog-date"><i class="far fa-calendar-alt"></i>Oct 13, 2022</li>
-                                </ul>
-                            </div>
-                            <div class="atf_blog-btn">
-                                <a href="#">Read more</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Blog Item -->
-            <div class="col-lg-12">
-                <div class="atf_blog-item">
-                    <div class="atf_blog-img">
-                        <a href="#"><img src="{% static 'index_app/assets/img/blog/2.jpg' %}" alt="#"></a>
-                    </div>
-                    <div class="atf_blog-brief">
-                        <div class="atf_blog-meta">
-                            <ul>
-                                <li class="atf_blog-author">
-                                    <a href="#"><i class="far fa-user"></i>by: Admin</a>
-                                </li>
-                                <li class="atf_blog-tags">
-                                    <a href="#"><i class="fas fa-tags"></i>Moving</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <h3 class="atf_blog-title"><a href="#">Business in your compact as a result top of position</a></h3>
-                        <div class="atf_blog-meta-btn">
-                            <div class="atf_blog-meta">
-                                <ul>
-                                    <li class="atf_blog-date"><i class="far fa-calendar-alt"></i>June 24, 2022</li>
-                                </ul>
-                            </div>
-                            <div class="atf_blog-btn">
-                                <a href="blog-details.html.htm">Read more</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Blog Item -->
+            {% endfor %}
         </div>
     </div><!--- END CONTAINER -->
 </section>

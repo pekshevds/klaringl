@@ -1,14 +1,23 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
+from django.core.paginator import Paginator
 from index_app.forms import GetInTouchForm
+from index_app.models import (
+    News,
+    Vacancy
+)
 
 
 class IndexView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        news = News.last_news.all()
+        context = {
+            "news": news
+        }
         return render(request,
                       "index_app/index.html",
-                      {})
+                      context)
 
 
 class AboutView(View):
@@ -18,18 +27,56 @@ class AboutView(View):
                       {})
 
 
-class NewsView(View):
+class NewsListView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        item_list = News.active_news.all()
+        paginator = Paginator(item_list, 9)
+        page_number = request.GET.get("page", 1)
+        items = paginator.get_page(page_number)
+        context = {
+            "items": items,
+            "iterator": [i for i in range(1, items.paginator.num_pages + 1)]
+        }
+        return render(request,
+                      "index_app/about/news_list.html",
+                      context)
+
+
+class NewsView(View):
+    def get(self, request: HttpRequest, id: str) -> HttpResponse:
+        item = News.objects.get(id=id)
+        context = {
+            "item": item
+        }
         return render(request,
                       "index_app/about/news.html",
-                      {})
+                      context)
 
 
-class VacanciesView(View):
+class VacancyListView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        item_list = Vacancy.active_vacancies.all()
+        paginator = Paginator(item_list, 9)
+        page_number = request.GET.get("page", 1)
+        items = paginator.get_page(page_number)
+        context = {
+            "items": items,
+            "iterator": [i for i in range(1, items.paginator.num_pages + 1)]
+        }
         return render(request,
-                      "index_app/about/vacancies.html",
-                      {})
+                      "index_app/about/vacancy_list.html",
+                      context)
+
+
+class VacancyView(View):
+    def get(self, request: HttpRequest, id: str) -> HttpResponse:
+        item = Vacancy.objects.get(id=id)
+        context = {
+            "item": item
+        }
+        return render(request,
+                      "index_app/about/vacancy.html",
+                      context)
 
 
 class CooperationView(View):

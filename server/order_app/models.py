@@ -4,6 +4,7 @@ from server.base import (
     Item,
     Document
 )
+from auth_app.models import User
 from calculator_app.models import City
 from order_app.services import ganerate_new_number
 
@@ -92,6 +93,12 @@ class Order(Document):
     cost = models.DecimalField(
         verbose_name="Стоимость", max_digits=15, decimal_places=2,
         blank=True, default=0)
+    author = models.ForeignKey(
+        User, verbose_name="Автор", on_delete=models.PROTECT,
+        related_name="orders",
+        null=True,
+        blank=True
+    )
 
     def save(self, *args, **kwargs) -> None:
         if not self.number:

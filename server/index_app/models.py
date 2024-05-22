@@ -1,5 +1,23 @@
 from django.db import models
 from server.base import Directory
+from auth_app.models import User
+
+
+class Tag(Directory):
+    class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
+        ordering = ["-created_at"]
+
+
+class LastNewsManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        return super().get_queryset().filter(active=True)[:3]
+
+
+class ActiveNewsManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        return super().get_queryset().filter(active=True)
 
 
 class News(Directory):
@@ -15,15 +33,36 @@ class News(Directory):
         null=True,
         blank=True
     )
+    tag = models.ForeignKey(
+        Tag, verbose_name="tag", on_delete=models.PROTECT,
+        related_name="news",
+        null=True,
+        blank=True
+    )
+    author = models.ForeignKey(
+        User, verbose_name="Автор", on_delete=models.PROTECT,
+        related_name="news",
+        null=True,
+        blank=True
+    )
     active = models.BooleanField(
         verbose_name="Активна",
         default=True
     )
 
+    objects = models.Manager()
+    last_news = LastNewsManager()
+    active_news = ActiveNewsManager()
+
     class Meta:
         verbose_name = "Новость"
         verbose_name_plural = "Новости"
         ordering = ["-created_at"]
+
+
+class ActiveVacancyManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        return super().get_queryset().filter(active=True)
 
 
 class Vacancy(Directory):
@@ -49,6 +88,9 @@ class Vacancy(Directory):
         verbose_name="Активна",
         default=True
     )
+
+    objects = models.Manager()
+    active_vacancies = ActiveVacancyManager()
 
     class Meta:
         verbose_name = "Вакансия"
