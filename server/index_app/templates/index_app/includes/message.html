@@ -1,0 +1,44 @@
+<div class="col-lg-6" data-aos="fade-up">
+    <div class="atf-section-title  text-left">
+        <h2 class="title-color">Get In <span>Touch</span> </h2>
+        <p class="f-15 mt-3">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.</p>
+        
+        <div class="contact mt-4">
+            <form id="contact-form" class="atf-contact-form form" method="POST" action="#">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="required">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <input type="tel" name="tel" class="form-control" id="tel" placeholder="Your tel" required="required">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Your Email" required="required">
+                    </div>
+                    <div class="form-group col-lg-12">
+                        <input type="text" name="city" class="form-control" id="city" placeholder="Your city" required="required">
+                    </div>
+                    <div class="form-group col-lg-12">
+                        <textarea rows="6" name="message" class="form-control" id="message" placeholder="Your Message" required="required"></textarea>
+                    </div>
+                    <div class="mt-4 col-lg-8 col-md-8">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="agree">
+                            <label class="form-check-label" for="agree">Agree</label>
+                        </div>
+                    </div>                    
+                    <div class="col-lg-12">
+                        <div class="atf-contact-btn text-left">
+                            <button type="submit" value="Submit Now" name="submit" id="submitButton" class="atf-themes-btn  atf-themes-btn-one" title="Submit Your Message!">
+                                <i class="btn-curve"></i>
+                                <span class="btn-title">Send Message</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <p class="form-message"></p>
+        </div>
+    </div>
+</div><!--- END COL -->
