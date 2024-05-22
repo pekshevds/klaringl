@@ -5,7 +5,8 @@ from django.core.paginator import Paginator
 from index_app.forms import GetInTouchForm
 from index_app.models import (
     News,
-    Vacancy
+    Vacancy,
+    Document
 )
 
 
@@ -95,9 +96,13 @@ class BlogView(View):
 
 class DocumentationView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        items = Document.active_documents.all()
+        context = {
+            "items": items
+        }
         return render(request,
                       "index_app/documentation.html",
-                      {})
+                      context)
 
 
 class ContactsView(View):

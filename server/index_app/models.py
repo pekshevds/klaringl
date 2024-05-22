@@ -98,6 +98,11 @@ class Vacancy(Directory):
         ordering = ["-created_at"]
 
 
+class ActiveDocumentManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        return super().get_queryset().filter(active=True)
+
+
 class Document(Directory):
     name = models.CharField(
         verbose_name="Заголовок",
@@ -114,6 +119,9 @@ class Document(Directory):
         verbose_name="Активна",
         default=True
     )
+
+    objects = models.Manager()
+    active_documents = ActiveDocumentManager()
 
     class Meta:
         verbose_name = "Файл для скачивания"
