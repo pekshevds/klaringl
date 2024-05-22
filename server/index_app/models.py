@@ -1,6 +1,57 @@
 from django.db import models
-from server.base import Directory
+from server.base import Directory, Base
 from auth_app.models import User
+
+
+class Const(Base):
+    address = models.CharField(
+        verbose_name="Адрес",
+        max_length=255,
+        blank=True,
+        null=True,
+        default=""
+    )
+
+    email = models.CharField(
+        verbose_name="Электронная почта",
+        max_length=50,
+        blank=True,
+        null=True,
+        default=""
+    )
+    tel = models.CharField(
+        verbose_name="Телефон",
+        max_length=25,
+        blank=True,
+        null=True,
+        default=""
+    )
+
+    def save(self, *args, **kwargs):
+        """
+        Синглтон - обеспечивает наличие не более одной записи"""
+        if self.__class__.objects.count():
+            self.pk = self.__class__.objects.first().pk
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def info(cls):
+        data = {
+            "address": "",
+            "email": "",
+            "tel": ""
+        }
+        item = cls.objects.first()
+        if item:
+            data["address"] = item.address
+            data["email"] = item.email
+            data["tel"] = item.tel
+        return data
+
+    class Meta:
+        verbose_name = "Константы"
+        verbose_name_plural = "Константы"
+        ordering = ["-created_at"]
 
 
 class Tag(Directory):

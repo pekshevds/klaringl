@@ -78,8 +78,8 @@
 					<div class="row align-items-center">
 						<div class="col-lg-7">
 							<div class="atf_header_top_left">                     
-								<p><i class="fas fa-phone-volume"></i><a href="tel:+74951819524">+7 (495) 181-95-24</a></p>
-								<p><i class="far fa-envelope-open"></i><a href="#">example@gmail.com</a></p>							
+								<p><i class="fas fa-phone-volume"></i><a href="tel:{{ const.tel }}">{{ const.tel }}</a></p>
+								<p><i class="far fa-envelope-open"></i><a href="mailto:{{ const.email }}">{{ const.email }}</a></p>							
 							 </div>
 						</div>
 
@@ -262,7 +262,7 @@
 								<i class="fa fa-map-marker-alt"></i>
 								</div>
 								<div class="atf_sidebar__contact-text">
-								<a target="#" href="">32/B United State, Usa.</a>
+								{{ const.address }}
 								</div>
 							</li>
 							<li class="d-flex align-items-center">
@@ -270,7 +270,7 @@
 								<i class="fa fa-phone"></i>
 								</div>
 								<div class="atf_sidebar__contact-text">
-								<a href="">222 (111) 5555</a>
+								<a href="tel:{{ const.tel }}">{{ const.tel }}</a>
 								</div>
 							</li>
 							<li class="d-flex align-items-center">
@@ -278,7 +278,7 @@
 								<i class="fa fa-envelope"></i>
 								</div>
 								<div class="atf_sidebar__contact-text">
-									<a href="">example@gmail.com</a>
+									<a href="mailto:{{ const.email }}">{{ const.email }}</a>
 								</div>
 							</li>
 						</ul>

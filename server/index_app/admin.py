@@ -3,7 +3,8 @@ from index_app.models import (
     News,
     Vacancy,
     Document,
-    Tag
+    Tag,
+    Const
 )
 
 
@@ -33,3 +34,9 @@ class DocumentAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     list_display = ["name", "created_at", "updated_at"]
     search_fields = ["name"]
+
+
+@admin.register(Const)
+class ConstAdmin(admin.ModelAdmin):
+    list_display = ["address", "tel", "email", "created_at", "updated_at"]
+    search_fields = ["address"]
