@@ -54,3 +54,26 @@ class Vacancy(Directory):
         verbose_name = "Вакансия"
         verbose_name_plural = "Вакансии"
         ordering = ["-created_at"]
+
+
+class Document(Directory):
+    name = models.CharField(
+        verbose_name="Заголовок",
+        max_length=150,
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    file = models.FileField(
+        verbose_name="Файл",
+        upload_to="uploads/"
+    )
+    active = models.BooleanField(
+        verbose_name="Активна",
+        default=True
+    )
+
+    class Meta:
+        verbose_name = "Файл для скачивания"
+        verbose_name_plural = "Файлы для скачивания"
+        ordering = ["-created_at"]
