@@ -1,0 +1,12 @@
+.as-delimiter {
+    border-bottom: 1px solid #677a85;
+}
+
+.as-form-group input[type="date"] {
+    color: #677a85;
+}
+
+.as-form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.8;
+    filter: invert(0.5);
+}

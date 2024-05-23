@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', include("index_app.urls", namespace="index")),
+    path('calc/', include("calculator_app.urls")),
     path('admin/', admin.site.urls),
 ]
 if settings.DEBUG:

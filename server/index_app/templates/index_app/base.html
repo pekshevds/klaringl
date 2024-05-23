@@ -40,9 +40,15 @@
         <link rel="stylesheet" href="{% static 'index_app/assets/css/slicknav.css' %}">	
 		<!-- Style CSS -->
 		<link rel="stylesheet" href="{% static 'index_app/assets/css/style.css' %}">
+		<!-- Annasoft Style CSS -->
+		<link rel="stylesheet" href="{% static 'index_app/assets/css/as.css' %}">
 		<!-- Responsive CSS -->
 		<link rel="stylesheet" href="{% static 'index_app/assets/css/responsive.css' %}">
-		
+
+		<!-- plug local libraries  -->
+		{% block local_libraries %}
+		{% endblock %}
+
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't gallery if you view the page via file:// -->
 		<!--[if lt IE 9]>
@@ -374,7 +380,7 @@
 						</div><!--- END COL -->
 					</div><!--- END ROW -->
 				</div>
-				<!-- FOOTER SECTION END-->	
+				<!-- FOOTER SECTION END-->	/
 			</footer>
 			<!--- END FOOTER -->
 			
@@ -414,5 +420,9 @@
 		<!-- main js -->
 		<script src="{% static 'index_app/assets/js/main.js' %}"></script>	
 		
+		<!-- plug local scripts  -->
+		{% block local_scripts %}
+		{% endblock %}
+
 	</body>
 </html>
