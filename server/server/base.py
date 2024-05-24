@@ -85,6 +85,10 @@ class Directory(Base):
     def __str__(self) -> str:
         return f"{self.name}"
 
+    @classmethod
+    def find_by_name(cls, name: str):
+        return cls.objects.filter(name=name).first()
+
     class Meta:
         abstract = True
 
