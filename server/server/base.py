@@ -4,6 +4,24 @@ from django.db import models
 from django.utils.dateformat import format
 
 
+class TimeSelector(models.TextChoices):
+    T_09_19 = "t1", "09:00-19:00"
+    T_19_25 = "t2", "19:00-23:00"
+    T_23_08 = "t3", "23:00-08:00"
+
+
+class FormOfOwnershipSelector(models.TextChoices):
+    FZ = "FZ", "Физическое лицо"
+    IP = "IP", "Индивидуальный предприниматель"
+    OR = "OR", "Физическое лицо"
+
+
+class PayerSelector(models.TextChoices):
+    SD = "SD", "Отправитель"
+    RP = "RP", "Получатель"
+    PR = "PR", "Третье лицо"
+
+
 class Item(models.Model):
     id = models.UUIDField(
         primary_key=True,

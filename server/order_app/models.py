@@ -2,7 +2,10 @@ from django.db import models
 from server.base import (
     Directory,
     Item,
-    Document
+    Document,
+    FormOfOwnershipSelector,
+    PayerSelector,
+    TimeSelector
 )
 from auth_app.models import User
 from calculator_app.models import City
@@ -50,11 +53,7 @@ class Cargo(Directory):
 
 class Order(Document):
 
-    class TimeSelector(models.TextChoices):
-        T_09_19 = "t1", "09:00-19:00"
-        T_19_25 = "t2", "19:00-23:00"
-        T_23_08 = "t3", "23:00-08:00"
-
+    # Основные реквизиты отправителя
     city_from = models.ForeignKey(
         City, verbose_name="Откуда", on_delete=models.PROTECT,
         related_name="orders_from")
@@ -69,6 +68,24 @@ class Order(Document):
         max_length=2, choices=TimeSelector.choices,
         default=TimeSelector.T_09_19, blank=False)
 
+    form_from = models.CharField(
+        verbose_name="Форма собственности",
+        max_length=2, choices=FormOfOwnershipSelector.choices,
+        default=FormOfOwnershipSelector.FZ, blank=False)
+    name_from = models.CharField(
+        max_length=255, verbose_name="Наименование",
+        null=True, blank=True, default="")
+    face_from = models.CharField(
+        max_length=255, verbose_name="Контактное лицо",
+        null=True, blank=True, default="")
+    tel_from = models.CharField(
+        max_length=25, verbose_name="Телефон",
+        null=True, blank=True, default="")
+    email_from = models.EmailField(
+        max_length=25, verbose_name="E-Mail",
+        null=True, blank=True)
+
+    # Основные реквизиты получателя
     city_to = models.ForeignKey(
         City, verbose_name="Куда", on_delete=models.PROTECT,
         related_name="orders_to")
@@ -82,6 +99,45 @@ class Order(Document):
         verbose_name="Время доставки",
         max_length=2, choices=TimeSelector.choices,
         default=TimeSelector.T_09_19, blank=False)
+
+    form_to = models.CharField(
+        verbose_name="Форма собственности",
+        max_length=2, choices=FormOfOwnershipSelector.choices,
+        default=FormOfOwnershipSelector.FZ, blank=False)
+    name_to = models.CharField(
+        max_length=255, verbose_name="Наименование",
+        null=True, blank=True, default="")
+    face_to = models.CharField(
+        max_length=255, verbose_name="Контактное лицо",
+        null=True, blank=True, default="")
+    tel_to = models.CharField(
+        max_length=25, verbose_name="Телефон",
+        null=True, blank=True, default="")
+    email_to = models.EmailField(
+        max_length=25, verbose_name="E-Mail",
+        null=True, blank=True)
+
+    # Реквизиты плательщика
+    payer = models.CharField(
+        verbose_name="Плательщик",
+        max_length=2, choices=PayerSelector.choices,
+        default=PayerSelector.SD, blank=False)
+    form_payer = models.CharField(
+        verbose_name="Форма собственности",
+        max_length=2, choices=FormOfOwnershipSelector.choices,
+        default=FormOfOwnershipSelector.FZ, blank=False)
+    name_payer = models.CharField(
+        max_length=255, verbose_name="Наименование",
+        null=True, blank=True, default="")
+    face_payer = models.CharField(
+        max_length=255, verbose_name="Контактное лицо",
+        null=True, blank=True, default="")
+    tel_payer = models.CharField(
+        max_length=25, verbose_name="Телефон",
+        null=True, blank=True, default="")
+    email_payer = models.EmailField(
+        max_length=25, verbose_name="E-Mail",
+        null=True, blank=True)
 
     insurance = models.BooleanField(
         verbose_name="Страхование груза", default=False)
