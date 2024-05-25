@@ -35,8 +35,8 @@ class Cargo(Directory):
     volume = models.DecimalField(
         verbose_name="Объем, м3", max_digits=15, decimal_places=5,
         blank=False, default=0)
-    seats = models.DecimalField(
-        verbose_name="Количество мест, шт", max_digits=15, decimal_places=0,
+    seats = models.IntegerField(
+        verbose_name="Количество мест, шт",
         blank=False, default=1)
 
     def __str__(self) -> str:
@@ -178,7 +178,7 @@ class ItemOrder(Item):
         Cargo, verbose_name="Груз", on_delete=models.PROTECT)
     soft_packaging = models.BooleanField(
         verbose_name="Мягкая упаковка", default=False)
-    Crate = models.BooleanField(
+    crate = models.BooleanField(
         verbose_name="Обрешетка", default=False)
     palletizing = models.BooleanField(
         verbose_name="Паллетирование", default=False)

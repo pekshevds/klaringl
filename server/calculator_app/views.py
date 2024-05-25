@@ -17,7 +17,7 @@ from calculator_app.services import (
 )
 
 
-class CityView(APIView):
+class CityAPIView(APIView):
 
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -46,7 +46,7 @@ class CityView(APIView):
         return Response(response)
 
 
-class RateView(APIView):
+class RateAPIView(APIView):
 
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -60,7 +60,7 @@ class RateView(APIView):
         return Response(response)
 
 
-class CalculateView(APIView):
+class CalculateAPIView(APIView):
 
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -74,7 +74,6 @@ class CalculateView(APIView):
             return Response(response)
         serializer = CalculateRequestSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-
             cost = calculate_delivery_cost(**serializer.validated_data)
             serializer = CalculateResponseSerializer({"cost": cost})
             response = {"data": serializer.data,
