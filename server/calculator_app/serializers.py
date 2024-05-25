@@ -6,6 +6,20 @@ from server.base_serializers import (
 from calculator_app.models import City
 
 
+class CalculateRequestSerializer(serializers.Serializer):
+    city_from_name = serializers.CharField()
+    city_to_name = serializers.CharField()
+    weight = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+    volume = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+
+
+class CalculateResponseSerializer(serializers.Serializer):
+    cost = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+
+
 class CitySerializer(DirectorySerializer):
 
     def create(self, validated_data):

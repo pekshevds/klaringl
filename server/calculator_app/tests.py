@@ -5,6 +5,7 @@ from calculator_app.models import (
 )
 from calculator_app.services import (
     city_by_name,
+    calculate_delivery_cost_by_rate,
     calculate_delivery_cost,
     rate_by_cities
 )
@@ -27,6 +28,15 @@ class RateTestCase(TestCase):
         rate = rate_by_cities(self.moskow, self.belgorod)
         self.assertEqual(rate, self.rate)
 
+    def test_calculate_delivery_cost_by_rate(self):
+        # Москва-Белгород
+        self.assertEqual(calculate_delivery_cost_by_rate(
+            self.rate,
+            weight=15), 900)
+
     def test_calculate_delivery_cost(self):
         # Москва-Белгород
-        self.assertEqual(calculate_delivery_cost(self.rate, 15), 900)
+        self.assertEqual(calculate_delivery_cost(
+            self.moskow.name,
+            self.belgorod.name,
+            weight=15), 900)

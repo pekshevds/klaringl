@@ -22,6 +22,8 @@ def rate_by_cities(city_from: City, city_to: City) -> Rate | None:
 
 
 def calculate_cost_by_weight(rate: Rate, weight: float) -> float:
+    if not rate:
+        return 0
     cost_by_weight = 0
     if 0 < weight <= rate.cost_by_weight_0_25:
         cost_by_weight = rate.cost_by_weight_0_25
@@ -63,6 +65,8 @@ def calculate_cost_by_weight(rate: Rate, weight: float) -> float:
 
 
 def calculate_cost_by_volume(rate: Rate, volume: float) -> float:
+    if not rate:
+        return 0
     cost_by_volume = 0
     if 0 < volume <= rate.cost_by_volume_0_01:
         cost_by_volume = rate.cost_by_volume_0_01 * volume
@@ -102,9 +106,24 @@ def calculate_cost_by_volume(rate: Rate, volume: float) -> float:
     return cost_by_volume
 
 
-def calculate_delivery_cost(
+def calculate_delivery_cost_by_rate(
         rate: Rate,
         weight: float = 0, volume: float = 0) -> float:
+
+    cost_by_weight = calculate_cost_by_weight(rate, weight)
+    cost_by_volume = calculate_cost_by_volume(rate, volume)
+
+    return max(cost_by_weight, cost_by_volume)
+
+
+def calculate_delivery_cost(
+        city_from_name: str,
+        city_to_name: str,
+        weight: float = 0, volume: float = 0) -> float:
+
+    city_from = city_by_name(city_name=city_from_name)
+    city_to = city_by_name(city_name=city_to_name)
+    rate = rate_by_cities(city_from=city_from, city_to=city_to)
 
     cost_by_weight = calculate_cost_by_weight(rate, weight)
     cost_by_volume = calculate_cost_by_volume(rate, volume)

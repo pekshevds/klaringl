@@ -6,7 +6,15 @@ from rest_framework import (
     authentication
 )
 from calculator_app.models import City, Rate
-from calculator_app.serializers import CitySerializer, RateSerializer
+from calculator_app.serializers import (
+    CitySerializer,
+    RateSerializer,
+    CalculateRequestSerializer,
+    CalculateResponseSerializer
+)
+from calculator_app.services import (
+    calculate_delivery_cost
+)
 
 
 class CityView(APIView):
@@ -49,4 +57,27 @@ class RateView(APIView):
         response = {"data": serializer.data,
                     "count": len(queryset),
                     "success": True}
+        return Response(response)
+
+
+class CalculateView(APIView):
+
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        response = {"data": {},
+                    "count": 0,
+                    "success": False}
+        data = request.data.get("data", None)
+        if not data:
+            return Response(response)
+        serializer = CalculateRequestSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+
+            cost = calculate_delivery_cost(**serializer.validated_data)
+            serializer = CalculateResponseSerializer({"cost": cost})
+            response = {"data": serializer.data,
+                        "count": 1,
+                        "success": True}
         return Response(response)
