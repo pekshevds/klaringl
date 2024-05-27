@@ -62,7 +62,8 @@ class Order(Document):
     address_from = models.CharField(
         max_length=1024, verbose_name="Адрес забора",
         null=True, blank=True, default="")
-    date_from = models.DateField(verbose_name="Дата забора")
+    date_from = models.DateField(
+        verbose_name="Дата забора", null=True, blank=True)
     time_from = models.CharField(
         verbose_name="Время забора",
         max_length=2, choices=TimeSelector.choices,
@@ -94,7 +95,8 @@ class Order(Document):
     address_to = models.CharField(
         max_length=1024, verbose_name="Адрес доставки",
         null=True, blank=True, default="")
-    date_to = models.DateField(verbose_name="Дата доставки")
+    date_to = models.DateField(
+        verbose_name="Дата доставки", null=True, blank=True)
     time_to = models.CharField(
         verbose_name="Время доставки",
         max_length=2, choices=TimeSelector.choices,

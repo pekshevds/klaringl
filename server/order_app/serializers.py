@@ -6,7 +6,11 @@ from server.base_serializers import (
 )
 from order_app.models import (
     Cargo,
-    Order
+    Order,
+    ItemOrder
+)
+from calculator_app.models import (
+    City
 )
 
 
@@ -25,6 +29,17 @@ class CargorSerializer(DirectorySerializer):
 
     def create(self, validated_data):
         return Cargo.objects.create(**validated_data)
+
+
+class ItemOrderSerializer(ItemSerializer):
+    cargo = CargorSerializer()
+    soft_packaging = serializers.BooleanField(required=False)
+    crate = serializers.BooleanField(required=False)
+    palletizing = serializers.BooleanField(required=False)
+    pallet_board = serializers.BooleanField(required=False)
+    seal_bag = serializers.BooleanField(required=False)
+    cardboard_box = serializers.BooleanField(required=False)
+    high_security_cargo = serializers.BooleanField(required=False)
 
 
 class OrderSerializer(DocumentSerializer):
@@ -63,21 +78,48 @@ class OrderSerializer(DocumentSerializer):
         max_digits=15, decimal_places=2, required=False)
     cost = serializers.DecimalField(
         max_digits=15, decimal_places=2, required=False)
+    items = ItemOrderSerializer(many=True, required=False)
 
-    def create(self, validated_data):
-        return Order.objects.create(**validated_data)
+    def __fill_order(self, validated_data: dict) -> Order:
+        order = Order()
+        for key, value in validated_data.items():
+            if key == "id":
+                order = Order.objects.get(id=value)
+                continue
+            if key == "items":
+                continue
+            if key == "city_from_id":
+                setattr(order, "city_from", City.find_by_id(id=value))
+                continue
+            if key == "city_to_id":
+                setattr(order, "city_to", City.find_by_id(id=value))
+                continue
+            setattr(order, key, value)
+        order.save()
+        return order
 
+    def __fill_cargo(self, validated_data: dict) -> Cargo:
+        cargo = Cargo()
+        for key, value in validated_data.items():
+            setattr(cargo, key, value)
+        cargo.save()
+        return cargo
 
-class ItemOrderSerializer(ItemSerializer):
-    order_id = serializers.UUIDField()
-    cargo_id = serializers.UUIDField()
-    soft_packaging = serializers.BooleanField(required=False)
-    crate = serializers.BooleanField(required=False)
-    palletizing = serializers.BooleanField(required=False)
-    pallet_board = serializers.BooleanField(required=False)
-    seal_bag = serializers.BooleanField(required=False)
-    cardboard_box = serializers.BooleanField(required=False)
-    high_security_cargo = serializers.BooleanField(required=False)
+    def __fill_item_order(self,
+                          order: Order,
+                          cargo: Cargo,
+                          validated_data: dict) -> ItemOrder:
+        item_cargo = ItemOrder(order=order, cargo=cargo)
+        for key, value in validated_data.items():
+            if key == "cargo":
+                continue
+            setattr(item_cargo, key, value)
+        item_cargo.save()
+        return item_cargo
 
-    def create(self, validated_data):
-        return Order.objects.create(**validated_data)
+    def create(self, validated_data: dict) -> Order:
+        order = self.__fill_order(validated_data)
+        for item in validated_data["items"]:
+            cargo = self.__fill_cargo(item["cargo"])
+            self.__fill_item_order(order, cargo, item)
+        return order

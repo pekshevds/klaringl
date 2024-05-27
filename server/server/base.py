@@ -13,7 +13,7 @@ class TimeSelector(models.TextChoices):
 class FormOfOwnershipSelector(models.TextChoices):
     FZ = "FZ", "Физическое лицо"
     IP = "IP", "Индивидуальный предприниматель"
-    OR = "OR", "Физическое лицо"
+    OR = "OR", "Юридическое лицо"
 
 
 class PayerSelector(models.TextChoices):
@@ -86,8 +86,12 @@ class Directory(Base):
         return f"{self.name}"
 
     @classmethod
-    def find_by_name(cls, name: str):
+    def find_by_name(cls, name: str) -> object:
         return cls.objects.filter(name=name).first()
+
+    @classmethod
+    def find_by_id(cls, id: models.UUIDField) -> object:
+        return cls.objects.filter(id=id).first()
 
     class Meta:
         abstract = True

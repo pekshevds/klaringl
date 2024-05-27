@@ -6,7 +6,8 @@ from calculator_app.views import (
     CalculateAPIView
 )
 from order_app.views import (
-    CargoAPIView
+    CargoAPIView,
+    OrderAPIView
 )
 
 
@@ -17,5 +18,6 @@ urlpatterns = [
     path('calculator/rates/', RateAPIView.as_view(), name="rate"),
     path('calculator/calculate/', CalculateAPIView.as_view(), name="calculate"),
     path('order/cargos/', CargoAPIView.as_view(), name="cargo"),
+    path('order/orders/', OrderAPIView.as_view(), name="order"),
     path('api-token-auth/', views.obtain_auth_token),
 ]
