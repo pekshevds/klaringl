@@ -51,11 +51,11 @@
                                         <div class="atf-booking-form-item col-lg-6 col-md-6">
                                             <select v-model="departureCity" id="departureCity" class="nice-select">
                                                 <option data-display="Выберите город" value=""></option>
-                                                <option value="1">Москва</option>
-                                                <option value="2">Уфа</option>
-                                                <option value="3">Калиниград</option>
-                                                <option value="4">Сочи</option>
-                                                <option value="5">Белгород</option>
+                                                <option value="Москва">Москва</option>
+                                                <option value="Уфа">Уфа</option>
+                                                <option value="Калиниград">Калиниград</option>
+                                                <option value="Сочи">Сочи</option>
+                                                <option value="Белгород">Белгород</option>
                                             </select>
                                         </div> 
                                     </div>
@@ -90,11 +90,11 @@
                                         <div class="atf-booking-form-item col-lg-6 col-md-6">	
                                             <select v-model="receivingCity" id="receivingCity" class="nice-select">
                                                 <option data-display="Выберите город" value=""></option>
-                                                <option value="1">Москва</option>
-                                                <option value="2">Уфа</option>
-                                                <option value="3">Калиниград</option>
-                                                <option value="4">Сочи</option>
-                                                <option value="5">Белгород</option>
+                                                <option value="Москва">Москва</option>
+                                                <option value="Уфа">Уфа</option>
+                                                <option value="Калиниград">Калиниград</option>
+                                                <option value="Сочи">Сочи</option>
+                                                <option value="Белгород">Белгород</option>
                                             </select>
                                         </div> 
                                     </div>
@@ -165,22 +165,32 @@
                                         </div>
                                     </div>
                                     <div v-if="orderItem.dimensionsType == 2" class="mt-4 col-12 row">
-                                        <div class="atf-booking-form-item col-3">
+                                        <div class="atf-booking-form-item col-12 col-md-2">
                                             <div class="form-group mb-0">
                                                 <input type="number" v-model="orderItem.length" class="form-control" placeholder="Длина">
                                             </div>
                                         </div>
-                                        <div class="atf-booking-form-item col-3">
+                                        <div class="atf-booking-form-item col-12 col-md-2">
                                             <div class="form-group mb-0">
                                                 <input type="number" v-model="orderItem.width" class="form-control" placeholder="Ширина">
                                             </div>
                                         </div>
-                                        <div class="atf-booking-form-item col-3">
+                                        <div class="atf-booking-form-item col-12 col-md-2">
                                             <div class="form-group mb-0">
                                                 <input type="number" v-model="orderItem.height" class="form-control"  placeholder="Высота">
                                             </div>
                                         </div>
-                                        <div class="atf-booking-form-item col-3">
+                                        <div class="atf-booking-form-item col-12 col-md-2">
+                                            <div class="form-group mb-0">
+                                                <input type="number" v-model="orderItem.volume" class="form-control" placeholder="Объем">
+                                            </div>
+                                        </div>
+                                        <div class="atf-booking-form-item col-12 col-md-2">
+                                            <div class="form-group mb-0">
+                                                <input type="number" v-model="orderItem.weight" class="form-control" placeholder="Вес">
+                                            </div>
+                                        </div>
+                                        <div class="atf-booking-form-item col-12 col-md-2">
                                             <div class="form-group mb-0">
                                                 <input type="number"v-model="orderItem.placeQty" class="form-control" placeholder="Мест">
                                             </div>
@@ -254,7 +264,7 @@
                                     </div>
                                     <div class="mt-3 col-12">
                                         <div class="atf-main-btn"> 
-                                            <button @click="checkout" class="atf-themes-btn  atf-themes-btn-one">
+                                            <button @click="calculateOrder" class="atf-themes-btn  atf-themes-btn-one">
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">Офомить заказ</span>
                                             </button>
@@ -297,7 +307,7 @@ const store = Vuex.createStore({
                 dimensionsType: 1,
                 volume: "",
                 weight: "",
-                placeQty: "",
+                placeQty: 1,
                 length: "",
                 height: "",
                 width: "",
@@ -320,7 +330,7 @@ const store = Vuex.createStore({
             dimensionsType: 1,
             volume: "",
             weight: "",
-            placeQty: "",
+            placeQty: 1,
             length: "",
             height: "",
             width: "",
@@ -377,6 +387,33 @@ const OrderForm = {
             let index = store.state.orderItems.indexOf(el)
             store.commit('deleteOrderItem', index)
         },
+        getOrderFullWeight () {
+            let orderFullWeight = 0
+            this.orderItems.forEach((item) => {
+                console.log(item.weight)
+                orderFullWeight += parseFloat(item.weight ? item.weight : 0)
+            })
+            return orderFullWeight
+        },
+        getOrderFullVolume () {
+            let orderFullVolume = 0
+            this.orderItems.forEach((item) => {
+                console.log(item.volume)
+                orderFullVolume += parseFloat(item.volume ? item.volume : 0)
+            })
+            return orderFullVolume
+        },
+        calculateOrder () {
+            $('#departureCity').niceSelect('update')
+            $('#receivingCity').niceSelect('update')
+            let data = {
+                city_from_name: $('#departureCity').val(),
+                city_to_name: $('#receivingCity').val(),
+                weight: this.getOrderFullWeight(),
+                volume: this.getOrderFullVolume(),
+            }
+            console.log(data)
+        },
         checkout () {
             $('#atf-loader').fadeIn(500)
             setTimeout(() => {
@@ -396,9 +433,9 @@ const OrderForm = {
                 let OrderItemList = []
                 this.orderItems.forEach((item) => {
                     $(`#itemType${item.id}`).niceSelect('update')
-                    let test = Object.assign({}, item)
-                    test.itemType = $(`#itemType${item.id}`).val()
-                    OrderItemList.push(item)
+                    let itemType = Object.assign({}, item)
+                    itemType.itemType = $(`#itemType${item.id}`).val()
+                    OrderItemList.push(itemType)
                 })
                 data.orderItems = OrderItemList
                 console.log(data)
