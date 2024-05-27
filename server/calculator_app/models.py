@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Count
 from server.base import (
     Directory,
     Base
@@ -116,6 +117,22 @@ class LastMileRate(Directory):
         ordering = ["rate_item"]
 
 
+class CityFromManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        rate = super().get_queryset().\
+            values_list("city_from", flat=True).distinct()
+        cities = City.objects.filter(id__in=rate)
+        return cities
+
+
+class CityToManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        rate = super().get_queryset().\
+            values_list("city_to", flat=True).distinct()
+        cities = City.objects.filter(id__in=rate)
+        return cities
+
+
 class Rate(Base):
     city_from = models.ForeignKey(
         City,
@@ -216,6 +233,10 @@ class Rate(Base):
     cost_by_volume_400_inf = models.DecimalField(
         verbose_name=">40.0", max_digits=15, decimal_places=2,
         blank=True, default=0)
+
+    cities_from = CityFromManager()
+    cities_to = CityToManager()
+    objects = models.Manager()
 
     def __str__(self) -> str:
         return f"{self.city_from.name} - {self.city_to.name}"

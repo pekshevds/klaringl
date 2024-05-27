@@ -2,6 +2,8 @@ from django.urls import path
 from rest_framework.authtoken import views
 from calculator_app.views import (
     CityAPIView,
+    CityFromAPIView,
+    CityToAPIView,
     RateAPIView,
     CalculateAPIView
 )
@@ -15,6 +17,8 @@ app_name = 'api_app'
 
 urlpatterns = [
     path('calculator/cities/', CityAPIView.as_view(), name="city"),
+    path('calculator/cities/from/', CityFromAPIView.as_view(), name="city-from"),
+    path('calculator/cities/to/', CityToAPIView.as_view(), name="city-to"),
     path('calculator/rates/', RateAPIView.as_view(), name="rate"),
     path('calculator/calculate/', CalculateAPIView.as_view(), name="calculate"),
     path('order/cargos/', CargoAPIView.as_view(), name="cargo"),

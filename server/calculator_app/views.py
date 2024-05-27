@@ -9,7 +9,10 @@ from rest_framework import (
     authentication
 )
 
-from calculator_app.models import City, Rate
+from calculator_app.models import (
+    City,
+    Rate
+)
 from calculator_app.serializers import (
     CitySerializer,
     RateSerializer,
@@ -19,6 +22,33 @@ from calculator_app.serializers import (
 from calculator_app.services import (
     calculate_delivery_cost
 )
+
+
+class CityFromAPIView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        queryset = Rate.cities_from.all()
+        serializer = CitySerializer(queryset, many=True)
+        response = {"data": serializer.data,
+                    "count": len(queryset),
+                    "success": True}
+        return Response(response)
+
+
+class CityToAPIView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        queryset = Rate.cities_to.all()
+        serializer = CitySerializer(queryset, many=True)
+        response = {"data": serializer.data,
+                    "count": len(queryset),
+                    "success": True}
+        return Response(response)
+
 
 class CityAPIView(APIView):
 
@@ -84,10 +114,10 @@ class CalculateAPIView(APIView):
                         "success": True}
         return Response(response)
 
+
 # процедура вывода страницы Калькулятор стоимости перевозки
 class CalcView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(request,
                       "calculator_app/calc.html",
                       {})
-
