@@ -1,10 +1,14 @@
+from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
+from django.views.generic import View
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import (
     permissions,
     authentication
 )
+
 from calculator_app.models import City, Rate
 from calculator_app.serializers import (
     CitySerializer,
@@ -15,7 +19,6 @@ from calculator_app.serializers import (
 from calculator_app.services import (
     calculate_delivery_cost
 )
-
 
 class CityAPIView(APIView):
 
@@ -80,3 +83,11 @@ class CalculateAPIView(APIView):
                         "count": 1,
                         "success": True}
         return Response(response)
+
+# процедура вывода страницы Калькулятор стоимости перевозки
+class CalcView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request,
+                      "calculator_app/calc.html",
+                      {})
+
