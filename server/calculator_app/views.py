@@ -116,8 +116,14 @@ class CalculateAPIView(APIView):
 
 
 # процедура вывода страницы Калькулятор стоимости перевозки
+
+
 class CalcView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        context = {
+            "cities_list" : Rate.cities_to.all(),
+            "cities_from_list" :  Rate.cities_from.all()
+        }
         return render(request,
                       "calculator_app/calc.html",
-                      {})
+                      context)

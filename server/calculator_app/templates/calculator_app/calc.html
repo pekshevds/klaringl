@@ -48,14 +48,12 @@
                                     <h4 class="mb-4">Направление</h4>
                                     <p>Откуда</p>
                                     <div class="col-12">
-                                        <div class="atf-booking-form-item col-lg-6 col-md-6">
+                                        <div class="atf-booking-form-item col-12 col-md-6 row">
                                             <select v-model="departureCity" id="departureCity" class="nice-select">
                                                 <option data-display="Выберите город" value=""></option>
-                                                <option value="Москва">Москва</option>
-                                                <option value="Уфа">Уфа</option>
-                                                <option value="Калиниград">Калиниград</option>
-                                                <option value="Сочи">Сочи</option>
-                                                <option value="Белгород">Белгород</option>
+                                                {% for city in cities_from_list %}
+                                                <option value="{{ city.name }}">{{ city.name }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div> 
                                     </div>
@@ -70,7 +68,7 @@
                                         </div>
                                     </div>
                                     <div v-if="departurePickupType == 2" class="mt-3 col-12 row">
-                                        <div class="atf-booking-form-item col-12 col-md-12">
+                                        <div class="atf-booking-form-item">
                                             <div class="form-group mb-0">
                                                 <input type="text" v-model="departureAddress" class="form-control" placeholder="Введите адрес">
                                             </div>
@@ -78,7 +76,7 @@
                                     </div>    
                                     <p class="mt-4">Когда</p>
                                     <div class="col-12">
-                                        <div class="atf-booking-form-item col-lg-4 col-md-6">
+                                        <div class="atf-booking-form-item col-12 col-md-6">
                                             <div class="form-group mb-0 as-form-group">
                                                 <input v-model="departureDate" type="date" class="form-control">
                                             </div>
@@ -87,14 +85,12 @@
                                     <div class="as-delimiter mt-5"></div>
                                     <p class="mt-5">Куда</p>
                                     <div class="col-12">
-                                        <div class="atf-booking-form-item col-lg-6 col-md-6">	
+                                        <div class="atf-booking-form-item col-12 col-md-6 row">	
                                             <select v-model="receivingCity" id="receivingCity" class="nice-select">
                                                 <option data-display="Выберите город" value=""></option>
-                                                <option value="Москва">Москва</option>
-                                                <option value="Уфа">Уфа</option>
-                                                <option value="Калиниград">Калиниград</option>
-                                                <option value="Сочи">Сочи</option>
-                                                <option value="Белгород">Белгород</option>
+                                                {% for city in cities_list %}
+                                                <option value="{{ city.name }}">{{ city.name }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div> 
                                     </div>
@@ -109,7 +105,7 @@
                                           </div>
                                     </div>
                                     <div v-if="receivingType == 2" class="mt-3 col-12 row">
-                                        <div class="atf-booking-form-item col-12 col-md-12">
+                                        <div class="atf-booking-form-item">
                                             <div class="form-group mb-0">
                                                 <input type="text" v-model="receivingAddress" class="form-control" placeholder="Введите адрес">
                                             </div>
@@ -126,24 +122,37 @@
                                             <button @click="deleteOrderItem(orderItem.id)" v-if="orderItems.length>1">- Удалить место</button>
                                         </div>
                                     </div>
-                                    
-                                    <div class="col-12">
-                                        <div class="atf-booking-form-item col-lg-6 col-md-6">	
-                                            <select class="nice-select" :id="createOrderItemType(orderItem.id)">
+                                    <p class="mt-4">Характер груза</p>
+                                    <div class="col-12 row">
+                                        <div class="atf-booking-form-item col-12">
+                                            <input type="text" v-model="orderItem.itemType" class="form-control" placeholder="Характер груза">
+                                            {% comment %} <select class="nice-select" :id="createOrderItemType(orderItem.id)">
                                                 <option data-display="Выберите из списка" value=""></option>
                                                 <option value="1">Тип 1</option>
                                                 <option value="2">Тип 2</option>
                                                 <option value="3">Тип 3</option>
-                                            </select>
+                                            </select> {% endcomment %}
                                         </div> 
                                     </div>
                                     <div class="mt-4 col-12">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" v-model="orderItem.dimensionsType" type="radio" value="1">
+                                            <input 
+                                                @change="calculateOrderItemVolume(orderItem.id)" 
+                                                class="form-check-input" 
+                                                v-model="orderItem.dimensionsType" 
+                                                type="radio" 
+                                                value="1"
+                                            >
                                             <label class="form-check-label">Общий объем и вес</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" v-model="orderItem.dimensionsType" type="radio" value="2">
+                                            <input 
+                                                @change="calculateOrderItemVolume(orderItem.id)" 
+                                                class="form-check-input" 
+                                                v-model="orderItem.dimensionsType" 
+                                                type="radio" 
+                                                value="2"
+                                            >
                                             <label class="form-check-label">Знаю размеры</label>
                                         </div>
                                     </div>
@@ -167,17 +176,35 @@
                                     <div v-if="orderItem.dimensionsType == 2" class="mt-4 col-12 row">
                                         <div class="atf-booking-form-item col-12 col-md-2">
                                             <div class="form-group mb-0">
-                                                <input type="number" v-model="orderItem.length" class="form-control" placeholder="Длина">
+                                                <input 
+                                                    @input="calculateOrderItemVolume(orderItem.id)" 
+                                                    type="number" 
+                                                    v-model="orderItem.length" 
+                                                    class="form-control" 
+                                                    placeholder="Длина"
+                                                >
                                             </div>
                                         </div>
                                         <div class="atf-booking-form-item col-12 col-md-2">
                                             <div class="form-group mb-0">
-                                                <input type="number" v-model="orderItem.width" class="form-control" placeholder="Ширина">
+                                                <input 
+                                                    @input="calculateOrderItemVolume(orderItem.id)"
+                                                    type="number" 
+                                                    v-model="orderItem.width" 
+                                                    class="form-control" 
+                                                    placeholder="Ширина"
+                                                >
                                             </div>
                                         </div>
                                         <div class="atf-booking-form-item col-12 col-md-2">
                                             <div class="form-group mb-0">
-                                                <input type="number" v-model="orderItem.height" class="form-control"  placeholder="Высота">
+                                                <input 
+                                                    @input="calculateOrderItemVolume(orderItem.id)"
+                                                    type="number" 
+                                                    v-model="orderItem.height" 
+                                                    class="form-control"  
+                                                    placeholder="Высота"
+                                                >
                                             </div>
                                         </div>
                                         <div class="atf-booking-form-item col-12 col-md-2">
@@ -264,7 +291,7 @@
                                     </div>
                                     <div class="mt-3 col-12">
                                         <div class="atf-main-btn"> 
-                                            <button @click="calculateOrder" class="atf-themes-btn  atf-themes-btn-one">
+                                            <button @click="checkout" class="atf-themes-btn  atf-themes-btn-one">
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">Офомить заказ</span>
                                             </button>
@@ -293,6 +320,11 @@
 {% endblock %}
 
 {% block local_scripts %}
+<script type='text/javascript'>
+	axios.defaults.xsrfCookieName = 'csrftoken'
+	axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
+</script>
+
 <script type="module">
 const { createApp } = Vue
 // store
@@ -319,7 +351,8 @@ const store = Vuex.createStore({
                 cardboardBox: false,
                 regularLoad: false
             },
-        ]
+        ],
+        fromCities: [],
     }
   },
   mutations: {
@@ -365,7 +398,6 @@ const OrderForm = {
             receivingAddress: "",
             cargoInsurance: false,
             returnDocuments: false,
-            loading: false,
         }
     },
     delimiters: ["${", "}$"],
@@ -373,6 +405,9 @@ const OrderForm = {
         orderItems () {
             return store.state.orderItems
         },
+        loadingStatus () {
+            return store.state.loading
+        }
     },
     methods: {
         createOrderItemType (id) {
@@ -382,6 +417,22 @@ const OrderForm = {
             store.commit('addOrderItem', this.orderItemsQty + 1)
             this.orderItemsQty ++
         },
+        calculateOrderItemVolume (id) {
+            let orderItemObject = store.state.orderItems.find(el => el.id == id)
+            if (orderItemObject.dimensionsType == 1) {
+                orderItemObject.length = ""
+                orderItemObject.height = ""
+                orderItemObject.width = ""
+                orderItemObject.volume = ""
+            }
+            if (orderItemObject.dimensionsType == 2) {
+                orderItemObject.volume = ""
+                if (orderItemObject.length &&  orderItemObject.height && orderItemObject.width) {
+                    let volume = parseFloat(orderItemObject.length) * parseFloat(orderItemObject.height) * parseFloat(orderItemObject.width)
+                    orderItemObject.volume = volume
+                } 
+            }
+        },
         deleteOrderItem (id) {
             let el = store.state.orderItems.find(el => el.id == id)
             let index = store.state.orderItems.indexOf(el)
@@ -390,7 +441,6 @@ const OrderForm = {
         getOrderFullWeight () {
             let orderFullWeight = 0
             this.orderItems.forEach((item) => {
-                console.log(item.weight)
                 orderFullWeight += parseFloat(item.weight ? item.weight : 0)
             })
             return orderFullWeight
@@ -398,7 +448,6 @@ const OrderForm = {
         getOrderFullVolume () {
             let orderFullVolume = 0
             this.orderItems.forEach((item) => {
-                console.log(item.volume)
                 orderFullVolume += parseFloat(item.volume ? item.volume : 0)
             })
             return orderFullVolume
@@ -431,14 +480,19 @@ const OrderForm = {
                     returnDocuments: this.returnDocuments,
                 }
                 let OrderItemList = []
-                this.orderItems.forEach((item) => {
-                    $(`#itemType${item.id}`).niceSelect('update')
-                    let itemType = Object.assign({}, item)
-                    itemType.itemType = $(`#itemType${item.id}`).val()
-                    OrderItemList.push(itemType)
+                this.orderItems.forEach((el) => {
+                    // $(`#itemType${item.id}`).niceSelect('update')
+                    // let itemType = Object.assign({}, item)
+                    // itemType.itemType = $(`#itemType${item.id}`).val()
+                    if (el.dimensionsType == 1) {
+                        delete el.length
+                        delete el.height
+                        delete el.width
+                    }
+                    OrderItemList.push(el)
                 })
                 data.orderItems = OrderItemList
-                console.log(data)
+                //console.log(data)
             }, 1000)
             $('#atf-loader').fadeOut(500)
         }
