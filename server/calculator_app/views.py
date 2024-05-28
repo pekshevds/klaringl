@@ -121,7 +121,7 @@ class CalculateAPIView(APIView):
 class CalcView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
-            "cities_list" : Rate.cities_to.all(),
+            "cities_list" : Rate.cities_to.all().order_by('?')[:15],
             "cities_from_list" :  Rate.cities_from.all()
         }
         return render(request,
