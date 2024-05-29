@@ -10,7 +10,7 @@ from order_app.models import (
 class CargoAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "weight",
                     "length", "width", "height",
-                    "volume", "seats"]
+                    "volume"]
     search_fields = ["id"]
 
 

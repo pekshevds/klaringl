@@ -22,8 +22,8 @@ from calculator_app.serializers import (
 from calculator_app.services import (
     calculate_delivery_cost
 )
-
 import config
+
 
 class CityFromAPIView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
@@ -130,8 +130,8 @@ class CalcView(View):
         except:
             server_api_url = ""
         context = {
-            "cities_list" : Rate.cities_to.all(),
-            "cities_from_list" :  Rate.cities_from.all(),
+            "cities_list": Rate.cities_to.all(),
+            "cities_from_list":  Rate.cities_from.all(),
             "server_api_url":  server_api_url,
             "server_api_token": server_api_token
         }

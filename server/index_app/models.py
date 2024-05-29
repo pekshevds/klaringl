@@ -26,6 +26,62 @@ class Const(Base):
         null=True,
         default=""
     )
+    nigth_deliver_cost = models.DecimalField(
+        verbose_name="Тариф ночной доставки (21.00-09.00), руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    time_deliver_cost = models.DecimalField(
+        verbose_name="Доставка ко времени, руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    warehouse_process_cost = models.DecimalField(
+        verbose_name="Складская обработка грузов, руб/м3",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    min_warehouse_process_cost = models.DecimalField(
+        verbose_name="Минимальная стоимость складской обработки грузов, руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    return_docs_cost = models.DecimalField(
+        verbose_name="Возврат документов, руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    insurance_cost = models.DecimalField(
+        verbose_name="Страхование, %",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    prr_cost = models.DecimalField(
+        verbose_name="Услуга ПРР, руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    crate_cost = models.DecimalField(
+        verbose_name="Жесткая упаковка(обрешётка), руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
 
     def save(self, *args, **kwargs):
         """

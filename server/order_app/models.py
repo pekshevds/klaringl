@@ -4,8 +4,7 @@ from server.base import (
     Item,
     Document,
     FormOfOwnershipSelector,
-    PayerSelector,
-    TimeSelector
+    PayerSelector
 )
 from auth_app.models import User
 from calculator_app.models import City
@@ -35,14 +34,11 @@ class Cargo(Directory):
     volume = models.DecimalField(
         verbose_name="Объем, м3", max_digits=15, decimal_places=5,
         blank=False, default=0)
-    seats = models.IntegerField(
-        verbose_name="Количество мест, шт",
-        blank=False, default=1)
 
     def __str__(self) -> str:
         title = (f"{self.name}, Вес {self.weight} кг, "
                  f"Д{self.length}xШ{self.width}xВ{self.height} см, "
-                 f"Объем {self.volume} м3, Мест {self.seats} шт")
+                 f"Объем {self.volume} м3")
         return title
 
     class Meta:
@@ -64,10 +60,8 @@ class Order(Document):
         null=True, blank=True, default="")
     date_from = models.DateField(
         verbose_name="Дата забора", null=True, blank=True)
-    time_from = models.CharField(
-        verbose_name="Время забора",
-        max_length=2, choices=TimeSelector.choices,
-        default=TimeSelector.T_09_19, blank=False)
+    time_from = models.TimeField(
+        verbose_name="Время забора", null=True, blank=True)
 
     form_from = models.CharField(
         verbose_name="Форма собственности",
@@ -97,10 +91,8 @@ class Order(Document):
         null=True, blank=True, default="")
     date_to = models.DateField(
         verbose_name="Дата доставки", null=True, blank=True)
-    time_to = models.CharField(
-        verbose_name="Время доставки",
-        max_length=2, choices=TimeSelector.choices,
-        default=TimeSelector.T_09_19, blank=False)
+    time_to = models.TimeField(
+        verbose_name="Время доставки", null=True, blank=True)
 
     form_to = models.CharField(
         verbose_name="Форма собственности",
@@ -178,20 +170,14 @@ class ItemOrder(Item):
         related_name="items")
     cargo = models.ForeignKey(
         Cargo, verbose_name="Груз", on_delete=models.PROTECT)
-    soft_packaging = models.BooleanField(
-        verbose_name="Мягкая упаковка", default=False)
-    crate = models.BooleanField(
-        verbose_name="Обрешетка", default=False)
-    palletizing = models.BooleanField(
-        verbose_name="Паллетирование", default=False)
-    pallet_board = models.BooleanField(
-        verbose_name="Паллетный борт", default=False)
-    seal_bag = models.BooleanField(
-        verbose_name="Мешок-пломба", default=False)
-    cardboard_box = models.BooleanField(
-        verbose_name="Картонная коробка", default=False)
-    high_security_cargo = models.BooleanField(
-        verbose_name="Режимный груз", default=False)
+    hard_packaging = models.BooleanField(
+        verbose_name="Жесткая упаковка", default=False)
+    prr_from = models.BooleanField(
+        verbose_name="Погрузка при заборе груза (ПРР при заборе)",
+        default=False)
+    prr_to = models.BooleanField(
+        verbose_name="Выгрузка при доставке (ПРР при доставке)",
+        default=False)
 
     def __str__(self) -> str:
         return f"{self.order}"
