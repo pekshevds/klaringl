@@ -1,4 +1,5 @@
 from django.test import TestCase
+from index_app.models import Const
 from calculator_app.models import (
     City,
     Rate
@@ -7,8 +8,10 @@ from calculator_app.services import (
     city_by_name,
     calculate_delivery_cost_by_rate,
     calculate_delivery_cost,
-    rate_by_cities
+    rate_by_cities,
+    calculate_nigth_delevery
 )
+from datetime import time
 
 
 class RateTestCase(TestCase):
@@ -19,6 +22,7 @@ class RateTestCase(TestCase):
         self.rate = Rate.objects.create(
             city_from=self.moskow, city_to=self.belgorod,
             cost_by_weight_0_25=900)
+        Const.objects.create(nigth_deliver_cost=1000)
 
     def test_find_moskow(self):
         moskow = city_by_name("Москва")
@@ -40,3 +44,8 @@ class RateTestCase(TestCase):
             self.moskow.name,
             self.belgorod.name,
             weight=15), 900)
+
+    def test_calculate_nigth_delevery(self):
+        self.assertEqual(calculate_nigth_delevery(
+            deliver_time=time(20, 0, 0)
+            ), 1000)

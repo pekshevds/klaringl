@@ -1,3 +1,4 @@
+from collections import namedtuple
 from django.db import models
 from server.base import Directory, Base
 from auth_app.models import User
@@ -75,8 +76,15 @@ class Const(Base):
         blank=True,
         default=0
     )
-    crate_cost = models.DecimalField(
+    hard_packaging_cost = models.DecimalField(
         verbose_name="Жесткая упаковка(обрешётка), руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    hard_packaging_min_cost = models.DecimalField(
+        verbose_name="Жесткая упаковка(обрешётка) минимальная стоимость, руб",
         max_digits=15,
         decimal_places=2,
         blank=True,
@@ -92,17 +100,36 @@ class Const(Base):
 
     @classmethod
     def info(cls):
-        data = {
-            "address": "",
-            "email": "",
-            "tel": ""
-        }
+        Const = namedtuple("Const", [
+            "address", "email", "tel", "nigth_deliver_cost",
+            "time_deliver_cost", "warehouse_process_cost",
+            "min_warehouse_process_cost", "return_docs_cost",
+            "insurance_cost", "prr_cost", "hard_packaging_cost",
+            "hard_packaging_min_cost"
+        ])
+
         item = cls.objects.first()
         if item:
-            data["address"] = item.address
-            data["email"] = item.email
-            data["tel"] = item.tel
-        return data
+            return Const(
+                address=item.address, email=item.email, tel=item.tel,
+                nigth_deliver_cost=float(item.nigth_deliver_cost),
+                time_deliver_cost=float(item.time_deliver_cost),
+                warehouse_process_cost=float(item.warehouse_process_cost),
+                min_warehouse_process_cost=float(
+                    item.min_warehouse_process_cost),
+                return_docs_cost=float(item.return_docs_cost),
+                insurance_cost=float(item.insurance_cost),
+                prr_cost=float(item.prr_cost),
+                hard_packaging_cost=float(item.hard_packaging_cost),
+                hard_packaging_min_cost=float(item.hard_packaging_min_cost)
+            )
+        return Const(
+            address="", email="", tel="", nigth_deliver_cost=0,
+            time_deliver_cost=0, warehouse_process_cost=0,
+            min_warehouse_process_cost=0, return_docs_cost=0,
+            insurance_cost=0, prr_cost=0, hard_packaging_cost=0,
+            hard_packaging_min_cost=0
+            )
 
     class Meta:
         verbose_name = "Константы"

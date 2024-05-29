@@ -1,8 +1,10 @@
+from datetime import time
 from django.shortcuts import get_object_or_404
 from calculator_app.models import (
     Rate,
     City
 )
+from index_app.models import Const
 
 
 def city_by_name(city_name: str) -> City | None:
@@ -129,3 +131,60 @@ def calculate_delivery_cost(
     cost_by_volume = calculate_cost_by_volume(rate, volume)
 
     return max(cost_by_weight, cost_by_volume)
+
+
+def calculate_delevery_on_time(deliver_time: time) -> float:
+    """
+    Расчет необходимости и стоимости надбавки за ночную/вечернюю доставку"""
+    const = Const.info()
+    time_21 = time(21, 0, 0)
+    time_09 = time(9, 0, 0)
+    if deliver_time >= time_21:
+        return const.nigth_deliver_cost
+    if deliver_time < time_09:
+        return const.nigth_deliver_cost
+    return const.time_deliver_cost
+
+
+def calculate_warehouse_process(volume: float) -> float:
+    """
+    Складская обработка грузов при местной (областной) доставке тогда
+    {const.warehouse_process_cost} руб./куб. м. Минимальная стоимость
+    тогда {const.min_warehouse_process_cost} руб."""
+    const = Const.info()
+    cost = const.warehouse_process_cost * volume
+    if cost < const.min_warehouse_process_cost:
+        cost = const.min_warehouse_process_cost
+    return cost
+
+
+def calculate_return_docs() -> float:
+    """
+    Расчет стоимости возврата документов"""
+    const = Const.info()
+    return const.return_docs_cost
+
+
+def calculate_insurance(declared_cost: float) -> float:
+    """
+    Расчет стоимости трахования груза"""
+    const = Const.info()
+    return declared_cost * (const.insurance_cost / 100)
+
+
+def calculate_prr(weight: float) -> float:
+    """
+    Услуга ПРР"""
+    const = Const.info()
+    return weight * const.prr_cost
+
+
+def calculate_hard_packaging(cargo: object) -> float:
+    """
+    Расчет стотмости жесткой упаковки/обрешетки"""
+    const = Const.info()
+    volume = cargo.volume * 1.3
+    cost = volume * const.hard_packaging_cost
+    if cost < const.hard_packaging_min_cost:
+        cost = const.hard_packaging_min_cost
+    return cost
