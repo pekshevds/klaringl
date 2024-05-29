@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block local_libraries %}
+
 <script src="https://unpkg.com/vue@3.0.1/dist/vue.global.prod.js"></script>
 <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
@@ -49,8 +50,8 @@
                                     <p>Откуда</p>
                                     <div class="col-12">
                                         <div class="atf-booking-form-item col-12 col-md-6 row">
-                                            <select id="departureCity" class="nice-select departureCity">
-                                                <option data-display="Выберите город" value="">...</option>
+                                            <select id="departureCity" class="nice-select">
+                                                <option data-display="Выберите город" value=""></option>
                                                 {% for city in cities_from_list %}
                                                 <option value="{{ city.id }}">{{ city.name }}</option>
                                                 {% endfor %}
@@ -85,13 +86,21 @@
                                     <div class="as-delimiter mt-5"></div>
                                     <p class="mt-5">Куда</p>
                                     <div class="col-12">
-                                        <div class="atf-booking-form-item col-12 col-md-6 row">	
-                                            <select id="receivingCity" class="nice-select receivingCity">
-                                                <option data-display="Выберите город" value="">...</option>
+                                        <div class="atf-booking-form-item col-12 col-md-6 row">
+                                            <select 
+                                                id="receivingCity" 
+                                                class="as-select" 
+                                            >   
                                                 {% for city in cities_list %}
                                                 <option value="{{ city.id }}">{{ city.name }}</option>
                                                 {% endfor %}
                                             </select>
+                                            {% comment %} <select v-model="receivingCity" id="receivingCity" class="nice-select">
+                                                <option data-display="Выберите город" value=""></option>
+                                                {% for city in cities_list %}
+                                                <option value="{{ city.id }}">{{ city.name }}</option>
+                                                {% endfor %}
+                                            </select> {% endcomment %}
                                         </div> 
                                     </div>
                                     <div class="mt-4 col-12">
@@ -320,13 +329,15 @@
 {% endblock %}
 
 {% block local_scripts %}
-<script>
+<script type="text/javascript">
     $(document).ready(function() {
-        $('.receivingCity').niceSelect();
-        $('.departureCity').niceSelect();
+        $('.as-select').select2({
+            placeholder: "Выберите город",
+            language: "ru",
+            allowClear: true
+        });
     });
 </script>
-
 <script type='text/javascript'>
 	axios.defaults.xsrfCookieName = 'csrftoken'
 	axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
@@ -339,49 +350,9 @@ const store = Vuex.createStore({
   state () {
     return {
         loading: false,
-        orderItems: [
-            {   
-                id: 1,
-                itemType: "",
-                dimensionsType: 1,
-                volume: "",
-                weight: "",
-                placeQty: 1,
-                length: "",
-                height: "",
-                width: "",
-                softPackaging: false,
-                lathing: false,
-                palletizing: false,
-                palletBoard: false,
-                sealBag: false,
-                cardboardBox: false,
-                regularLoad: false
-            },
-        ],
     }
   },
   mutations: {
-    addOrderItem (state, payload) {
-      state.orderItems.push({
-            id: payload,
-            itemType: "",
-            dimensionsType: 1,
-            volume: "",
-            weight: "",
-            placeQty: 1,
-            length: "",
-            height: "",
-            width: "",
-            softPackaging: false,
-            lathing: false,
-            palletizing: false,
-            palletBoard: false,
-            sealBag: false,
-            cardboardBox: false,
-            regularLoad: false
-        })
-    },
     deleteOrderItem (state, payload) {
         state.orderItems.splice(payload, 1)
     },
@@ -395,13 +366,40 @@ const OrderForm = {
     data() {
         return {
             orderItemsQty: 1,
+            departureCity: "",
             departureDate: "",
             departurePickupType: 1,
             departureAddress: "",
+            receivingCity: "",
             receivingType: 1,
             receivingAddress: "",
             cargoInsurance: false,
             returnDocuments: false,
+            orderItems: [
+                {   
+                    id: 1,
+                    itemType: "",
+                    dimensionsType: 1,
+                    volume: "",
+                    weight: "",
+                    placeQty: 1,
+                    length: "",
+                    height: "",
+                    width: "",
+                    softPackaging: false,
+                    lathing: false,
+                    palletizing: false,
+                    palletBoard: false,
+                    sealBag: false,
+                    cardboardBox: false,
+                    regularLoad: false
+                },
+            ],
+            options: [
+                'foo',
+                'bar',
+                'baz'
+            ]
         }
     },
     delimiters: ["${", "}$"],
@@ -418,11 +416,28 @@ const OrderForm = {
             return `itemType${id}`
         },
         addOrderItem () {
-            store.commit('addOrderItem', this.orderItemsQty + 1)
+            this.orderItems.push({
+                id: this.orderItemsQty ++,
+                itemType: "",
+                dimensionsType: 1,
+                volume: "",
+                weight: "",
+                placeQty: 1,
+                length: "",
+                height: "",
+                width: "",
+                softPackaging: false,
+                lathing: false,
+                palletizing: false,
+                palletBoard: false,
+                sealBag: false,
+                cardboardBox: false,
+                regularLoad: false
+            })
             this.orderItemsQty ++
         },
         calculateOrderItemVolume (id) {
-            let orderItemObject = store.state.orderItems.find(el => el.id == id)
+            let orderItemObject = this.orderItems.find(el => el.id == id)
             if (orderItemObject.dimensionsType == 1) {
                 orderItemObject.length = ""
                 orderItemObject.height = ""
@@ -438,9 +453,8 @@ const OrderForm = {
             }
         },
         deleteOrderItem (id) {
-            let el = store.state.orderItems.find(el => el.id == id)
-            let index = store.state.orderItems.indexOf(el)
-            store.commit('deleteOrderItem', index)
+            let el = this.orderItems.find(el => el.id == id)
+            this.orderItems.splice(this.orderItems.indexOf(el), 1)
         },
         getOrderFullWeight () {
             let orderFullWeight = 0
@@ -457,32 +471,27 @@ const OrderForm = {
             return orderFullVolume
         },
         calculateOrder () {
-            $('#departureCity').niceSelect('update')
-            $('#receivingCity').niceSelect('update')
+            // $('#departureCity').niceSelect('update')
+            // $('#receivingCity').niceSelect('update')
             let data = {
-                city_from_name: $('#departureCity').val(),
-                city_to_name: $('#receivingCity').val(),
+                // city_from_name: $('#departureCity').val(),
+                // city_to_name: $('#receivingCity').val(),
                 weight: this.getOrderFullWeight(),
                 volume: this.getOrderFullVolume(),
             }
             console.log(data)
         },
-        async checkout () {
+        checkout () {
             $('#atf-loader').fadeIn(500)
-            //setTimeout(() => {
-            let city_from_id = $('#departureCity').val()
-            let city_to_id = $('#receivingCity').val()
             let data = {
-                city_from_id: city_from_id,
+                city_from_id: this.departureCity,
+                //date_from: this.departureDate,
                 from_address: this.departurePickupType == 2 ? true : false,
-                city_to_id: city_to_id,
+                city_to_id: $('#receivingCity').select2('data'),
                 to_address: this.receivingType == 2 ? true: false,
                 insurance: this.cargoInsurance,
                 return_docs: this.returnDocuments,
                 form_payer: "FZ",
-            }
-            if (this.departureDate) {
-                data.date_from = this.departureDate
             }
             if (this.departurePickupType == 2) {
                 data.address_from = this.departureAddress
@@ -492,6 +501,9 @@ const OrderForm = {
             }
             let OrderItemList = []
             this.orderItems.forEach((el) => {
+                // $(`#itemType${item.id}`).niceSelect('update')
+                // let itemType = Object.assign({}, item)
+                // itemType.itemType = $(`#itemType${item.id}`).val()
                 let cargo = {
                     name: el.itemType,
                     weight: parseFloat(el.weight ? el.weight : 0),
@@ -516,17 +528,13 @@ const OrderForm = {
                 OrderItemList.push(item)
             })
             data["items"] = OrderItemList
-            let url = ""
-            let serverApiUrl = "{{ server_api_url }}"
-            if (serverApiUrl != "") {
-                url = `${serverApiUrl}/api/v1/order/orders/`
-            } else {
-                url = `${window.location.hostname}/api/v1/order/orders/`
-            }
-            await axios({
+            console.log(data)
+            //let backendPath = window.location.host
+            {% comment %} let url = `http://127.0.0.1:4560/api/v1/order/orders/`
+            axios({
                 method: 'post',
                 headers: {
-                    "Authorization": `Token ${"{{server_api_token}}"}`
+                    "Authorization": `Token 54a25654981445179d5808a3397e5d8d50465c0c`
                 },
                 url: url,
                 data: { "data": data},
@@ -536,7 +544,7 @@ const OrderForm = {
                 console.log(error)
             }).finally(() => {
                 $('#atf-loader').fadeOut(500)
-            })
+            }) {% endcomment %}
             //}, 1000)
         }
     }
@@ -544,5 +552,6 @@ const OrderForm = {
 
 createApp(OrderForm).use(store).mount('#order_form')
 </script>
+
 
 {% endblock %}

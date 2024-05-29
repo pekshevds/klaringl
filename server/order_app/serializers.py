@@ -43,7 +43,7 @@ class ItemOrderSerializer(ItemSerializer):
 
 
 class OrderSerializer(DocumentSerializer):
-    city_from_id = serializers.UUIDField()
+    city_from_id = serializers.UUIDField(format='hex_verbose')
     from_address = serializers.BooleanField(required=False)
     address_from = serializers.CharField(max_length=1024, required=False)
     date_from = serializers.DateField(required=False)

@@ -23,6 +23,7 @@ from calculator_app.services import (
     calculate_delivery_cost
 )
 
+import config
 
 class CityFromAPIView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
@@ -120,9 +121,19 @@ class CalculateAPIView(APIView):
 
 class CalcView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        try:
+            server_api_token = config.SERVER_API_TOKEN
+        except:
+            server_api_token = ""
+        try:
+            server_api_url = config.SERVER_API_URL
+        except:
+            server_api_url = ""
         context = {
-            "cities_list" : Rate.cities_to.all().order_by('?')[:15],
-            "cities_from_list" :  Rate.cities_from.all()
+            "cities_list" : Rate.cities_to.all(),
+            "cities_from_list" :  Rate.cities_from.all(),
+            "server_api_url":  server_api_url,
+            "server_api_token": server_api_token
         }
         return render(request,
                       "calculator_app/calc.html",

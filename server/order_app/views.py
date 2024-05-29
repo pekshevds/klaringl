@@ -64,6 +64,7 @@ class OrderAPIView(APIView):
         data = request.data.get("data", None)
         if not data:
             return Response(response)
+        print(data)
         serializer = OrderSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
