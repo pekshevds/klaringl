@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Count
 from server.base import (
     Directory,
     Base
@@ -138,14 +137,14 @@ class Rate(Base):
         City,
         verbose_name="Город отправитель",
         on_delete=models.PROTECT,
-        related_name="cities_from",
+        related_name="rates_from",
         null=True
     )
     city_to = models.ForeignKey(
         City,
         verbose_name="Город получатель",
         on_delete=models.PROTECT,
-        related_name="cities_to",
+        related_name="rates_to",
         null=True
     )
     delivery_time = models.CharField(

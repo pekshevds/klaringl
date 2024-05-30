@@ -6,7 +6,42 @@ from server.base_serializers import (
 from calculator_app.models import City
 
 
+class ItemCalculateRequestSerializer(serializers.Serializer):
+    hard_packaging = serializers.BooleanField()
+    prr_from = serializers.BooleanField()
+    prr_to = serializers.BooleanField()
+    weight = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+    length = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+    width = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+    height = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+    volume = serializers.DecimalField(
+        max_digits=15, decimal_places=5)
+
+
 class CalculateRequestSerializer(serializers.Serializer):
+    city_from_id = serializers.UUIDField()
+    city_to_id = serializers.UUIDField()
+
+    from_address = serializers.BooleanField()
+    date_from = serializers.DateField(required=False)
+    time_from = serializers.TimeField(required=False)
+
+    to_address = serializers.BooleanField()
+    date_to = serializers.DateField(required=False)
+    time_to = serializers.TimeField(required=False)
+
+    insurance = serializers.BooleanField()
+    return_docs = serializers.BooleanField()
+    declared_cost = serializers.DecimalField(
+        max_digits=15, decimal_places=2)
+    items = ItemCalculateRequestSerializer(many=True)
+
+
+class FastCalculateRequestSerializer(serializers.Serializer):
     city_from_name = serializers.CharField()
     city_to_name = serializers.CharField()
     weight = serializers.DecimalField(

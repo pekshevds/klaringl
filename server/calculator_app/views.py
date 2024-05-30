@@ -16,11 +16,13 @@ from calculator_app.models import (
 from calculator_app.serializers import (
     CitySerializer,
     RateSerializer,
+    FastCalculateRequestSerializer,
     CalculateRequestSerializer,
     CalculateResponseSerializer
 )
 from calculator_app.services import (
-    calculate_delivery_cost
+    calculate_delivery_cost,
+    calculate_order
 )
 import config
 
@@ -107,6 +109,29 @@ class CalculateAPIView(APIView):
         if not data:
             return Response(response)
         serializer = CalculateRequestSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            # cost = calculate_delivery_cost(**serializer.validated_data)
+            cost = calculate_order(serializer.validated_data)
+            serializer = CalculateResponseSerializer({"cost": cost})
+            response = {"data": serializer.data,
+                        "count": 1,
+                        "success": True}
+        return Response(response)
+
+
+class FastCalculateAPIView(APIView):
+
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        response = {"data": {},
+                    "count": 0,
+                    "success": False}
+        data = request.data.get("data", None)
+        if not data:
+            return Response(response)
+        serializer = FastCalculateRequestSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             cost = calculate_delivery_cost(**serializer.validated_data)
             serializer = CalculateResponseSerializer({"cost": cost})
