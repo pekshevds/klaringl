@@ -115,23 +115,6 @@ class LastMileRate(Directory):
         verbose_name_plural = "Тарифы на экспедирование"
         ordering = ["rate_item"]
 
-
-class CityFromManager(models.Manager):
-    def get_queryset(self) -> models.QuerySet:
-        rate = super().get_queryset().\
-            values_list("city_from", flat=True).distinct()
-        cities = City.objects.filter(id__in=rate)
-        return cities
-
-
-class CityToManager(models.Manager):
-    def get_queryset(self) -> models.QuerySet:
-        rate = super().get_queryset().\
-            values_list("city_to", flat=True).distinct()
-        cities = City.objects.filter(id__in=rate)
-        return cities
-
-
 class Rate(Base):
     city_from = models.ForeignKey(
         City,
@@ -233,9 +216,19 @@ class Rate(Base):
         verbose_name=">40.0", max_digits=15, decimal_places=2,
         blank=True, default=0)
 
-    cities_from = CityFromManager()
-    cities_to = CityToManager()
-    objects = models.Manager()
+    @staticmethod
+    def cities_from():
+        rate = Rate.objects.\
+            values_list("city_from", flat=True).distinct()
+        cities = City.objects.filter(id__in=rate)
+        return cities
+
+    @staticmethod
+    def cities_to():
+        rate = Rate.objects.\
+            values_list("city_to", flat=True).distinct()
+        cities = City.objects.filter(id__in=rate)
+        return cities
 
     def __str__(self) -> str:
         return f"{self.city_from.name} - {self.city_to.name}"
