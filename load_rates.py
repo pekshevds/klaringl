@@ -18,7 +18,7 @@ def str_to_dec(str_in: str) -> float:
 
 def load():
     moskow = get_moskow()
-    with open("server/rates.csv", encoding="utf-8") as file:
+    with open("rates.csv", encoding="utf-8") as file:
         reader = csv.reader(file, delimiter=";")
         for line in reader:
             city_name = line[0]
