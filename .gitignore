@@ -3,9 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 config.py
+passenger_wsgi.py
 *.doc
 *.docx
 *.zip
+tmp/
+static/
 
 # C extensions
 *.so
