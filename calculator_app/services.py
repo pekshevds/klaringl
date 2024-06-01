@@ -190,7 +190,7 @@ def calculate_hard_packaging(volume: Decimal) -> Decimal:
     """
     Расчет стоимости жесткой упаковки/обрешетки"""
     const = Const.info()
-    cost = (volume * 1.3) * const.hard_packaging_cost
+    cost = (volume * Decimal("1.3")) * const.hard_packaging_cost
     if cost < const.hard_packaging_min_cost:
         cost = const.hard_packaging_min_cost
     return cost
@@ -206,8 +206,15 @@ def calculate_base_cost(order: dict) -> Decimal:
 
 
 def calculate_order(order: dict) -> Decimal:
+    """
+    Расчет стоимсоти перевозки"""
+
+    # Константа - полдень
     noon = time(12, 0, 0)
-    cost = calculate_base_cost(order)
+    # Расчет базовой стоимости по общему весу, объему и тарифам
+    base_cost = calculate_base_cost(order)
+    cost = base_cost
+    # Расчет стоимсоти забора у двери по времени
     if order.get("from_address", False):
         cost += calculate_delevery_on_time(order.get("time_from", noon))
     if order.get("to_address", False):
@@ -216,15 +223,66 @@ def calculate_order(order: dict) -> Decimal:
         cost += calculate_return_docs()
     if order.get("insurance", False):
         cost += calculate_insurance((order.get("declared_cost", 0)))
+    k_oversize = Decimal("1")
     for item in order["items"]:
-        if item.get("prr_from", False):
+        if item.get("prr_from", False) and\
+            item.get("weight", 0) < Decimal("35") and\
+                item.get("volume", 0) < Decimal("0.3"):
             cost += calculate_prr((item.get("weight", 0)))
-    for item in order["items"]:
-        if item.get("prr_to", False):
+        if item.get("prr_to", False) and\
+            item.get("weight", 0) < Decimal("35") and\
+                item.get("volume", 0) < Decimal("0.3"):
             cost += calculate_prr((item.get("weight", 0)))
         if item.get("hard_packaging", False):
             cost += calculate_hard_packaging((item.get("volume", 0)))
+        k_oversize = max(k_oversize, calclulate_k_oversize(item))
+    cost += base_cost * k_oversize
     return cost
+
+
+def calclulate_k_oversize(item_order: dict) -> Decimal:
+    k_oversize = Decimal("1")
+    if condition_10(item_order):
+        k_oversize = Decimal("1.1")
+    if condition_20(item_order):
+        k_oversize = Decimal("1.2")
+    if condition_30(item_order):
+        k_oversize = Decimal("1.3")
+    if condition_50(item_order):
+        k_oversize = Decimal("1.5")
+    return k_oversize
+
+
+def condition_10(item_order: dict) -> bool:
+    return item_order.get("weight", 0) > 500 or\
+        item_order.get("volume", 0) > 2 or\
+        item_order.get("length", 0) > 3 or\
+        item_order.get("width", 0) > 3 or\
+        item_order.get("height", 0) > 3
+
+
+def condition_20(item_order: dict) -> bool:
+    return item_order.get("weight", 0) > 700 or\
+        item_order.get("volume", 0) > 3 or\
+        item_order.get("length", 0) > 4 or\
+        item_order.get("width", 0) > 4 or\
+        item_order.get("height", 0) > 4
+
+
+def condition_30(item_order: dict) -> bool:
+    return item_order.get("weight", 0) > 1000 or\
+        item_order.get("volume", 0) > 4 or\
+        item_order.get("length", 0) > 5 or\
+        item_order.get("width", 0) > 5 or\
+        item_order.get("height", 0) > 5
+
+
+def condition_50(item_order: dict) -> bool:
+    return item_order.get("weight", 0) > 1500 or\
+        item_order.get("volume", 0) > 5 or\
+        item_order.get("length", 0) > 7 or\
+        item_order.get("width", 0) > 7 or\
+        item_order.get("height", 0) > 7
 
 
 def calculate_item_order(item_order: dict) -> Decimal:

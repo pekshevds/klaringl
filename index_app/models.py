@@ -112,16 +112,15 @@ class Const(Base):
         if item:
             return Const(
                 address=item.address, email=item.email, tel=item.tel,
-                nigth_deliver_cost=float(item.nigth_deliver_cost),
-                time_deliver_cost=float(item.time_deliver_cost),
-                warehouse_process_cost=float(item.warehouse_process_cost),
-                min_warehouse_process_cost=float(
-                    item.min_warehouse_process_cost),
-                return_docs_cost=float(item.return_docs_cost),
-                insurance_cost=float(item.insurance_cost),
-                prr_cost=float(item.prr_cost),
-                hard_packaging_cost=float(item.hard_packaging_cost),
-                hard_packaging_min_cost=float(item.hard_packaging_min_cost)
+                nigth_deliver_cost=item.nigth_deliver_cost,
+                time_deliver_cost=item.time_deliver_cost,
+                warehouse_process_cost=item.warehouse_process_cost,
+                min_warehouse_process_cost=item.min_warehouse_process_cost,
+                return_docs_cost=item.return_docs_cost,
+                insurance_cost=item.insurance_cost,
+                prr_cost=item.prr_cost,
+                hard_packaging_cost=item.hard_packaging_cost,
+                hard_packaging_min_cost=item.hard_packaging_min_cost
             )
         return Const(
             address="", email="", tel="", nigth_deliver_cost=0,
