@@ -77,14 +77,42 @@ class Const(Base):
         default=0
     )
     hard_packaging_cost = models.DecimalField(
-        verbose_name="Жесткая упаковка(обрешётка), руб",
+        verbose_name="Жесткая упаковка (обрешётка), руб",
         max_digits=15,
         decimal_places=2,
         blank=True,
         default=0
     )
     hard_packaging_min_cost = models.DecimalField(
-        verbose_name="Жесткая упаковка(обрешётка) минимальная стоимость, руб",
+        verbose_name="Жесткая упаковка (обрешётка) минимальная стоимость, руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    soft_packaging_cost = models.DecimalField(
+        verbose_name="Мягкая упаковка (пупырка), руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    soft_packaging_min_cost = models.DecimalField(
+        verbose_name="Мягкая упаковка (пупырка) минимальная стоимость, руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    palletizing_cost = models.DecimalField(
+        verbose_name="Стоимость паллетирования, руб",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0
+    )
+    palletizing_min_cost = models.DecimalField(
+        verbose_name="Минимальная стоимость паллетирования, руб",
         max_digits=15,
         decimal_places=2,
         blank=True,
@@ -104,8 +132,10 @@ class Const(Base):
             "address", "email", "tel", "nigth_deliver_cost",
             "time_deliver_cost", "warehouse_process_cost",
             "min_warehouse_process_cost", "return_docs_cost",
-            "insurance_cost", "prr_cost", "hard_packaging_cost",
-            "hard_packaging_min_cost"
+            "insurance_cost", "prr_cost",
+            "hard_packaging_cost", "hard_packaging_min_cost",
+            "soft_packaging_cost", "soft_packaging_min_cost",
+            "palletizing_cost", "palletizing_min_cost",
         ])
 
         item = cls.objects.first()
@@ -120,14 +150,20 @@ class Const(Base):
                 insurance_cost=item.insurance_cost,
                 prr_cost=item.prr_cost,
                 hard_packaging_cost=item.hard_packaging_cost,
-                hard_packaging_min_cost=item.hard_packaging_min_cost
+                hard_packaging_min_cost=item.hard_packaging_min_cost,
+                soft_packaging_cost=item.soft_packaging_cost,
+                soft_packaging_min_cost=item.soft_packaging_min_cost,
+                palletizing_cost=item.palletizing_cost,
+                palletizing_min_cost=item.palletizing_min_cost
             )
         return Const(
             address="", email="", tel="", nigth_deliver_cost=0,
             time_deliver_cost=0, warehouse_process_cost=0,
             min_warehouse_process_cost=0, return_docs_cost=0,
-            insurance_cost=0, prr_cost=0, hard_packaging_cost=0,
-            hard_packaging_min_cost=0
+            insurance_cost=0, prr_cost=0,
+            hard_packaging_cost=0, hard_packaging_min_cost=0,
+            soft_packaging_cost=0, soft_packaging_min_cost=0,
+            palletizing_cost=0, palletizing_min_cost=0
             )
 
     class Meta:

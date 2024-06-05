@@ -8,6 +8,8 @@ from calculator_app.models import City
 
 class ItemCalculateRequestSerializer(serializers.Serializer):
     hard_packaging = serializers.BooleanField()
+    soft_packaging = serializers.BooleanField()
+    palletizing = serializers.BooleanField()
     prr_from = serializers.BooleanField()
     prr_to = serializers.BooleanField()
     weight = serializers.DecimalField(

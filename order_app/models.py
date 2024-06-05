@@ -172,6 +172,10 @@ class ItemOrder(Item):
         Cargo, verbose_name="Груз", on_delete=models.PROTECT)
     hard_packaging = models.BooleanField(
         verbose_name="Жесткая упаковка", default=False)
+    soft_packaging = models.BooleanField(
+        verbose_name="Мягкая упаковка", default=False)
+    palletizing = models.BooleanField(
+        verbose_name="Паллетирование", default=False)
     prr_from = models.BooleanField(
         verbose_name="Погрузка при заборе груза (ПРР при заборе)",
         default=False)
