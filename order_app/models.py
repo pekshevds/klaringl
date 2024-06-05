@@ -60,6 +60,8 @@ class Order(Document):
         null=True, blank=True, default="")
     date_from = models.DateField(
         verbose_name="Дата забора", null=True, blank=True)
+    from_time = models.BooleanField(
+        verbose_name="Забрать по времени", default=False)
     time_from = models.TimeField(
         verbose_name="Время забора", null=True, blank=True)
 
@@ -91,6 +93,8 @@ class Order(Document):
         null=True, blank=True, default="")
     date_to = models.DateField(
         verbose_name="Дата доставки", null=True, blank=True)
+    to_time = models.BooleanField(
+        verbose_name="Доставить ко времени", default=False)
     time_to = models.TimeField(
         verbose_name="Время доставки", null=True, blank=True)
 
