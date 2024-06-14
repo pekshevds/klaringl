@@ -1,3 +1,4 @@
+from decimal import Decimal
 from collections import namedtuple
 from django.db import models
 from server.base import Directory, Base
@@ -137,7 +138,7 @@ class Const(Base):
             "soft_packaging_cost", "soft_packaging_min_cost",
             "palletizing_cost", "palletizing_min_cost",
         ])
-
+        Decimal0 = Decimal("0")
         item = cls.objects.first()
         if item:
             return Const(
@@ -157,13 +158,13 @@ class Const(Base):
                 palletizing_min_cost=item.palletizing_min_cost
             )
         return Const(
-            address="", email="", tel="", nigth_deliver_cost=0,
-            time_deliver_cost=0, warehouse_process_cost=0,
-            min_warehouse_process_cost=0, return_docs_cost=0,
-            insurance_cost=0, prr_cost=0,
-            hard_packaging_cost=0, hard_packaging_min_cost=0,
-            soft_packaging_cost=0, soft_packaging_min_cost=0,
-            palletizing_cost=0, palletizing_min_cost=0
+            address="", email="", tel="", nigth_deliver_cost=Decimal0,
+            time_deliver_cost=Decimal0, warehouse_process_cost=Decimal0,
+            min_warehouse_process_cost=Decimal0, return_docs_cost=Decimal0,
+            insurance_cost=Decimal0, prr_cost=Decimal0,
+            hard_packaging_cost=Decimal0, hard_packaging_min_cost=Decimal0,
+            soft_packaging_cost=Decimal0, soft_packaging_min_cost=Decimal0,
+            palletizing_cost=Decimal0, palletizing_min_cost=Decimal0
             )
 
     class Meta:

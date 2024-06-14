@@ -7,21 +7,21 @@ from calculator_app.models import City
 
 
 class ItemCalculateRequestSerializer(serializers.Serializer):
-    hard_packaging = serializers.BooleanField()
-    soft_packaging = serializers.BooleanField()
-    palletizing = serializers.BooleanField()
-    prr_from = serializers.BooleanField()
-    prr_to = serializers.BooleanField()
+    hard_packaging = serializers.BooleanField(required=False)
+    soft_packaging = serializers.BooleanField(required=False)
+    palletizing = serializers.BooleanField(required=False)
+    prr_from = serializers.BooleanField(required=False)
+    prr_to = serializers.BooleanField(required=False)
     weight = serializers.DecimalField(
         max_digits=15, decimal_places=2)
     length = serializers.DecimalField(
-        max_digits=15, decimal_places=2)
+        max_digits=15, decimal_places=2, required=False)
     width = serializers.DecimalField(
-        max_digits=15, decimal_places=2)
+        max_digits=15, decimal_places=2, required=False)
     height = serializers.DecimalField(
-        max_digits=15, decimal_places=2)
+        max_digits=15, decimal_places=2, required=False)
     volume = serializers.DecimalField(
-        max_digits=15, decimal_places=5)
+        max_digits=15, decimal_places=5, required=False)
 
 
 class CalculateRequestSerializer(serializers.Serializer):

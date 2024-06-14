@@ -24,7 +24,7 @@ class CargorSerializer(DirectorySerializer):
     height = serializers.DecimalField(
         max_digits=15, decimal_places=2, required=False)
     volume = serializers.DecimalField(
-        max_digits=15, decimal_places=5)
+        max_digits=15, decimal_places=5, required=False)
 
     def create(self, validated_data):
         return Cargo.objects.create(**validated_data)
@@ -33,6 +33,8 @@ class CargorSerializer(DirectorySerializer):
 class ItemOrderSerializer(ItemSerializer):
     cargo = CargorSerializer()
     hard_packaging = serializers.BooleanField(required=False)
+    soft_packaging = serializers.BooleanField(required=False)
+    palletizing = serializers.BooleanField(required=False)
     prr_from = serializers.BooleanField(required=False)
     prr_to = serializers.BooleanField(required=False)
 
