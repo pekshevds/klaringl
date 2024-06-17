@@ -1,3 +1,23 @@
+.order-price-block h4 {
+    text-align: end;
+    font-size: 36px;
+    font-weight: 600;
+    color: #EC180B;
+}
+
+.margin-auto {
+    margin: auto !important;
+}
+
+.asOrderFormError {
+    background-color: #FDC9C9 !important;
+}
+
+.asOrderFormErrorMessage {
+    font-size: 12px !important;
+    color : #FF474A !important;
+}
+
 .as-delimiter {
     border-bottom: 1px solid #677a85;
 }
@@ -6,7 +26,16 @@
     color: #677a85;
 }
 
+.as-form-group input[type="time"] {
+    color: #677a85;
+}
+
 .as-form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.8;
+    filter: invert(0.5);
+}
+
+.as-form-group input[type="time"]::-webkit-calendar-picker-indicator {
     opacity: 0.8;
     filter: invert(0.5);
 }
