@@ -155,8 +155,8 @@ class CalcView(View):
         except:
             server_api_url = ""
         context = {
-            "cities_list": Rate.cities_to.all(),
-            "cities_from_list":  Rate.cities_from.all(),
+            "cities_list": Rate.cities_to,
+            "cities_from_list":  Rate.cities_from,
             "server_api_url":  server_api_url,
             "server_api_token": server_api_token
         }
