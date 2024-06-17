@@ -90,11 +90,28 @@
                                                 <input v-model="departureDate" type="date" class="form-control">
                                             </div>
                                         </div> 
-                                        <div class="atf-booking-form-item col-4 col-md-3">
+                                        <div v-if="departureByTime" class="atf-booking-form-item col-4 col-md-3">
                                             <div class="form-group mb-0 as-form-group">
                                                 <input v-model="departureTime" type="time" class="form-control">
                                             </div>
+                                            <p  
+                                                v-if="errors.departureTime"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
                                         </div> 
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input 
+                                                    v-model="departureByTime"
+                                                    @click="departureByTime= !departureByTime"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
+                                                <label class="form-check-label">Выбрать время</label>
+                                              </div>
+                                        </div>
                                     </div>
                                     <div class="as-delimiter mt-5"></div>
                                     <p class="mt-5">Куда</p>
@@ -138,11 +155,28 @@
                                                 <input v-model="receivingDate" type="date" class="form-control">
                                             </div>
                                         </div> 
-                                        <div class="atf-booking-form-item col-4 col-md-3">
+                                        <div v-if="receivingByTime" class="atf-booking-form-item col-4 col-md-3">
                                             <div class="form-group mb-0 as-form-group">
                                                 <input v-model="receivingTime" type="time" class="form-control">
                                             </div>
-                                        </div> 
+                                            <p  
+                                                v-if="errors.receivingTime"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input 
+                                                    v-model="receivingByTime"
+                                                    @click="receivingByTime= !receivingByTime"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
+                                                <label class="form-check-label">Выбрать время</label>
+                                              </div>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -184,7 +218,7 @@
                                     <div v-if="orderItem.dimensionsType == 1" class="mt-3 col-12 row">
                                         <div class="atf-booking-form-item col-12 col-md-6">
                                             <div class="form-group mb-0">
-                                                <input type="number" v-model="orderItem.volume" class="form-control" placeholder="Объем">
+                                                <input type="number" v-model="orderItem.volume" class="form-control" placeholder="Объем, м3">
                                             </div>
                                             <p 
                                                 v-if="orderItem.errors.volume"
@@ -195,7 +229,7 @@
                                         </div>
                                         <div class="atf-booking-form-item col-12 col-md-6">
                                             <div class="form-group mb-0">
-                                                <input type="number" v-model="orderItem.weight" class="form-control" placeholder="Вес">
+                                                <input type="number" v-model="orderItem.weight" class="form-control" placeholder="Вес, кг">
                                             </div>
                                             <p  
                                                 v-if="orderItem.errors.weight"
@@ -213,7 +247,7 @@
                                                     type="number" 
                                                     v-model="orderItem.length" 
                                                     class="form-control" 
-                                                    placeholder="Длина"
+                                                    placeholder="Длина, м"
                                                 >
                                             </div>
                                         </div>
@@ -224,7 +258,7 @@
                                                     type="number" 
                                                     v-model="orderItem.width" 
                                                     class="form-control" 
-                                                    placeholder="Ширина"
+                                                    placeholder="Ширина, м"
                                                 >
                                             </div>
                                         </div>
@@ -235,13 +269,13 @@
                                                     type="number" 
                                                     v-model="orderItem.height" 
                                                     class="form-control"  
-                                                    placeholder="Высота"
+                                                    placeholder="Высота, м"
                                                 >
                                             </div>
                                         </div>
                                         <div class="atf-booking-form-item col-12 col-md-3">
                                             <div class="form-group mb-0">
-                                                <input type="number" v-model="orderItem.volume" class="form-control" placeholder="Объем">
+                                                <input type="number" v-model="orderItem.volume" class="form-control" placeholder="Объем, м3">
                                             </div>
                                             <p  
                                                 v-if="orderItem.errors.volume"
@@ -252,7 +286,7 @@
                                         </div>
                                         <div class="atf-booking-form-item col-12 col-md-3">
                                             <div class="form-group mb-0">
-                                                <input type="number" v-model="orderItem.weight" class="form-control" placeholder="Вес">
+                                                <input type="number" v-model="orderItem.weight" class="form-control" placeholder="Вес, кг">
                                             </div>
                                             <p 
                                                 v-if="orderItem.errors.weight"
@@ -473,10 +507,12 @@ const OrderForm = {
             orderItemsQty: 1,
             departureDate: "",
             departureTime: "",
+            departureByTime: false,
             departurePickupType: 1,
             departureAddress: "",
             receivingDate: "",
             receivingTime: "",
+            receivingByTime: false,
             receivingType: 1,
             receivingAddress: "",
             cargoInsurance: false,
@@ -585,6 +621,14 @@ const OrderForm = {
                 isValidCalcForm = false
                 this.errors.city_to_id = true
             }
+            if (this.departureByTime && !this.departureTime ) {
+                this.errors.departureTime = true
+                isValidCalcForm = false
+            }
+            if (this.receivingByTime && !this.receivingTime ) {
+                this.errors.receivingTime = true
+                isValidCalcForm = false
+            }
             this.orderItems.forEach((el) => {
                 el.errors = {}
                 if (!el.volume) {
@@ -599,7 +643,6 @@ const OrderForm = {
             return isValidCalcForm
         },
         async calulateOrder () {
-            $('#atf-loader').fadeIn(200)
             this.price = 0
             this.serverErrors = []
             if (this.checkCalculateValidation()) {
@@ -618,13 +661,13 @@ const OrderForm = {
                 if (this.departureDate) {
                     data.date_from = this.departureDate
                 }
-                if (this.departureTime) {
+                if (this.departureByTime && this.departureTime) {
                     data.time_from = this.time_from
                 }
                 if (this.receivingDate) {
                     data.date_to = this.date_to
                 }
-                if (this.receivingTime) {
+                if (this.receivingByTime && this.receivingTime) {
                     data.time_to = this.time_to
                 }
                 let url = ""
@@ -634,6 +677,7 @@ const OrderForm = {
                 } else {
                     url = `${window.location.hostname}/api/v1/order/orders/`
                 }
+                $('#atf-loader').fadeIn(200)
                 await axios({
                     method: 'post',
                     headers: {
