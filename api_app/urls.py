@@ -14,7 +14,7 @@ from order_app.views import (
 )
 
 
-app_name = 'api_app'
+app_name = 'api'
 
 urlpatterns = [
     path('calculator/cities/', CityAPIView.as_view(), name="city"),

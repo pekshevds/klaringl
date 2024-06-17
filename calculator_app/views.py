@@ -122,7 +122,8 @@ class CalculateAPIView(APIView):
 class FastCalculateAPIView(APIView):
 
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request: HttpRequest) -> HttpResponse:
         response = {"data": {},
@@ -145,15 +146,13 @@ class FastCalculateAPIView(APIView):
 
 
 class CalcView(View):
+
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.AllowAny]
+
     def get(self, request: HttpRequest) -> HttpResponse:
-        try:
-            server_api_token = config.SERVER_API_TOKEN
-        except:
-            server_api_token = ""
-        try:
-            server_api_url = config.SERVER_API_URL
-        except:
-            server_api_url = ""
+        server_api_token = config.SERVER_API_TOKEN
+        server_api_url = config.SERVER_API_URL
         context = {
             "cities_list": Rate.cities_to,
             "cities_from_list":  Rate.cities_from,
