@@ -246,10 +246,12 @@ def calculate_order(order: dict) -> Decimal:
     k_oversize = Decimal("1")
     for item in order["items"]:
         if item.get("prr_from", False) and\
+            order.get("from_address", False) and\
             item.get("weight", 0) < Decimal("35") and\
                 item.get("volume", 0) < Decimal("0.3"):
             cost += calculate_prr((item.get("weight", 0)))
         if item.get("prr_to", False) and\
+            order.get("to_address", False) and\
             item.get("weight", 0) < Decimal("35") and\
                 item.get("volume", 0) < Decimal("0.3"):
             cost += calculate_prr((item.get("weight", 0)))
