@@ -152,11 +152,9 @@ class CalcView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         server_api_token = config.SERVER_API_TOKEN
-        server_api_url = config.SERVER_API_URL
         context = {
             "cities_list": Rate.cities_to,
             "cities_from_list":  Rate.cities_from,
-            "server_api_url":  server_api_url,
             "server_api_token": server_api_token
         }
         return render(request,

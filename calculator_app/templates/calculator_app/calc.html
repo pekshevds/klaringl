@@ -749,13 +749,7 @@ const OrderForm = {
                 if (this.receivingByTime && this.receivingTime) {
                     data.time_to = this.receivingTime
                 }
-                let url = ""
-                let serverApiUrl = "{{ server_api_url }}"
-                if (serverApiUrl != "") {
-                    url = `${serverApiUrl}/api/v1/calculator/calculate/`
-                } else {
-                    url = `${window.location.hostname}/api/v1/calculator/calculate/`
-                }
+                let url = `${window.location.origin}/api/v1/calculator/calculate/`
                 $('#atf-loader').fadeIn(200)
                 await axios({
                     method: 'post',
