@@ -235,9 +235,9 @@ def calculate_order(order: dict) -> Decimal:
     base_cost = calculate_base_cost(order)
     cost = base_cost
     # Расчет стоимсоти забора у двери по времени
-    if order.get("from_address", False):
+    if order.get("from_address", False) and order.get("by_time_from", False):
         cost += calculate_delevery_on_time(order.get("time_from", noon))
-    if order.get("to_address", False):
+    if order.get("to_address", False) and order.get("by_time_to", False):
         cost += calculate_delevery_on_time(order.get("time_to", noon))
     if order.get("return_docs", False):
         cost += calculate_return_docs()

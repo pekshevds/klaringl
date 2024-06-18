@@ -30,10 +30,12 @@ class CalculateRequestSerializer(serializers.Serializer):
 
     from_address = serializers.BooleanField()
     date_from = serializers.DateField(required=False)
+    by_time_from = serializers.BooleanField()
     time_from = serializers.TimeField(required=False)
 
     to_address = serializers.BooleanField()
     date_to = serializers.DateField(required=False)
+    by_time_to = serializers.BooleanField()
     time_to = serializers.TimeField(required=False)
 
     insurance = serializers.BooleanField()
