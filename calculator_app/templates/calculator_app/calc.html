@@ -655,8 +655,10 @@ const OrderForm = {
                 let data = {
                     city_from_id: city_from_id,
                     from_address: this.departurePickupType == 2 ? true : false,
+                    by_time_from: this.departureByTime,
                     city_to_id: city_to_id,
                     to_address: this.receivingType == 2 ? true: false,
+                    by_time_to: this.receivingByTime,
                     insurance: this.cargoInsurance,
                     return_docs: this.returnDocuments,
                     declared_cost: parseFloat(this.declared_cost ? this.declared_cost : 0),
@@ -666,13 +668,13 @@ const OrderForm = {
                     data.date_from = this.departureDate
                 }
                 if (this.departureByTime && this.departureTime) {
-                    data.time_from = this.time_from
+                    data.time_from = this.departureTime
                 }
                 if (this.receivingDate) {
-                    data.date_to = this.date_to
+                    data.date_to = this.receivingDate
                 }
                 if (this.receivingByTime && this.receivingTime) {
-                    data.time_to = this.time_to
+                    data.time_to = this.receivingTime
                 }
                 let url = ""
                 let serverApiUrl = "{{ server_api_url }}"
