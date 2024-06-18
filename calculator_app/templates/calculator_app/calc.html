@@ -83,14 +83,27 @@
                                             </div>
                                         </div>
                                     </div>    
-                                    <p v-if="departurePickupType == 2" class="mt-4">Дата и время</p>
+                                    <p v-if="departurePickupType == 2" class="mt-4">Дата забора</p>
                                     <div v-if="departurePickupType == 2" class="col-12 row">
-                                        <div class="atf-booking-form-item col-8 col-md-6">
+                                        <div class="atf-booking-form-item col-12 col-md-6">
                                             <div class="form-group mb-0 as-form-group">
                                                 <input v-model="departureDate" type="date" class="form-control">
                                             </div>
                                         </div> 
-                                        <div v-if="departureByTime" class="atf-booking-form-item col-4 col-md-3">
+                                    </div>
+                                    <div v-if="departurePickupType == 2" class="col-12 col-md-6 row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-check">
+                                                <input 
+                                                    v-model="departureByTime"
+                                                    @click="departureByTime= !departureByTime"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
+                                                <label class="form-check-label">Забор по времени</label>
+                                              </div>
+                                        </div>
+                                        <div v-if="departureByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
                                             <div class="form-group mb-0 as-form-group">
                                                 <input v-model="departureTime" type="time" class="form-control">
                                             </div>
@@ -101,18 +114,8 @@
                                                 Обязательное поле!
                                             </p>
                                         </div> 
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input 
-                                                    v-model="departureByTime"
-                                                    @click="departureByTime= !departureByTime"
-                                                    class="form-check-input" 
-                                                    type="checkbox"
-                                                >
-                                                <label class="form-check-label">Выбрать время</label>
-                                              </div>
-                                        </div>
-                                    </div>
+                                    </div>        
+
                                     <div class="as-delimiter mt-5"></div>
                                     <p class="mt-5">Куда</p>
                                     <div class="col-12">
@@ -148,14 +151,27 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <p v-if="receivingType == 2" class="mt-4">Дата и время</p>
+                                    <p v-if="receivingType == 2" class="mt-4">Дата забора</p>
                                     <div v-if="receivingType == 2" class="col-12 row">
-                                        <div class="atf-booking-form-item col-8 col-md-6">
+                                        <div class="atf-booking-form-item col-12 col-md-6">
                                             <div class="form-group mb-0 as-form-group">
                                                 <input v-model="receivingDate" type="date" class="form-control">
                                             </div>
                                         </div> 
-                                        <div v-if="receivingByTime" class="atf-booking-form-item col-4 col-md-3">
+                                    </div>
+                                    <div v-if="receivingType == 2" class="col-12 col-md-6 row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-check">
+                                                <input 
+                                                    v-model="receivingByTime"
+                                                    @click="receivingByTime= !receivingByTime"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
+                                                <label class="form-check-label">Забор по времени</label>
+                                              </div>
+                                        </div>
+                                        <div v-if="receivingByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
                                             <div class="form-group mb-0 as-form-group">
                                                 <input v-model="receivingTime" type="time" class="form-control">
                                             </div>
@@ -166,20 +182,8 @@
                                                 Обязательное поле!
                                             </p>
                                         </div>
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input 
-                                                    v-model="receivingByTime"
-                                                    @click="receivingByTime= !receivingByTime"
-                                                    class="form-check-input" 
-                                                    type="checkbox"
-                                                >
-                                                <label class="form-check-label">Выбрать время</label>
-                                              </div>
-                                        </div>
-                                    </div>
+                                    </div>    
                                 </div>
-                                
                             </div>
                             <div v-for="orderItem, key in orderItems" v-bind:key="orderItem.id" class="atf-booking-form mt-5">
                                 <div class="atf-booking-form-box row">
