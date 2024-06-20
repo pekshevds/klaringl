@@ -98,22 +98,8 @@ class Const(Base):
         blank=True,
         default=0
     )
-    soft_packaging_min_cost = models.DecimalField(
-        verbose_name="Мягкая упаковка (пупырка) минимальная стоимость, руб",
-        max_digits=15,
-        decimal_places=2,
-        blank=True,
-        default=0
-    )
     palletizing_cost = models.DecimalField(
         verbose_name="Стоимость паллетирования, руб",
-        max_digits=15,
-        decimal_places=2,
-        blank=True,
-        default=0
-    )
-    palletizing_min_cost = models.DecimalField(
-        verbose_name="Минимальная стоимость паллетирования, руб",
         max_digits=15,
         decimal_places=2,
         blank=True,
@@ -135,8 +121,7 @@ class Const(Base):
             "min_warehouse_process_cost", "return_docs_cost",
             "insurance_cost", "prr_cost",
             "hard_packaging_cost", "hard_packaging_min_cost",
-            "soft_packaging_cost", "soft_packaging_min_cost",
-            "palletizing_cost", "palletizing_min_cost",
+            "soft_packaging_cost", "palletizing_cost",
         ])
         Decimal0 = Decimal("0")
         item = cls.objects.first()
@@ -153,9 +138,7 @@ class Const(Base):
                 hard_packaging_cost=item.hard_packaging_cost,
                 hard_packaging_min_cost=item.hard_packaging_min_cost,
                 soft_packaging_cost=item.soft_packaging_cost,
-                soft_packaging_min_cost=item.soft_packaging_min_cost,
                 palletizing_cost=item.palletizing_cost,
-                palletizing_min_cost=item.palletizing_min_cost
             )
         return Const(
             address="", email="", tel="", nigth_deliver_cost=Decimal0,
@@ -163,8 +146,7 @@ class Const(Base):
             min_warehouse_process_cost=Decimal0, return_docs_cost=Decimal0,
             insurance_cost=Decimal0, prr_cost=Decimal0,
             hard_packaging_cost=Decimal0, hard_packaging_min_cost=Decimal0,
-            soft_packaging_cost=Decimal0, soft_packaging_min_cost=Decimal0,
-            palletizing_cost=Decimal0, palletizing_min_cost=Decimal0
+            soft_packaging_cost=Decimal0, palletizing_cost=Decimal0,
             )
 
     class Meta:

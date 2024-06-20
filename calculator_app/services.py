@@ -196,24 +196,18 @@ def calculate_hard_packaging(volume: Decimal) -> Decimal:
     return cost
 
 
-def calculate_soft_packaging(volume: Decimal) -> Decimal:
+def calculate_soft_packaging() -> Decimal:
     """
     Расчет стоимости мягкой упаковки/пупырки"""
     const = Const.info()
-    cost = (volume * Decimal("1.3")) * const.soft_packaging_cost
-    if cost < const.soft_packaging_min_cost:
-        cost = const.soft_packaging_min_cost
-    return cost
+    return const.soft_packaging_cost
 
 
-def calculate_palletizing(volume: Decimal) -> Decimal:
+def calculate_palletizing() -> Decimal:
     """
     Расчет стоимости паллетирования"""
     const = Const.info()
-    cost = (volume * Decimal("1.3")) * const.palletizing_cost
-    if cost < const.palletizing_min_cost:
-        cost = const.palletizing_min_cost
-    return cost
+    return const.palletizing_cost
 
 
 def calculate_base_cost(order: dict) -> Decimal:
@@ -258,9 +252,9 @@ def calculate_order(order: dict) -> Decimal:
         if item.get("hard_packaging", False):
             cost += calculate_hard_packaging((item.get("volume", 0)))
         if item.get("soft_packaging", False):
-            cost += calculate_soft_packaging((item.get("volume", 0)))
+            cost += calculate_soft_packaging()
         if item.get("palletizing", False):
-            cost += calculate_palletizing((item.get("volume", 0)))
+            cost += calculate_palletizing()
         k_oversize = max(k_oversize, calclulate_k_oversize(item))
     cost += base_cost * k_oversize
     return cost
