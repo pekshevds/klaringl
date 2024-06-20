@@ -372,11 +372,11 @@
                                               </div>
                                         </div>
                                         <div class="col-12 col-md-6 pl-3 pr-3">
-                                            <div v-if="!orderItem.errors.fromOversize" class="form-check">
+                                            <div v-if="departurePickupType==2 && !orderItem.errors.fromOversize" class="form-check">
                                                 <input class="form-check-input" v-model="orderItem.prr_from" type="checkbox">
                                                 <label class="form-check-label">Погрузка при заборе груза (ПРР при заборе)</label>
                                             </div>
-                                            <div v-if="!orderItem.errors.toOversize" class="form-check">
+                                            <div v-if="receivingType==2 && !orderItem.errors.toOversize" class="form-check">
                                                 <input class="form-check-input" v-model="orderItem.prr_to" type="checkbox">
                                                 <label class="form-check-label">Выгрузка при доставке (ПРР при доставке)</label>
                                             </div>
