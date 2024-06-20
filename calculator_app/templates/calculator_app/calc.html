@@ -657,7 +657,7 @@ const OrderForm = {
         },
         checkOrderItemParams (id) {
             let el = store.state.orderItems.find(el => el.id == id)
-            if ((el.weight>35||el.weight==""||el.weight==0) || (el.volume>0.3||el.volume==""||el.volume==0)) {
+            if ((el.weight>=35||el.weight==""||el.weight==0) || (el.volume>=0.3||el.volume==""||el.volume==0)) {
                 if (this.departurePickupType == 2) {
                     el.errors.fromOversize = true
                     el.prr_from = false
