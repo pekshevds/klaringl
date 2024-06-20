@@ -71,14 +71,21 @@
                                             <input 
                                                 class="form-check-input" 
                                                 v-model="departurePickupType" 
-                                                @click="clearDepartureData"
+                                                @click="clearDepartureData()"
+                                                @change="checkAllOrderItemsOversize()"
                                                 type="radio" 
                                                 value="1"
                                             >
                                             <label class="form-check-label">Сдать в терминале</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" v-model="departurePickupType" type="radio" value="2">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="departurePickupType" 
+                                                @change="checkAllOrderItemsOversize()"
+                                                type="radio" 
+                                                value="2"
+                                            >
                                             <label class="form-check-label">Забрать по адресу</label>
                                         </div>
                                     </div>
@@ -145,21 +152,33 @@
                                             <input 
                                                 class="form-check-input" 
                                                 v-model="receivingType"
-                                                @click="clearReceivingData"
+                                                @click="clearReceivingData()"
+                                                @change="checkAllOrderItemsOversize()"
                                                 type="radio" 
                                                 value="1"
                                             >
                                           <label class="form-check-label">Забрать в терминале</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" v-model="receivingType" type="radio" value="2">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="receivingType" 
+                                                @change="checkAllOrderItemsOversize()"
+                                                type="radio" 
+                                                value="2"
+                                            >
                                             <label class="form-check-label">Доставить по адресу</label>
                                           </div>
                                     </div>
                                     <div v-if="receivingType == 2" class="mt-3 col-12 row">
                                         <div class="atf-booking-form-item">
                                             <div class="form-group mb-0">
-                                                <input type="text" v-model="receivingAddress" class="form-control" placeholder="Введите адрес">
+                                                <input 
+                                                    type="text" 
+                                                    v-model="receivingAddress" 
+                                                    class="form-control" 
+                                                    placeholder="Введите адрес"
+                                                >
                                             </div>
                                         </div>
                                     </div>
@@ -352,15 +371,15 @@
                                                 <label class="form-check-label">Паллетирование</label>
                                               </div>
                                         </div>
-                                        <div v-if="!orderItem.oversize" class="col-12 col-md-6 pl-3 pr-3">
-                                            <div class="form-check">
+                                        <div class="col-12 col-md-6 pl-3 pr-3">
+                                            <div v-if="!orderItem.errors.fromOversize" class="form-check">
                                                 <input class="form-check-input" v-model="orderItem.prr_from" type="checkbox">
                                                 <label class="form-check-label">Погрузка при заборе груза (ПРР при заборе)</label>
-                                              </div>
-                                              <div class="form-check">
+                                            </div>
+                                            <div v-if="!orderItem.errors.toOversize" class="form-check">
                                                 <input class="form-check-input" v-model="orderItem.prr_to" type="checkbox">
                                                 <label class="form-check-label">Выгрузка при доставке (ПРР при доставке)</label>
-                                              </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -508,7 +527,6 @@ const store = Vuex.createStore({
                 palletizing: false,
                 prr_from: false,
                 prr_to: false,
-                oversize: false,
                 errors: {}
             },
         ],
@@ -530,7 +548,6 @@ const store = Vuex.createStore({
             palletizing: false,
             prr_from: false,
             prr_to: false,
-            oversize: false,
             errors: {}
         })
     },
@@ -626,14 +643,29 @@ const OrderForm = {
                 this.checkOrderItemParams(id)
             }
         },
+        checkAllOrderItemsOversize () {
+            store.state.orderItems.forEach(orderItem => {
+                this.checkOrderItemParams(orderItem.id)
+            })
+        },
         checkOrderItemParams (id) {
             let el = store.state.orderItems.find(el => el.id == id)
             if (el.weight > 35 || el.volume > 0.3) {
-                el.oversize = true
-                el.prr_from = false
-                el.prr_to = false
+                if (this.departurePickupType == 2) {
+                    el.errors.fromOversize = true
+                    el.prr_from = false
+                } else {
+                    el.errors.fromOversize = false
+                }
+                if (this.receivingType == 2) {
+                    el.errors.toOversize = true
+                    el.prr_to = false
+                } else {
+                    el.errors.toOversize = false
+                }
             } else {
-                el.oversize = false
+                el.errors.fromOversize = false
+                el.errors.toOversize = false
             }
         },
         deleteOrderItem (id) {
