@@ -3,7 +3,7 @@
         <h2 class="title-color">Напишите нам </h2>
                 
         <div class="contact mt-4">
-            <form id="contact-form" class="atf-contact-form form" method="POST" action="#">
+            <form id="contact-form" class="atf-contact-form form" method="POST" action="{% url 'index:message' %}">
                 {% csrf_token %}
                 <div class="row">
                     <div class="form-group col-lg-6">
@@ -23,7 +23,7 @@
                     </div>
                     <div class="mt-4 col-lg-8 col-md-8">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="agree">
+                            <input class="form-check-input" type="checkbox" name="agree" id="agree" required="required">
                             <label class="form-check-label" for="agree">Я согласен(а) на обработку моих персональных данных</label>
                         </div>
                     </div>                    
@@ -31,7 +31,7 @@
                         <div class="atf-contact-btn text-left">
                             <button type="submit" value="Submit Now" name="submit" id="submitButton" class="atf-themes-btn  atf-themes-btn-one" title="Submit Your Message!">
                                 <i class="btn-curve"></i>
-                                <span class="btn-title">Send Message</span>
+                                <span class="btn-title">Отправить</span>
                             </button>
                         </div>
                     </div>

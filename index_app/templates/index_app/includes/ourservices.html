@@ -6,85 +6,87 @@
         <div class="row justify-content-start">
             <div class="col-lg-6 col-md-8 col-12 pe-lg-5" data-aos="fade-up">
                 <div class="atf-section-title title-color text-start ">
-                    <h5 class="sub-title">Our Service</h5>
-                    <h2>We are Interested for Your <span>Service</span> of Ocean Freight</h2>
+                    <h5 class="sub-title">Наши услуги</h5>
+                    <h2>Основная наша задача – надежная, своевременная и недорогая <span>доставка</span> грузов в любой регион страны</h2>
                 </div>
             </div><!--- END COL -->
         </div><!--- END ROW -->
         
         <div class="row mt-5 pt-4 atf__service-slider-active slick-arrow-2">
+            
             <div class="col-lg-12">
                 <div class="atf-single-service text-center" data-aos="fade-up">
                     <div class="atf-service-img">
                         <img class="img-fluid" src="{% static 'index_app/assets/img/service/1.jpg' %}" alt="service">
                         <div class="atf-service-icon">
-                            <a href="#"><i class="fas fa-truck-moving"></i></a>
+                            <a href="{% url 'index:delivery-of-groupage-cargo' %}"><i class="fas fa-truck-moving"></i></a>
                         </div>
                     </div>
                     
                     <div class="atf-service-text">
-                        <a href="service.html.htm"><h4 class="mb-3 atf-service-title">Road Freight</h4></a>
+                        <a href="{% url 'index:delivery-of-groupage-cargo' %}"><h4 class="mb-3 atf-service-title">Доставка сборного груза</h4></a>
                         <p> It was popularised in the 1960s with the release of Letraset sheets containing .</p>
                         
                         <div class="mt-4"> 
-                            <a href="service.html.htm" class="read-more text-uppercase">read more</a>
+                            <a href="{% url 'index:delivery-of-groupage-cargo' %}" class="read-more text-uppercase">Подробнее</a>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-lg-12">	
-                <div class="atf-single-service text-center" data-aos="fade-up">
-                    <div class="atf-service-img">
-                        <img class="img-fluid" src="{% static 'index_app/assets/img/service/2.jpg' %}" alt="service">
-                        <div class="atf-service-icon">
-                            <a href="#"><i class="fas fa-plane"></i></a>
-                        </div>
-                    </div>
-                    
-                    <div class="atf-service-text">
-                        <a href="service.html.htm"><h4 class="mb-3  atf-service-title">Air Freight</h4></a>
-                        <p> It was popularised in the 1960s with the release of Letraset sheets containing .</p>
-                        <div class="mt-4"> 
-                            <a href="service.html.htm" class="read-more text-uppercase">read more</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                
-            <div class="col-lg-12">	
-                <div class="atf-single-service text-center" data-aos="fade-up">
-                    <div class="atf-service-img">
-                        <img class="img-fluid" src="{% static 'index_app/assets/img/service/3.jpg' %}" alt="service">
-                        <div class="atf-service-icon">
-                            <a href="#"><i class="fas fa-ship"></i></a>
-                        </div>
-                    </div>
-                    
-                    <div class="atf-service-text">
-                        <a href="service.html.htm"><h4 class="mb-3  atf-service-title">Ocean Freight</h4></a>
-                        <p> It was popularised in the 1960s with the release of Letraset sheets containing .</p>
-                        <div class="mt-4"> 
-                            <a href="service.html.htm" class="read-more text-uppercase">read more</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
+                        
             <div class="col-lg-12">
                 <div class="atf-single-service text-center" data-aos="fade-up">
                     <div class="atf-service-img">
                         <img class="img-fluid" src="{% static 'index_app/assets/img/service/4.jpg' %}" alt="service">
                         <div class="atf-service-icon">
-                            <a href="#"><i class="fas fa-truck"></i></a>
+                            <a href="{% url 'index:additional-services' %}"><i class="fas fa-truck"></i></a>
                         </div>
                     </div>
                     
                     <div class="atf-service-text">
-                        <a href="service.html.htm"><h4 class="mb-3 atf-service-title">Warehouse Service</h4></a>
+                        <a href="{% url 'index:additional-services' %}"><h4 class="mb-3 atf-service-title">Дополнительные услуги</h4></a>
                         <p> It was popularised in the 1960s with the release of Letraset sheets containing .</p>
                         <div class="mt-4"> 
-                            <a href="service.html.htm" class="read-more text-uppercase">read more</a>
+                            <a href="{% url 'index:additional-services' %}" class="read-more text-uppercase">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="atf-single-service text-center" data-aos="fade-up">
+                    <div class="atf-service-img">
+                        <img class="img-fluid" src="{% static 'index_app/assets/img/service/1.jpg' %}" alt="service">
+                        <div class="atf-service-icon">
+                            <a href="{% url 'index:complete-solutions-for-business' %}"><i class="fas fa-truck-moving"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div class="atf-service-text">
+                        <a href="{% url 'index:complete-solutions-for-business' %}"><h4 class="mb-3 atf-service-title">Комплексные решения для бизнеса</h4></a>
+                        <p> It was popularised in the 1960s with the release of Letraset sheets containing .</p>
+                        
+                        <div class="mt-4"> 
+                            <a href="{% url 'index:complete-solutions-for-business' %}" class="read-more text-uppercase">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        
+            <div class="col-lg-12">
+                <div class="atf-single-service text-center" data-aos="fade-up">
+                    <div class="atf-service-img">
+                        <img class="img-fluid" src="{% static 'index_app/assets/img/service/4.jpg' %}" alt="service">
+                        <div class="atf-service-icon">
+                            <a href="{% url 'index:solutions-for-online-stores' %}"><i class="fas fa-truck"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div class="atf-service-text">
+                        <a href="{% url 'index:solutions-for-online-stores' %}"><h4 class="mb-3 atf-service-title">Доставка для интернет-магазинов</h4></a>
+                        <p> It was popularised in the 1960s with the release of Letraset sheets containing .</p>
+                        <div class="mt-4"> 
+                            <a href="{% url 'index:solutions-for-online-stores' %}" class="read-more text-uppercase">Подробнее</a>
                         </div>
                     </div>
                 </div>

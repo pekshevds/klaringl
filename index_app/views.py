@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 from django.core.paginator import Paginator
-from index_app.forms import GetInTouchForm
+from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import (
     News,
     Vacancy,
@@ -207,3 +207,11 @@ class GetInTouchView(View):
         if form.is_valid():
             print(form.cleaned_data)
         return redirect("index:contacts")
+
+
+class MessageView(View):
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+        return redirect(request.META.get("HTTP_REFERER"))

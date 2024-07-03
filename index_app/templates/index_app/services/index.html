@@ -17,5 +17,74 @@
 </div>
 <!-- .atf-page-heading -->
 
+{% include "index_app/includes/ourservices.html" %}
+
+<!-- START ABOUT -->
+<section id="about" class="atf-section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6" data-aos="fade-up">
+                <div class="atf-section-title text-left pe-lg-5">
+                    <h5 class="sub-title">Транспортная логистическая компания</h5>
+                    <h2 class="title-color"><span>KLARIN GL</span> - это транспортная логистическая компания, специализирующаяся на грузоперевозках по Москве и всей России (включая отдаленные регионы и города). За 9 лет работы мы обрели внушительный опыт в сфере транспортировки грузов.</h2>
+                    
+                    <p class="f-15 mt-3">В спектр наших услуг входят:</p>
+					<p class="f-15 mt-3">
+						<ul class="atf-list-menu">
+							<li><i class="fas fa-caret-right me-2"></i>Доставка сборного груза;</li>
+							<li><i class="fas fa-caret-right me-2"></i>Дополнительные услуги;</li>
+							<li><i class="fas fa-caret-right me-2"></i>Комплексное решение для бизнеса;</li>
+							<li><i class="fas fa-caret-right me-2"></i>Доставка для интернет-магазинов.</li>
+						</ul>
+					</p>
+                    <p class="f-15 mt-3">На странице «Доставки сборного груза» Вы сможете самостоятельно рассчитать стоимость перевозки груза/товара. В калькуляторе указываются основные характеристики груза, после чего калькулятор рассчитывает цену перевозки по тарифам.</p>
+					<p class="f-15 mt-3">В «дополнительные услуги» транспортной логистической компании KLARIN GL входит:</p>
+					<p class="f-15 mt-3">
+						<ul class="atf-list-menu">
+							<li><i class="fas fa-caret-right me-2"></i>Возврат документации (Клиенты компании могут заказать возврат документов при условии заказа услуги «Доставка до двери получателя».);</li>
+							<li><i class="fas fa-caret-right me-2"></i>Страхование грузов (ставка страхования составляет 0,12% от заявленной стоимости груза, и полис выдается на каждую партию груза);</li>
+							<li><i class="fas fa-caret-right me-2"></i>Погрузочно-разгрузочные работы (действительно при заборе ОТ и доставке грузов ДО двери заказчика);</li>
+							<li><i class="fas fa-caret-right me-2"></i>Дополнительная упаковка (для большей сохранности товара/груза);</li>
+							<li><i class="fas fa-caret-right me-2"></i>Хранение груза (можно хранить на филиале компании товар до 7 дней).</li>
+						</ul>
+					</p>
+					<p class="f-15 mt-3">Мы выполняем грузоперевозки любой сложности, руководствуемся критериями честности и прозрачности в работе, критериями мобильности и надежности.</p>
+					<p class="f-15 mt-3">Команда транспортной логистической компании состоит из профессионалов своего дела. Если у вас есть вопросы, Вы можете обратиться к специалистам на горячей линии или написать нам сообщение.</p>					
+                    <div class="atf-main-btn mt-4"> 
+                        <a class="atf-themes-btn  atf-themes-btn-one" href="{% url 'index:contacts' %}">
+                            <i class="btn-curve"></i>
+                            <span class="btn-title">Написать сообщение</span>
+                        </a>
+                    </div>
+                </div>
+            </div><!--- END COL -->
+            
+            <div class="col-lg-6 col-12">
+                <div class="row atf-md-about align-items-center">
+                    <div class="col-12" data-aos="fade-up">
+                        <div class="atf-singl-video">
+                            <div class="atf-about-img text-lg-center text-center mb-3">
+                                <img class="img-fluid" src="{% static 'index_app/assets/img/about/about-3.jpg' %}" alt="about">
+                            </div>
+                            <div class="waves-box">
+                                <a href="https://www.youtube.com/embed/VtXrZp0S1U8" data-rel="lightcase:myCollection" class="iq-video"> <i class="fi fi-rr-play"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6" data-aos="fade-up">
+                        <img class="img-fluid" src="{% static 'index_app/assets/img/about/about-2.jpg' %}" alt="About">
+                    </div>
+                    <div class="col-6" data-aos="fade-up">
+                        <img class="img-fluid" src="{% static 'index_app/assets/img/about/about-1.jpg' %}" alt="about">
+                    </div>
+                    
+                </div>
+            </div><!--- END COL -->
+        </div><!--- END ROW -->
+    </div><!--- END CONTAINER -->
+</section>
+<!-- END ABOUT -->
 
 {% endblock %}

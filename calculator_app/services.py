@@ -306,4 +306,4 @@ def condition_50(item_order: dict) -> bool:
 
 
 def calculate_item_order(item_order: dict) -> Decimal:
-    pass
+    return Decimal("0")
