@@ -131,16 +131,6 @@ class ContactsView(View):
                       context)
 
 
-class BranchOfficesView(View):
-    def get(self, request: HttpRequest) -> HttpResponse:
-        context = {
-            "const": Const.info()
-        }
-        return render(request,
-                      "index_app/branch_offices.html",
-                      context)
-
-
 class ServicesView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {

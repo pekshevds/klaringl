@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', include("index_app.urls", namespace="index")),
+    path('branch-offices/', include("branch_app.urls", namespace="branch")),
     path('api-auth/',
          include('rest_framework.urls', namespace='rest_framework')),
     path('api/v1/', include('api_app.urls', namespace='api_app')),
