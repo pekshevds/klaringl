@@ -2,6 +2,11 @@ from django.db import models
 from server.base import Directory
 
 
+class ActiveBranchManager(models.Manager):
+    def get_queryset(self) -> models.QuerySet:
+        return super().get_queryset().filter(active=True)
+
+
 class Branch(Directory):
 
     address = models.CharField(
@@ -30,6 +35,9 @@ class Branch(Directory):
         verbose_name="Активен",
         default=True
     )
+
+    objects = models.Manager()
+    active_branchs = ActiveBranchManager()
 
     class Meta:
         verbose_name = "Филиал"

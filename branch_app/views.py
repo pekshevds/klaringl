@@ -11,7 +11,7 @@ class BranchOfficesView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             "const": Const.info(),
-            "items": Branch.objects.filter(active=True)
+            "items": Branch.active_branchs()
         }
         return render(request,
                       "branch_app/index.html",
