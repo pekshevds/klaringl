@@ -18,11 +18,17 @@
 <!-- .atf-page-heading -->
 
 <!-- START ABOUT -->
-{% for item in items %}
-<section id="contact_info" class="atf-section-padding">
-    <div class="container">		
+
+<section id="contact_info">
+    <div class="container">
+        <!-- <div class="row">
+            <div class="col-lg-4 atf-section-padding">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d8015.198595761624!2d30.29517880983911!3d59.852467420007635!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46963bbb86de9da3%3A0x2e537ed7886f953!2sKLARIN%20GL!5e0!3m2!1sru!2sru!4v1715745013056!5m2!1sru!2sru" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>            
+        </div> -->
         <div class="row">
-            <div class="col-lg-12">
+            {% for item in items %}
+            <div class="col-lg-4 atf-section-padding">
                 <div class="atf-contact-info ps-lg-5" data-aos="fade-up">
                     <div class="atf-section-title title-color">
                         <h3>{{ item.name }}</h3>
@@ -59,11 +65,12 @@
                         </div>
                     </div>
                 </div><!--- END CONTACT -->
-            </div><!--- END COL -->            
+            </div><!--- END COL -->
+            {% endfor %}
         </div><!--- END ROW -->		
     </div><!--- END CONTAINER -->
 </section>
 <!-- END ABOUT -->
-{% endfor %}
+
 
 {% endblock %}
