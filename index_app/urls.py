@@ -15,7 +15,8 @@ from index_app.views import (
     SolutionsForOnlineStoresView,
     DocumentationView,
     ContactsView,
-    MessageView
+    MessageView,
+    BranchOfficesView,
 )
 
 app_name = "index"
@@ -29,20 +30,28 @@ urlpatterns = [
     path("about/vacancies/<str:id>", VacancyView.as_view(), name="open-vacancy"),
     path("about/cooperation/", CooperationView.as_view(), name="cooperation"),
     path("about/blog/", BlogView.as_view(), name="blog"),
-
+    path("branch-offices/", BranchOfficesView.as_view(), name="branch-offices"),
     path("services/", ServicesView.as_view(), name="services"),
-    path("services/delivery_of_groupage_cargo/",
-         DeliveryOfGroupageCargoView.as_view(),
-         name="delivery-of-groupage-cargo"),
-    path("services/additional_services/",
-         AdditionalServicesView.as_view(),
-         name="additional-services"),
-    path("services/complete_solutions_for_business/",
-         CompleteSolutionsForBusinessView.as_view(),
-         name="complete-solutions-for-business"),
-    path("services/solutions_for_online_stores/",
-         SolutionsForOnlineStoresView.as_view(),
-         name="solutions-for-online-stores"),
+    path(
+        "services/delivery_of_groupage_cargo/",
+        DeliveryOfGroupageCargoView.as_view(),
+        name="delivery-of-groupage-cargo",
+    ),
+    path(
+        "services/additional_services/",
+        AdditionalServicesView.as_view(),
+        name="additional-services",
+    ),
+    path(
+        "services/complete_solutions_for_business/",
+        CompleteSolutionsForBusinessView.as_view(),
+        name="complete-solutions-for-business",
+    ),
+    path(
+        "services/solutions_for_online_stores/",
+        SolutionsForOnlineStoresView.as_view(),
+        name="solutions-for-online-stores",
+    ),
     path("documentation/", DocumentationView.as_view(), name="documentation"),
     path("contacts/", ContactsView.as_view(), name="contacts"),
     path("message/", MessageView.as_view(), name="message"),

@@ -115,6 +115,7 @@ class LastMileRate(Directory):
         verbose_name_plural = "Тарифы на экспедирование"
         ordering = ["rate_item"]
 
+
 class Rate(Base):
     city_from = models.ForeignKey(
         City,

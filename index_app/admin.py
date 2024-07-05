@@ -1,17 +1,24 @@
 from django.contrib import admin
-from index_app.models import (
-    News,
-    Vacancy,
-    Document,
-    Tag,
-    Const
-)
+from index_app.models import News, Vacancy, Document, Tag, Branch, Const
+
+
+@admin.register(Branch)
+class BranchAdmin(admin.ModelAdmin):
+    list_display = [
+        "name",
+        "created_at",
+        "updated_at",
+        "address",
+        "email",
+        "tel",
+        "active",
+    ]
+    search_fields = ["name", "address"]
 
 
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ["name", "created_at", "updated_at",
-                    "active", "author", "tag"]
+    list_display = ["name", "created_at", "updated_at", "active", "author", "tag"]
     search_fields = ["name"]
     list_filter = ["active", "author", "tag"]
 
