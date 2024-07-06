@@ -5,11 +5,20 @@ from django.core.paginator import Paginator
 from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import News, Vacancy, Document, Const, Branch
 
+from calculator_app.models import (
+    Rate
+)
+
 
 class IndexView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         news = News.last_news.all()
-        context = {"const": Const.info(), "news": news}
+        context = {
+            "const": Const.info(), 
+            "cities_list": Rate.cities_to,
+            "cities_from_list":  Rate.cities_from,
+            "news": news
+        }
         return render(request, "index_app/index.html", context)
 
 

@@ -1,3 +1,19 @@
+.padding-right-0 {
+    padding-right: 0px !important;
+}
+
+.padding-0 {
+    padding: 0px !important;
+}
+
+.text-align-right {
+    text-align: right !important;
+}
+
+.text-align-left {
+    text-align: left !important;
+}
+
 .order-price-block h4 {
     text-align: end;
     font-size: 36px;
@@ -58,7 +74,7 @@
     top: 100%;
     border-top: 0;
     border-radius: 0 0 5px 5px;
-    max-height: 500px;
+    max-height: 450px;
     overflow-y: scroll;
     padding: 80px 0 0
 }

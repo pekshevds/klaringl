@@ -1,122 +1,156 @@
  {% load static %}
 
+ {% block local_libraries %}
+    <script src="https://unpkg.com/vue@3.0.1/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+
+{% endblock %}
+
  <!-- START FACILITIES -->
  <section id="booking" class="atf-section-padding">
     <div class="container">
         <div class="row">
-            <div class="col-lg-7" data-aos="fade-up">
-                <div class="atf-section-title  text-start">
+            <div class="col-lg-7" data-aos="fade-up" id="fast_calculate_form">
+                <div class="atf-section-title text-start">
                     <h5 class="sub-title">Запрос расчета перевозки</h5>
-                    <h2 class="title-color">Booking your Logistic <span>Transportation</span> Best Product Solution in the world</h2>
+                    {% comment %} <h2 class="title-color">Booking your Logistic <span>Transportation</span> Best Product Solution in the world</h2> {% endcomment %}
                     <div class="row mt-5">
                         <div class="col-lg-12">
                             <div class="atf-booking-form">
-                                <form action="#" class="atf-booking-form-box row">
+                                <div class="atf-booking-form-box row">
                                     <div class="atf-booking-form-item col-lg-6 col-md-6">
                                         <div class="form-group mb-0">
-                                            <input type="text" name="from" class="form-control" id="from" placeholder="City from" required="required">
-                                            <div class="input-group-addon"></div>
+                                            <select 
+                                                id="departureCity" 
+                                                class="nice-select departureCity"
+                                            >
+                                                <option data-display="Выберите город" value="">...</option>
+                                                {% for city in cities_from_list %}
+                                                <option value="{{ city.name }}">{{ city.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <p 
+                                                v-if="errors.cityFromId" 
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
                                         </div>
                                     </div> 
-
                                     <div class="atf-booking-form-item col-lg-6 col-md-6">
                                         <div class="form-group mb-0">
-                                            <input type="text" name="to" class="form-control" id="to" placeholder="City to" required="required">
-                                            <div class="input-group-addon"><i class="fas fa-phone"></i></div>
+                                            <select 
+                                                id="receivingCity" 
+                                                class="nice-select receivingCity"
+                                            >
+                                                <option data-display="Выберите город" value="">...</option>
+                                                {% for city in cities_list %}
+                                                <option value="{{ city.name }}">{{ city.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <p 
+                                                v-if="errors.city_to_id" 
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
                                         </div>
                                     </div> 
                                     
-                                    <div class="atf-booking-form-item col-lg-4 col-md-6">	
-                                        <select class="nice-select">
-                                            <option>Fright Type</option>
-                                            <option>Hair</option>
-                                            <option>Spa</option>
-                                            <option>Salon</option>
-                                            <option>Cutting</option>
-                                        </select>
-                                    </div> 
-                                    <div class="atf-booking-form-item col-lg-4 col-md-6">	
-                                        <select class="nice-select">
-                                            <option>Departure</option>
-                                            <option>Hair</option>
-                                            <option>Spa</option>
-                                            <option>Salon</option>
-                                            <option>Cutting</option>
-                                        </select>
-                                    </div> 
-                                    <div class="atf-booking-form-item col-lg-4 col-md-6">	
-                                        <select class="nice-select">
-                                            <option>Delivery</option>
-                                            <option>Hair</option>
-                                            <option>Spa</option>
-                                            <option>Salon</option>
-                                            <option>Cutting</option>
-                                        </select>
+                                    <div class="atf-booking-form-item col-12 col-md-6">
+                                        <div class="form-group mb-0">
+                                            <input 
+                                                type="number" 
+                                                v-model="volume" 
+                                                class="form-control" 
+                                                placeholder="Объем, м3"
+                                                min="0"
+                                            >
+                                        </div>
+                                        <p 
+                                            v-if="errors.volume"
+                                            class="asOrderFormErrorMessage"
+                                        >
+                                            Обязательное поле!
+                                        </p>
                                     </div>
-
-                                    <div class="atf-booking-form-item col-lg-4 col-md-6">	
-                                        <select class="nice-select">
-                                            <option>Height</option>
-                                            <option>Hair</option>
-                                            <option>Spa</option>
-                                            <option>Salon</option>
-                                            <option>Cutting</option>
-                                        </select>
-                                    </div> 
-                                    <div class="atf-booking-form-item col-lg-4 col-md-6">	
-                                        <select class="nice-select">
-                                            <option>Weight</option>
-                                            <option>Hair</option>
-                                            <option>Spa</option>
-                                            <option>Salon</option>
-                                            <option>Cutting</option>
-                                        </select>
-                                    </div> 
-                                    <div class="atf-booking-form-item col-lg-4 col-md-6">	
-                                        <select class="nice-select">
-                                            <option>Income</option>
-                                            <option>Hair</option>
-                                            <option>Spa</option>
-                                            <option>Salon</option>
-                                            <option>Cutting</option>
-                                        </select>
+                                    <div class="atf-booking-form-item col-12 col-md-6">
+                                        <div class="form-group mb-0">
+                                            <input 
+                                                type="number" 
+                                                v-model="weight" 
+                                                class="form-control" 
+                                                placeholder="Вес, кг"
+                                                min="0"
+                                            >
+                                        </div>
+                                        <p  
+                                            v-if="errors.weight"
+                                            class="asOrderFormErrorMessage"
+                                        >
+                                            Обязательное поле!
+                                        </p>
                                     </div>
-                                    
-                                    <div class="mt-4 col-lg-8 col-md-8">
-                                        <div class="form-check form-check-inline">
-                                          <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                          <label class="form-check-label" for="inlineCheckbox1">Packging</label>
+                                    <div class="mt-3 row col-12 flex-row-reverse padding-right-0">
+                                        <div 
+                                            class="col-lg-4 col-md-4 padding-0 text-align-right">
+                                            <div class="atf-main-btn"> 
+                                                <button 
+                                                    v-if="loading"
+                                                    class="atf-themes-btn atf-themes-btn-one" 
+                                                    style="padding: 5px 56px 3px;"
+                                                >
+                                                    <div class="spinner-border text-light" role="status">
+                                                    </div>
+                                                </button>
+                                                <button 
+                                                    v-else
+                                                    @click="fastCalulateOrder" 
+                                                    class="atf-themes-btn  atf-themes-btn-one"
+                                                >
+                                                    <i class="btn-curve"></i>
+                                                    <span class="btn-title">
+                                                        Рассчитать
+                                                    </span>
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="form-check form-check-inline">
-                                          <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                                          <label class="form-check-label" for="inlineCheckbox2">Delivery</label>
+                                        <div v-if="price" class="col-8 col-md-8 order-price-block">
+                                            <h4 class="text-align-left">${ orderPrice }$ &#8381;</h4>
                                         </div>
-                                        <div class="form-check form-check-inline">
-                                          <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
-                                          <label class="form-check-label" for="inlineCheckbox2">Width</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                          <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option4">
-                                          <label class="form-check-label" for="inlineCheckbox2">Height</label>
-                                        </div>
-                                        
                                     </div>
-                                    <div class="mt-3 col-lg-4 col-md-4">
-                                        <div class="atf-main-btn"> 
-                                            <a class="atf-themes-btn  atf-themes-btn-one" href="booking.html.htm">
+                                    <div 
+                                        v-if="price"
+                                        class="mt-3 row col-12 flex-row-reverse padding-right-0">
+                                        <div class="col-lg-6 col-md-6 padding-0 text-align-right"
+                                        >
+                                            <a 
+                                                class="atf-themes-btn atf-themes-btn-one" 
+                                                href="{% url 'calculator:calc' %}"
+                                            >
                                                 <i class="btn-curve"></i>
-                                                <span class="btn-title">Booking Now</span>
+                                                <span class="btn-title">Подробный расчет</span>
                                             </a>
                                         </div>
                                     </div>
-                                </form>
+                                    <div v-if="serverErrors.length > 0">
+                                        <div class="atf-facilities-services d-flex mt-2 text-left">
+                                            <div class="atf-facilities-text ms-3">
+                                                <p 
+                                                    v-for="error in serverErrors" 
+                                                    v-bind:key="error.id"
+                                                >
+                                                ${error}$
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div><!--- END COL -->
-            
-            
             <div class="col-lg-5">
                 <div class="atf-about-image">
                     <div class="atf-about-images text-center">
@@ -131,4 +165,93 @@
 </section>
 <!-- END FACILITIES -->
 
-{% include "index_app/includes/checkstatus.html" %}
+{% block local_scripts %}
+<script src="{% static 'index_app/assets/js/jquery-1.12.4.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('.receivingCity').niceSelect();
+        $('.departureCity').niceSelect();
+    });
+</script>
+
+<script type="module">
+    const { createApp } = Vue
+    const FastcalculateForm = {
+        data() {
+            return {
+                volume: "",
+                weight: "",
+                errors: {},
+                price: 0,
+                serverErrors: [],
+                loading: false,
+            }
+        },
+        delimiters: ["${", "}$"],
+        computed: {
+            orderPrice () {
+                return Math.floor(this.price).toLocaleString()
+            },
+            loadingStatus () {
+                return this.loading
+            }
+        },
+        methods: {
+            checkCalculateValidation () {
+                let isValidCalcForm = true
+                this.errors = {}
+                let city_from_id = $('#departureCity').val()
+                if (!city_from_id) {
+                    isValidCalcForm = false
+                    this.errors.cityFromId = true
+                }
+                let city_to_id = $('#receivingCity').val()
+                if (!city_to_id) {
+                    isValidCalcForm = false
+                    this.errors.city_to_id = true
+                }
+                if (!this.volume) {
+                    isValidCalcForm = false
+                    this.errors.volume = true
+                }
+                if (!this.weight) {
+                    isValidCalcForm = false
+                    this.errors.weight = true
+                }
+                return isValidCalcForm
+            },
+            fastCalulateOrder () {
+                this.price = 0
+                this.serverErrors = []
+                if (this.checkCalculateValidation()) {
+                    let data = {
+                        city_from_name: $('#departureCity').val(),
+                        city_to_name: $('#receivingCity').val(),
+                        weight: parseFloat(this.weight ? this.weight : 0),
+                        volume: parseFloat(this.volume ? this.volume : 0),
+                    }
+                    let url = `${window.location.origin}/api/v1/calculator/fast-calculate/`
+                    this.loading = true
+                    axios({
+                        method: 'post',
+                        url: url,
+                        data: { "data": data},
+                    }).then((resp) => {
+                        this.price = resp.data.data.cost
+                    }).catch(error => {
+                        if (error.response.status === 404) {
+                            this.serverErrors.push("Такого маршрута не существует, выберите другие города")
+                        } else {
+                            this.serverErrors.push("Сервис временно недоступен, попробуйте сделать расчет позднее")
+                        }
+                        console.log(error)
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                }
+            }
+        }
+    }
+    createApp(FastcalculateForm).mount('#fast_calculate_form')
+</script>
+{% endblock %}
