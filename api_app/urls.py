@@ -9,6 +9,7 @@ from calculator_app.views import (
     CalculateAPIView,
 )
 from order_app.views import CargoAPIView, OrderAPIView, CheckStatusAPIView
+from api_app.views import CheckConnectionAPIView
 
 
 app_name = "api"
@@ -28,4 +29,7 @@ urlpatterns = [
     path("order/orders/", OrderAPIView.as_view(), name="order"),
     path("order/check-status/", CheckStatusAPIView.as_view(), name="check-status"),
     path("api-token-auth/", views.obtain_auth_token),
+    path(
+        "check-connection/", CheckConnectionAPIView.as_view(), name="check-connection"
+    ),
 ]
