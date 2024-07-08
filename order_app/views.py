@@ -1,37 +1,23 @@
 from django.http import HttpRequest, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import (
-    permissions,
-    authentication
-)
-from order_app.models import (
-    Cargo,
-    Order
-)
-from order_app.serializers import (
-    CargorSerializer,
-    OrderSerializer
-)
+from rest_framework import permissions, authentication
+from order_app.models import Cargo, Order
+from order_app.serializers import CargorSerializer, OrderSerializer
 
 
 class CargoAPIView(APIView):
-
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request: HttpRequest) -> HttpResponse:
         queryset = Cargo.objects.all()
         serializer = CargorSerializer(queryset, many=True)
-        response = {"data": serializer.data,
-                    "count": len(queryset),
-                    "success": True}
+        response = {"data": serializer.data, "count": len(queryset), "success": True}
         return Response(response)
 
     def post(self, request: HttpRequest) -> Response:
-        response = {"data": [],
-                    "count": 0,
-                    "success": False}
+        response = {"data": [], "count": 0, "success": False}
         data = request.data.get("data", None)
         if not data:
             return Response(response)
@@ -45,22 +31,17 @@ class CargoAPIView(APIView):
 
 
 class OrderAPIView(APIView):
-
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request: HttpRequest) -> HttpResponse:
         queryset = Order.objects.all()
         serializer = OrderSerializer(queryset, many=True)
-        response = {"data": serializer.data,
-                    "count": len(queryset),
-                    "success": True}
+        response = {"data": serializer.data, "count": len(queryset), "success": True}
         return Response(response)
 
     def post(self, request: HttpRequest) -> Response:
-        response = {"data": [],
-                    "count": 0,
-                    "success": False}
+        response = {"data": [], "count": 0, "success": False}
         data = request.data.get("data", None)
         if not data:
             return Response(response)
@@ -71,4 +52,19 @@ class OrderAPIView(APIView):
             response["data"] = serializer.data
             response["count"] = len(serializer.data)
             response["success"] = True
+        return Response(response)
+
+
+class CheckStatusAPIView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request: HttpRequest) -> Response:
+        response = {"data": [], "count": 0, "success": False}
+        num = request.GET.get("num")
+        if not num:
+            return Response(response)
+        response["data"] = [{"status": "some status"}]
+        response["count"] = 1
+        response["success"] = True
         return Response(response)
