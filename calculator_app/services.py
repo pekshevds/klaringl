@@ -1,11 +1,11 @@
 from decimal import Decimal
 from datetime import time
 from django.shortcuts import get_object_or_404
-from calculator_app.models import (
-    Rate,
-    City
-)
+from calculator_app.models import Rate, City
 from index_app.models import Const
+
+
+decimal_0 = Decimal("0")
 
 
 def city_by_name(city_name: str) -> City | None:
@@ -16,23 +16,23 @@ def city_by_name(city_name: str) -> City | None:
     return city
 
 
-def rate_by_cities(city_from: City, city_to: City) -> Rate | None:
+def city_by_id(city_id: str) -> City | None:
     try:
-        # rate = get_object_or_404(Rate, city_from=city_from, city_to=city_to)
-        rate = Rate.objects.filter(
-            city_from=city_from, city_to=city_to
-        ).first()
-    except Rate.DoesNotExist:
-        rate = None
-    return rate
+        city = get_object_or_404(City, id=city_id)
+    except City.DoesNotExist:
+        city = None
+    return city
+
+
+def rate_by_cities(city_from: City, city_to: City) -> Rate | None:
+    return Rate.objects.filter(city_from=city_from, city_to=city_to).first()
 
 
 def calculate_cost_by_weight(rate: Rate, weight: Decimal) -> Decimal:
-    docimal_0 = Decimal("0")
     if not rate:
-        return docimal_0
-    cost_by_weight = docimal_0
-    if docimal_0 < weight <= rate.cost_by_weight_0_25:
+        return decimal_0
+    cost_by_weight = decimal_0
+    if decimal_0 < weight <= rate.cost_by_weight_0_25:
         cost_by_weight = rate.cost_by_weight_0_25
 
     if rate.cost_by_weight_0_25 < weight <= rate.cost_by_weight_25_50:
@@ -62,8 +62,7 @@ def calculate_cost_by_weight(rate: Rate, weight: Decimal) -> Decimal:
     if rate.cost_by_weight_2000_3000 < weight <= rate.cost_by_weight_3000_5000:
         cost_by_weight = rate.cost_by_weight_3000_5000 * weight
 
-    if rate.cost_by_weight_3000_5000 < weight\
-            <= rate.cost_by_weight_5000_10000:
+    if rate.cost_by_weight_3000_5000 < weight <= rate.cost_by_weight_5000_10000:
         cost_by_weight = rate.cost_by_weight_5000_10000 * weight
 
     if weight > rate.cost_by_weight_10000_inf:
@@ -72,11 +71,10 @@ def calculate_cost_by_weight(rate: Rate, weight: Decimal) -> Decimal:
 
 
 def calculate_cost_by_volume(rate: Rate, volume: Decimal) -> Decimal:
-    docimal_0 = Decimal("0")
     if not rate:
-        return docimal_0
-    cost_by_volume = docimal_0
-    if docimal_0 < volume <= rate.cost_by_volume_0_01:
+        return decimal_0
+    cost_by_volume = decimal_0
+    if decimal_0 < volume <= rate.cost_by_volume_0_01:
         cost_by_volume = rate.cost_by_volume_0_01 * volume
 
     if rate.cost_by_volume_0_01 < volume <= rate.cost_by_volume_01_02:
@@ -115,25 +113,26 @@ def calculate_cost_by_volume(rate: Rate, volume: Decimal) -> Decimal:
 
 
 def calculate_delivery_cost_by_rate(
-        rate: Rate,
-        weight: Decimal = 0,
-        volume: Decimal = 0) -> Decimal:
-
+    rate: Rate, weight: Decimal = decimal_0, volume: Decimal = decimal_0
+) -> Decimal:
     cost_by_weight = calculate_cost_by_weight(rate, weight)
     cost_by_volume = calculate_cost_by_volume(rate, volume)
     return max(cost_by_weight, cost_by_volume)
 
 
 def calculate_delivery_cost(
-        city_from_name: str,
-        city_to_name: str,
-        weight: Decimal = 0,
-        volume: Decimal = 0) -> Decimal:
-
-    city_from = city_by_name(city_name=city_from_name)
-    city_to = city_by_name(city_name=city_to_name)
+    city_from_id: str,
+    city_to_id: str,
+    weight: Decimal = decimal_0,
+    volume: Decimal = decimal_0,
+) -> Decimal:
+    city_from = city_by_id(city_id=city_from_id)
+    city_to = city_by_id(city_id=city_to_id)
+    if city_from is None or city_to is None:
+        return decimal_0
     rate = rate_by_cities(city_from=city_from, city_to=city_to)
-
+    if rate is None:
+        return decimal_0
     cost_by_weight = calculate_cost_by_weight(rate, weight)
     cost_by_volume = calculate_cost_by_volume(rate, volume)
 
@@ -211,8 +210,8 @@ def calculate_palletizing() -> Decimal:
 
 
 def calculate_base_cost(order: dict) -> Decimal:
-    total_weight = (sum([item.get("weight", 0) for item in order["items"]]))
-    total_volume = (sum([item.get("volume", 0) for item in order["items"]]))
+    total_weight = sum([item.get("weight", 0) for item in order["items"]])
+    total_volume = sum([item.get("volume", 0) for item in order["items"]])
     city_from = City.find_by_id(order.get("city_from_id"))
     city_to = City.find_by_id(order.get("city_to_id"))
     rate = rate_by_cities(city_from, city_to)
@@ -239,15 +238,19 @@ def calculate_order(order: dict) -> Decimal:
         cost += calculate_insurance((order.get("declared_cost", 0)))
     k_oversize = Decimal("1")
     for item in order["items"]:
-        if item.get("prr_from", False) and\
-            order.get("from_address", False) and\
-            item.get("weight", 0) < Decimal("35") and\
-                item.get("volume", 0) < Decimal("0.3"):
+        if (
+            item.get("prr_from", False)
+            and order.get("from_address", False)
+            and item.get("weight", 0) < Decimal("35")
+            and item.get("volume", 0) < Decimal("0.3")
+        ):
             cost += calculate_prr((item.get("weight", 0)))
-        if item.get("prr_to", False) and\
-            order.get("to_address", False) and\
-            item.get("weight", 0) < Decimal("35") and\
-                item.get("volume", 0) < Decimal("0.3"):
+        if (
+            item.get("prr_to", False)
+            and order.get("to_address", False)
+            and item.get("weight", 0) < Decimal("35")
+            and item.get("volume", 0) < Decimal("0.3")
+        ):
             cost += calculate_prr((item.get("weight", 0)))
         if item.get("hard_packaging", False):
             cost += calculate_hard_packaging((item.get("volume", 0)))
@@ -274,36 +277,44 @@ def calclulate_k_oversize(item_order: dict) -> Decimal:
 
 
 def condition_10(item_order: dict) -> bool:
-    return item_order.get("weight", 0) > 500 or\
-        item_order.get("volume", 0) > 2 or\
-        item_order.get("length", 0) > 3 or\
-        item_order.get("width", 0) > 3 or\
-        item_order.get("height", 0) > 3
+    return (
+        item_order.get("weight", 0) > 500
+        or item_order.get("volume", 0) > 2
+        or item_order.get("length", 0) > 3
+        or item_order.get("width", 0) > 3
+        or item_order.get("height", 0) > 3
+    )
 
 
 def condition_20(item_order: dict) -> bool:
-    return item_order.get("weight", 0) > 700 or\
-        item_order.get("volume", 0) > 3 or\
-        item_order.get("length", 0) > 4 or\
-        item_order.get("width", 0) > 4 or\
-        item_order.get("height", 0) > 4
+    return (
+        item_order.get("weight", 0) > 700
+        or item_order.get("volume", 0) > 3
+        or item_order.get("length", 0) > 4
+        or item_order.get("width", 0) > 4
+        or item_order.get("height", 0) > 4
+    )
 
 
 def condition_30(item_order: dict) -> bool:
-    return item_order.get("weight", 0) > 1000 or\
-        item_order.get("volume", 0) > 4 or\
-        item_order.get("length", 0) > 5 or\
-        item_order.get("width", 0) > 5 or\
-        item_order.get("height", 0) > 5
+    return (
+        item_order.get("weight", 0) > 1000
+        or item_order.get("volume", 0) > 4
+        or item_order.get("length", 0) > 5
+        or item_order.get("width", 0) > 5
+        or item_order.get("height", 0) > 5
+    )
 
 
 def condition_50(item_order: dict) -> bool:
-    return item_order.get("weight", 0) > 1500 or\
-        item_order.get("volume", 0) > 5 or\
-        item_order.get("length", 0) > 7 or\
-        item_order.get("width", 0) > 7 or\
-        item_order.get("height", 0) > 7
+    return (
+        item_order.get("weight", 0) > 1500
+        or item_order.get("volume", 0) > 5
+        or item_order.get("length", 0) > 7
+        or item_order.get("width", 0) > 7
+        or item_order.get("height", 0) > 7
+    )
 
 
 def calculate_item_order(item_order: dict) -> Decimal:
-    return Decimal("0")
+    return decimal_0
