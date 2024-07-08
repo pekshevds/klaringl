@@ -1,11 +1,5 @@
  {% load static %}
 
- {% block local_libraries %}
-    <script src="https://unpkg.com/vue@3.0.1/dist/vue.global.prod.js"></script>
-    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
-
-{% endblock %}
-
  <!-- START FACILITIES -->
  <section id="booking" class="atf-section-padding">
     <div class="container">
@@ -133,18 +127,20 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div v-if="serverErrors.length > 0">
-                                        <div class="atf-facilities-services d-flex mt-2 text-left">
-                                            <div class="atf-facilities-text ms-3">
-                                                <p 
-                                                    v-for="error in serverErrors" 
-                                                    v-bind:key="error.id"
-                                                >
-                                                ${error}$
-                                                </p>
+                                    <Transition>
+                                        <div v-if="serverErrors.length > 0">
+                                            <div class="atf-facilities-services d-flex mt-2 text-left">
+                                                <div class="atf-facilities-text ms-3">
+                                                    <p 
+                                                        v-for="error in serverErrors" 
+                                                        v-bind:key="error.id"
+                                                    >
+                                                    ${error}$
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>  
+                                    </Transition>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +216,7 @@
                 }
                 return isValidCalcForm
             },
-            fastCalulateOrder () {
+            async fastCalulateOrder () {
                 this.price = 0
                 this.serverErrors = []
                 if (this.checkCalculateValidation()) {
@@ -232,7 +228,7 @@
                     }
                     let url = `${window.location.origin}/api/v1/calculator/fast-calculate/`
                     this.loading = true
-                    axios({
+                    await axios({
                         method: 'post',
                         url: url,
                         data: { "data": data},

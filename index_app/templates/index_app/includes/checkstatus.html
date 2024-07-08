@@ -1,32 +1,72 @@
-<!-- START FACILITIES -->
-<section id="booking" class="atf-section-padding">
-    <div class="container">
 
+<script src="https://unpkg.com/vue@3.0.1/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+<!-- START FACILITIES -->
+<section class="atf-section-padding">
+    <div class="container">
         <div class="row">
             <div class="col-lg-7" data-aos="fade-up">
-                <div class="atf-section-title  text-start">
+                <div id="check_status_form" class="atf-section-title text-start">
                     <h5 class="sub-title">Проверка статуса</h5>
                     <h2 class="title-color">Booking your Logistic <span>Transportation</span> Best Product Solution in the world</h2>
                     <div class="row mt-5">
                         <div class="col-lg-12">
                             <div class="atf-booking-form">
-                                <form action="#" class="atf-booking-form-box row">
+                                <div class="atf-booking-form-box row">
                                     <div class="atf-booking-form-item col-lg-6 col-md-6">
                                         <div class="form-group mb-0">
-                                            <input type="text" name="name" class="form-control" id="name1" placeholder="Order id" required="required">
-                                            <div class="input-group-addon"><i class="fas fa-user"></i></div>
+                                            <input
+                                                v-model="orderId"
+                                                type="text" 
+                                                name="name" 
+                                                class="form-control"
+                                                placeholder="Номер заказа"
+                                            >
+                                            <div class="input-group-addon"><i class="fas fa-location-dot"></i></div>
                                         </div>
                                     </div>                                     
                                     <div class="mt-3 col-lg-4 col-md-4">
                                         <div class="atf-main-btn"> 
-                                            <a class="atf-themes-btn  atf-themes-btn-one" href="booking.html.htm">
+                                            <button 
+                                                v-if="loading"
+                                                class="atf-themes-btn atf-themes-btn-one" 
+                                                style="padding: 5px 56px 3px;"
+                                            >
+                                                <div class="spinner-border text-light" role="status">
+                                                </div>
+                                            </button>
+                                            <button
+                                                v-else
+                                                @click="checkStatusOfOrder"
+                                                class="atf-themes-btn atf-themes-btn-one">
                                                 <i class="btn-curve"></i>
-                                                <span class="btn-title">Booking Now</span>
-                                            </a>
+                                                <span class="btn-title">Отследить</span>
+                                            </button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
+                            <Transition>
+                                <div v-if="serverErrors.length > 0" class="atf-facilities-services d-flex mt-2 text-left">
+                                    <div class="atf-facilities-text ms-3">
+                                        <p 
+                                            v-for="error in serverErrors" 
+                                            v-bind:key="error.id"
+                                        >
+                                        ${error}$
+                                        </p>
+                                    </div>
+                                </div>
+                            </Transition>
+                            <Transition>
+                                <div v-if="orderInfo" class="atf-facilities-services d-flex mt-2 text-left">
+                                    <div class="atf-facilities-text ms-3">
+                                        <p>
+                                        ${orderInfo}$
+                                        </p>
+                                    </div>
+                                </div>
+                            </Transition>
                         </div>
                     </div>
                 </div>
@@ -35,3 +75,46 @@
     </div><!--- END CONTAINER -->
 </section>
 <!-- END FACILITIES -->
+
+<script type="module">
+    const { createApp } = Vue
+    const CheckStatus = {
+        data () {
+            return {
+                orderId: "",
+                loading: false,
+                orderInfo: "",
+                errors: {},
+                serverErrors: []
+            }
+        },
+        delimiters: ["${", "}$"],
+        methods: {
+            checkStatusOfOrder () {
+                this.serverErrors = []
+                this.orderInfo = ""
+                if (this.orderId != "") {
+                    this.loading = true
+                    let data = {
+                        orderId: this.orderId
+                    }
+                    let url = `${window.location.origin}/api/v1/calculator/fast-calculate/`
+                    this.loading = true
+                    axios({
+                        method: 'post',
+                        url: url,
+                        data: {"data": data}
+                    }).then((resp) => {
+                        this.orderInfo = resp.data.data
+                    }).catch(error => {
+                        this.serverErrors.push("Сервис временно недоступен, попробуйте сделать запрос позднее")
+                        console.log(error)
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                }
+            }
+        }
+    }
+    createApp(CheckStatus).mount('#check_status_form')
+</script>
