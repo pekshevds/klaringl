@@ -8,11 +8,11 @@
             <div class="col-lg-7" data-aos="fade-up">
                 <div id="check_status_form" class="atf-section-title text-start">
                     <h5 class="sub-title">Проверка статуса</h5>
-                    <h2 class="title-color">Booking your Logistic <span>Transportation</span> Best Product Solution in the world</h2>
+                    {% comment %} <h2 class="title-color">Booking your Logistic <span>Transportation</span> Best Product Solution in the world</h2> {% endcomment %}
                     <div class="row mt-5">
                         <div class="col-lg-12">
                             <div class="atf-booking-form">
-                                <div class="atf-booking-form-box row">
+                                <div class="atf-booking-form-box row justify-content-around">
                                     <div class="atf-booking-form-item col-lg-6 col-md-6">
                                         <div class="form-group mb-0">
                                             <input
@@ -21,6 +21,8 @@
                                                 name="name" 
                                                 class="form-control"
                                                 placeholder="Номер заказа"
+                                                maxlength="11"
+                                                @input="orderInfo=''"
                                             >
                                             <div class="input-group-addon"><i class="fas fa-location-dot"></i></div>
                                         </div>
@@ -95,17 +97,18 @@
                 this.orderInfo = ""
                 if (this.orderId != "") {
                     this.loading = true
-                    let data = {
-                        orderId: this.orderId
-                    }
-                    let url = `${window.location.origin}/api/v1/calculator/fast-calculate/`
+                    let url = `${window.location.origin}/api/v1/order/check-status/?num=${this.orderId}`
                     this.loading = true
                     axios({
-                        method: 'post',
-                        url: url,
-                        data: {"data": data}
+                        method: 'get',
+                        url: url
                     }).then((resp) => {
-                        this.orderInfo = resp.data.data
+                        let orderInfo = resp.data.data[0]
+                        if (orderInfo) {
+                            this.orderInfo = resp.data.data[0].status
+                        } else {
+                            this.orderInfo = `По заказу ${this.orderId} информации не найдено`
+                        }
                     }).catch(error => {
                         this.serverErrors.push("Сервис временно недоступен, попробуйте сделать запрос позднее")
                         console.log(error)

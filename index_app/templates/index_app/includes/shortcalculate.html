@@ -13,6 +13,7 @@
                             <div class="atf-booking-form">
                                 <div class="atf-booking-form-box row">
                                     <div class="atf-booking-form-item col-lg-6 col-md-6">
+                                        <span>Откуда</span>
                                         <div class="form-group mb-0">
                                             <select 
                                                 id="departureCity" 
@@ -20,7 +21,7 @@
                                             >
                                                 <option data-display="Выберите город" value="">...</option>
                                                 {% for city in cities_from_list %}
-                                                <option value="{{ city.name }}">{{ city.name }}</option>
+                                                <option value="{{ city.id }}">{{ city.name }}</option>
                                                 {% endfor %}
                                             </select>
                                             <p 
@@ -32,6 +33,7 @@
                                         </div>
                                     </div> 
                                     <div class="atf-booking-form-item col-lg-6 col-md-6">
+                                        <span>Куда</span>
                                         <div class="form-group mb-0">
                                             <select 
                                                 id="receivingCity" 
@@ -39,7 +41,7 @@
                                             >
                                                 <option data-display="Выберите город" value="">...</option>
                                                 {% for city in cities_list %}
-                                                <option value="{{ city.name }}">{{ city.name }}</option>
+                                                <option value="{{ city.id }}">{{ city.name }}</option>
                                                 {% endfor %}
                                             </select>
                                             <p 
@@ -52,12 +54,13 @@
                                     </div> 
                                     
                                     <div class="atf-booking-form-item col-12 col-md-6">
+                                        <span>Объем</span>
                                         <div class="form-group mb-0">
                                             <input 
                                                 type="number" 
                                                 v-model="volume" 
                                                 class="form-control" 
-                                                placeholder="Объем, м3"
+                                                placeholder="м3"
                                                 min="0"
                                             >
                                         </div>
@@ -69,12 +72,13 @@
                                         </p>
                                     </div>
                                     <div class="atf-booking-form-item col-12 col-md-6">
+                                        <span>Вес</span>
                                         <div class="form-group mb-0">
                                             <input 
                                                 type="number" 
                                                 v-model="weight" 
                                                 class="form-control" 
-                                                placeholder="Вес, кг"
+                                                placeholder="кг"
                                                 min="0"
                                             >
                                         </div>
@@ -221,8 +225,8 @@
                 this.serverErrors = []
                 if (this.checkCalculateValidation()) {
                     let data = {
-                        city_from_name: $('#departureCity').val(),
-                        city_to_name: $('#receivingCity').val(),
+                        city_from_id: $('#departureCity').val(),
+                        city_to_id: $('#receivingCity').val(),
                         weight: parseFloat(this.weight ? this.weight : 0),
                         volume: parseFloat(this.volume ? this.volume : 0),
                     }
