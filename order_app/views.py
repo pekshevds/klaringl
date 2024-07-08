@@ -8,7 +8,7 @@ from order_app.serializers import CargorSerializer, OrderSerializer
 
 class CargoAPIView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request: HttpRequest) -> HttpResponse:
         queryset = Cargo.objects.all()
@@ -18,7 +18,7 @@ class CargoAPIView(APIView):
 
     def post(self, request: HttpRequest) -> Response:
         response = {"data": [], "count": 0, "success": False}
-        data = request.data.get("data", None)
+        data = request.data.get("data")
         if not data:
             return Response(response)
         serializer = CargorSerializer(data=data, many=True)
@@ -32,7 +32,7 @@ class CargoAPIView(APIView):
 
 class OrderAPIView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request: HttpRequest) -> HttpResponse:
         queryset = Order.objects.all()
@@ -42,7 +42,7 @@ class OrderAPIView(APIView):
 
     def post(self, request: HttpRequest) -> Response:
         response = {"data": [], "count": 0, "success": False}
-        data = request.data.get("data", None)
+        data = request.data.get("data")
         if not data:
             return Response(response)
         print(data)
