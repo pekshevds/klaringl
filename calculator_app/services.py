@@ -32,40 +32,40 @@ def calculate_cost_by_weight(rate: Rate, weight: Decimal) -> Decimal:
     if not rate:
         return decimal_0
     cost_by_weight = decimal_0
-    if decimal_0 < weight <= rate.cost_by_weight_0_25:
+    if decimal_0 < weight <= Decimal("25"):
         cost_by_weight = rate.cost_by_weight_0_25
 
-    if rate.cost_by_weight_0_25 < weight <= rate.cost_by_weight_25_50:
+    if Decimal("25") < weight <= Decimal("50"):
         cost_by_weight = rate.cost_by_weight_25_50
 
-    if rate.cost_by_weight_25_50 < weight <= rate.cost_by_weight_50_150:
+    if Decimal("50") < weight <= Decimal("150"):
         cost_by_weight = rate.cost_by_weight_50_150 * weight
 
-    if rate.cost_by_weight_50_150 < weight <= rate.cost_by_weight_150_300:
+    if Decimal("150") < weight <= Decimal("300"):
         cost_by_weight = rate.cost_by_weight_150_300 * weight
 
-    if rate.cost_by_weight_150_300 < weight <= rate.cost_by_weight_300_500:
+    if Decimal("300") < weight <= Decimal("500"):
         cost_by_weight = rate.cost_by_weight_300_500 * weight
 
-    if rate.cost_by_weight_300_500 < weight <= rate.cost_by_weight_500_1000:
+    if Decimal("500") < weight <= Decimal("1000"):
         cost_by_weight = rate.cost_by_weight_500_1000 * weight
 
-    if rate.cost_by_weight_500_1000 < weight <= rate.cost_by_weight_1000_1500:
+    if Decimal("1000") < weight <= Decimal("1500"):
         cost_by_weight = rate.cost_by_weight_1000_1500 * weight
 
-    if rate.cost_by_weight_1000_1500 < weight <= rate.cost_by_weight_1500_2000:
+    if Decimal("1500") < weight <= Decimal("2000"):
         cost_by_weight = rate.cost_by_weight_1500_2000 * weight
 
-    if rate.cost_by_weight_1500_2000 < weight <= rate.cost_by_weight_2000_3000:
+    if Decimal("2000") < weight <= Decimal("3000"):
         cost_by_weight = rate.cost_by_weight_2000_3000 * weight
 
-    if rate.cost_by_weight_2000_3000 < weight <= rate.cost_by_weight_3000_5000:
+    if Decimal("3000") < weight <= Decimal("5000"):
         cost_by_weight = rate.cost_by_weight_3000_5000 * weight
 
-    if rate.cost_by_weight_3000_5000 < weight <= rate.cost_by_weight_5000_10000:
+    if Decimal("5000") < weight <= Decimal("10000"):
         cost_by_weight = rate.cost_by_weight_5000_10000 * weight
 
-    if weight > rate.cost_by_weight_10000_inf:
+    if weight > Decimal("10000"):
         cost_by_weight = rate.cost_by_weight_10000_inf * weight
     return cost_by_weight
 
@@ -74,40 +74,40 @@ def calculate_cost_by_volume(rate: Rate, volume: Decimal) -> Decimal:
     if not rate:
         return decimal_0
     cost_by_volume = decimal_0
-    if decimal_0 < volume <= rate.cost_by_volume_0_01:
+    if decimal_0 < volume <= Decimal("0.1"):
         cost_by_volume = rate.cost_by_volume_0_01 * volume
 
-    if rate.cost_by_volume_0_01 < volume <= rate.cost_by_volume_01_02:
+    if Decimal("0.1") < volume <= Decimal("0.2"):
         cost_by_volume = rate.cost_by_volume_01_02 * volume
 
-    if rate.cost_by_volume_01_02 < volume <= rate.cost_by_volume_02_06:
+    if Decimal("0.2") < volume <= Decimal("0.6"):
         cost_by_volume = rate.cost_by_volume_02_06 * volume
 
-    if rate.cost_by_volume_02_06 < volume <= rate.cost_by_volume_06_12:
+    if Decimal("0.6") < volume <= Decimal("1.2"):
         cost_by_volume = rate.cost_by_volume_06_12 * volume
 
-    if rate.cost_by_volume_06_12 < volume <= rate.cost_by_volume_12_20:
+    if Decimal("1.2") < volume <= Decimal("2"):
         cost_by_volume = rate.cost_by_volume_12_20 * volume
 
-    if rate.cost_by_volume_12_20 < volume <= rate.cost_by_volume_20_40:
+    if Decimal("2") < volume <= Decimal("4"):
         cost_by_volume = rate.cost_by_volume_20_40 * volume
 
-    if rate.cost_by_volume_20_40 < volume <= rate.cost_by_volume_40_60:
+    if Decimal("4") < volume <= Decimal("6"):
         cost_by_volume = rate.cost_by_volume_40_60 * volume
 
-    if rate.cost_by_volume_40_60 < volume <= rate.cost_by_volume_60_80:
+    if Decimal("6") < volume <= Decimal("8"):
         cost_by_volume = rate.cost_by_volume_60_80 * volume
 
-    if rate.cost_by_volume_60_80 < volume <= rate.cost_by_volume_80_120:
+    if Decimal("8") < volume <= Decimal("12"):
         cost_by_volume = rate.cost_by_volume_80_120 * volume
 
-    if rate.cost_by_volume_80_120 < volume <= rate.cost_by_volume_120_200:
+    if Decimal("12") < volume <= Decimal("20"):
         cost_by_volume = rate.cost_by_volume_120_200 * volume
 
-    if rate.cost_by_volume_120_200 < volume <= rate.cost_by_volume_200_400:
+    if Decimal("20") < volume <= Decimal("40"):
         cost_by_volume = rate.cost_by_volume_200_400 * volume
 
-    if volume > rate.cost_by_volume_400_inf:
+    if volume > Decimal("40"):
         cost_by_volume = rate.cost_by_volume_400_inf * volume
     return cost_by_volume
 
@@ -236,7 +236,7 @@ def calculate_order(order: dict) -> Decimal:
         cost += calculate_return_docs()
     if order.get("insurance", False):
         cost += calculate_insurance((order.get("declared_cost", 0)))
-    k_oversize = Decimal("1")
+    k_oversize = decimal_0
     for item in order["items"]:
         if (
             item.get("prr_from", False)
@@ -259,20 +259,20 @@ def calculate_order(order: dict) -> Decimal:
         if item.get("palletizing", False):
             cost += calculate_palletizing()
         k_oversize = max(k_oversize, calclulate_k_oversize(item))
-    cost += base_cost * k_oversize
+        cost += base_cost * k_oversize
     return cost
 
 
 def calclulate_k_oversize(item_order: dict) -> Decimal:
-    k_oversize = Decimal("1")
+    k_oversize = decimal_0
     if condition_10(item_order):
-        k_oversize = Decimal("1.1")
+        k_oversize = Decimal("0.1")
     if condition_20(item_order):
-        k_oversize = Decimal("1.2")
+        k_oversize = Decimal("0.2")
     if condition_30(item_order):
-        k_oversize = Decimal("1.3")
+        k_oversize = Decimal("0.3")
     if condition_50(item_order):
-        k_oversize = Decimal("1.5")
+        k_oversize = Decimal("0.5")
     return k_oversize
 
 
