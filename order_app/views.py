@@ -1,9 +1,18 @@
+from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
+from django.views.generic import View
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
+
+from server.base import (
+    FormOfOwnershipSelector,
+    PayerSelector
+)
 from order_app.models import Cargo, Order
 from order_app.serializers import CargorSerializer, OrderSerializer
+from calculator_app.models import  Rate
 
 
 class CargoAPIView(APIView):
@@ -68,3 +77,17 @@ class CheckStatusAPIView(APIView):
         response["count"] = 1
         response["success"] = True
         return Response(response)
+
+
+class NewOrderView(View):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        context = {
+            "cities_list": Rate.cities_to,
+            "cities_from_list": Rate.cities_from,
+            "payer_selector": dict(PayerSelector.choices),
+            "form_ownership_selector": dict(FormOfOwnershipSelector.choices),
+        }
+        return render(request, "order_app/new-order.html", context)
