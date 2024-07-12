@@ -6,13 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
 
-from server.base import (
-    FormOfOwnershipSelector,
-    PayerSelector
-)
+from server.base import FormOfOwnershipSelector, PayerSelector
 from order_app.models import Cargo, Order
 from order_app.serializers import CargorSerializer, OrderSerializer
-from calculator_app.models import  Rate
+from calculator_app.models import Rate
 
 
 class CargoAPIView(APIView):

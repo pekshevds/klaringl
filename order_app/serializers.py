@@ -2,29 +2,18 @@ from rest_framework import serializers
 from server.base_serializers import (
     DirectorySerializer,
     ItemSerializer,
-    DocumentSerializer
+    DocumentSerializer,
 )
-from order_app.models import (
-    Cargo,
-    Order,
-    ItemOrder
-)
-from calculator_app.models import (
-    City
-)
+from order_app.models import Cargo, Order, ItemOrder
+from calculator_app.models import City
 
 
 class CargorSerializer(DirectorySerializer):
-    weight = serializers.DecimalField(
-        max_digits=15, decimal_places=2)
-    length = serializers.DecimalField(
-        max_digits=15, decimal_places=2, required=False)
-    width = serializers.DecimalField(
-        max_digits=15, decimal_places=2, required=False)
-    height = serializers.DecimalField(
-        max_digits=15, decimal_places=2, required=False)
-    volume = serializers.DecimalField(
-        max_digits=15, decimal_places=5, required=False)
+    weight = serializers.DecimalField(max_digits=15, decimal_places=2)
+    length = serializers.DecimalField(max_digits=15, decimal_places=2, required=False)
+    width = serializers.DecimalField(max_digits=15, decimal_places=2, required=False)
+    height = serializers.DecimalField(max_digits=15, decimal_places=2, required=False)
+    volume = serializers.DecimalField(max_digits=15, decimal_places=5, required=False)
 
     def create(self, validated_data):
         return Cargo.objects.create(**validated_data)
@@ -40,32 +29,45 @@ class ItemOrderSerializer(ItemSerializer):
 
 
 class OrderSerializer(DocumentSerializer):
-    city_from_id = serializers.UUIDField(format='hex_verbose')
-    from_address = serializers.BooleanField(required=False)
-    address_from = serializers.CharField(max_length=1024, required=False)
-    date_from = serializers.DateField(required=False)
-    from_time = serializers.BooleanField(required=False)
-    time_from = serializers.TimeField(required=False)
-    form_from = serializers.CharField(max_length=2, required=False)
-    name_from = serializers.CharField(max_length=255, required=False)
-    face_from = serializers.CharField(max_length=255, required=False)
-    tel_from = serializers.CharField(max_length=25, required=False)
-    email_from = serializers.EmailField(max_length=25, required=False)
+    # Отправитель
+    city_from_id = serializers.UUIDField(
+        format="hex_verbose", required=True
+    )  # Город-отправитель
 
-    city_to_id = serializers.UUIDField()
-    to_address = serializers.BooleanField(required=False)
-    address_to = serializers.CharField(max_length=1024, required=False)
-    date_to = serializers.DateField(required=False)
-    to_time = serializers.BooleanField(required=False)
-    time_to = serializers.TimeField(required=False)
-    form_to = serializers.CharField(max_length=2, required=False)
-    name_to = serializers.CharField(max_length=255, required=False)
-    face_to = serializers.CharField(max_length=255, required=False)
-    tel_to = serializers.CharField(max_length=25, required=False)
-    email_to = serializers.EmailField(max_length=25, required=False)
+    from_address = serializers.BooleanField(required=False)  # Забор по адресу
+    address_from = serializers.CharField(
+        max_length=1024, required=False
+    )  # Адрес забора
+    date_from = serializers.DateField(required=False)  # Дата забора
+    from_time = serializers.BooleanField(required=False)  # Забор по времени
+    time_from = serializers.TimeField(required=False)  # Время забора
+    form_from = serializers.CharField(
+        max_length=2, required=True
+    )  # Форма собственности
+    name_from = serializers.CharField(max_length=255, required=True)  # Имя отправителя
+    face_from = serializers.CharField(max_length=255, required=False)  # Контактное лицо
+    tel_from = serializers.CharField(max_length=25, required=False)  # Телефон
+    email_from = serializers.EmailField(max_length=25, required=False)  # Почта
 
-    payer = serializers.CharField(max_length=2, required=False)
-    form_payer = serializers.CharField(max_length=2)
+    # Получатель
+    city_to_id = serializers.UUIDField(
+        format="hex_verbose", required=True
+    )  # Город-получатель
+    to_address = serializers.BooleanField(required=False)  # Доставка по адресу
+    address_to = serializers.CharField(
+        max_length=1024, required=False
+    )  # Адрес доставки
+    date_to = serializers.DateField(required=False)  # Дата доставки
+    to_time = serializers.BooleanField(required=False)  # Доставка по времени
+    time_to = serializers.TimeField(required=False)  # Время доставки
+    form_to = serializers.CharField(max_length=2, required=True)  # Форма собственности
+    name_to = serializers.CharField(max_length=255, required=True)  # Имя получателя
+    face_to = serializers.CharField(max_length=255, required=False)  # Контактное лицо
+    tel_to = serializers.CharField(max_length=25, required=False)  # Телефон
+    email_to = serializers.EmailField(max_length=25, required=False)  # Почта
+
+    payer = serializers.CharField(max_length=2, required=True)  # Плательщик
+    form_payer = serializers.CharField(max_length=2, required=False)
     name_payer = serializers.CharField(max_length=255, required=False)
     face_payer = serializers.CharField(max_length=255, required=False)
     tel_payer = serializers.CharField(max_length=25, required=False)
@@ -74,9 +76,9 @@ class OrderSerializer(DocumentSerializer):
     insurance = serializers.BooleanField(required=False)
     return_docs = serializers.BooleanField(required=False)
     declared_cost = serializers.DecimalField(
-        max_digits=15, decimal_places=2, required=False)
-    cost = serializers.DecimalField(
-        max_digits=15, decimal_places=2, required=False)
+        max_digits=15, decimal_places=2, required=True
+    )
+    cost = serializers.DecimalField(max_digits=15, decimal_places=2, required=False)
     items = ItemOrderSerializer(many=True, required=False)
 
     def __fill_order(self, validated_data: dict) -> Order:
@@ -104,10 +106,9 @@ class OrderSerializer(DocumentSerializer):
         cargo.save()
         return cargo
 
-    def __fill_item_order(self,
-                          order: Order,
-                          cargo: Cargo,
-                          validated_data: dict) -> ItemOrder:
+    def __fill_item_order(
+        self, order: Order, cargo: Cargo, validated_data: dict
+    ) -> ItemOrder:
         item_cargo = ItemOrder(order=order, cargo=cargo)
         for key, value in validated_data.items():
             if key == "cargo":
