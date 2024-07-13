@@ -44,7 +44,10 @@ class CityToAPIView(APIView):
 
 
 class CityAPIView(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.BasicAuthentication,
+    ]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request: HttpRequest) -> HttpResponse:
@@ -55,7 +58,7 @@ class CityAPIView(APIView):
 
     def post(self, request: HttpRequest) -> Response:
         response = {"data": [], "count": 0, "success": False}
-        data = request.data.get("data", None)
+        data = request.data.get("data")
         if not data:
             return Response(response)
         serializer = CitySerializer(data=data, many=True)
@@ -68,13 +71,29 @@ class CityAPIView(APIView):
 
 
 class RateAPIView(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.BasicAuthentication,
+    ]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request: HttpRequest) -> HttpResponse:
         queryset = Rate.objects.all()
         serializer = RateSerializer(queryset, many=True)
         response = {"data": serializer.data, "count": len(queryset), "success": True}
+        return Response(response)
+
+    def post(self, request: HttpRequest) -> Response:
+        response = {"data": [], "count": 0, "success": False}
+        data = request.data.get("data")
+        if not data:
+            return Response(response)
+        serializer = RateSerializer(data=data, many=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            response["data"] = serializer.data
+            response["count"] = len(serializer.data)
+            response["success"] = True
         return Response(response)
 
 
