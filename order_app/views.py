@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
@@ -10,6 +11,8 @@ from server.base import FormOfOwnershipSelector, PayerSelector
 from order_app.models import Cargo, Order
 from order_app.serializers import CargorSerializer, OrderSerializer
 from calculator_app.models import Rate
+
+logger = logging.getLogger(__name__)
 
 
 class CargoAPIView(APIView):
@@ -27,6 +30,7 @@ class CargoAPIView(APIView):
         data = request.data.get("data")
         if not data:
             return Response(response)
+        logger.info(data)
         serializer = CargorSerializer(data=data, many=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -51,7 +55,7 @@ class OrderAPIView(APIView):
         data = request.data.get("data")
         if not data:
             return Response(response)
-        print(data)
+        logger.info(data)
         serializer = OrderSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()

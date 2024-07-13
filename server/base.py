@@ -1,7 +1,12 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 from django.db import models
 from django.utils.dateformat import format
+from django.utils import timezone
+
+
+def now() -> datetime:
+    return datetime.now(tz=timezone.utc)
 
 
 class TimeSelector(models.TextChoices):
@@ -23,22 +28,12 @@ class PayerSelector(models.TextChoices):
 
 
 class Item(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(
-        verbose_name="Дата создания",
-        auto_now_add=True,
-        null=True,
-        blank=True
+        verbose_name="Дата создания", auto_now_add=True, null=True, blank=True
     )
     updated_at = models.DateTimeField(
-        verbose_name="Дата изменения",
-        auto_now=True,
-        null=True,
-        blank=True
+        verbose_name="Дата изменения", auto_now=True, null=True, blank=True
     )
 
     class Meta:
@@ -46,27 +41,13 @@ class Item(models.Model):
 
 
 class Base(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False
-    )
-    comment = models.TextField(
-        verbose_name="Комментарий",
-        null=True,
-        blank=True
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    comment = models.TextField(verbose_name="Комментарий", null=True, blank=True)
     created_at = models.DateTimeField(
-        verbose_name="Дата создания",
-        auto_now_add=True,
-        null=True,
-        blank=True
+        verbose_name="Дата создания", auto_now_add=True, null=True, blank=True
     )
     updated_at = models.DateTimeField(
-        verbose_name="Дата изменения",
-        auto_now=True,
-        null=True,
-        blank=True
+        verbose_name="Дата изменения", auto_now=True, null=True, blank=True
     )
 
     class Meta:
@@ -79,7 +60,7 @@ class Directory(Base):
         max_length=150,
         null=True,
         blank=True,
-        db_index=True
+        db_index=True,
     )
 
     def __str__(self) -> str:
@@ -99,18 +80,10 @@ class Directory(Base):
 
 class Document(Base):
     number = models.IntegerField(
-        verbose_name="Номер",
-        null=True,
-        blank=True,
-        editable=False,
-        default=0
+        verbose_name="Номер", null=True, blank=True, editable=False, default=0
     )
-    date = models.DateTimeField(
-        verbose_name="Дата",
-        null=True,
-        blank=True,
-        default=datetime.now
-    )
+
+    date = models.DateTimeField(verbose_name="Дата", null=True, blank=True, default=now)
 
     def __str__(self) -> str:
         return f"Документ №{self.id} от {format(self.date, '%Y.%m.%d')}"

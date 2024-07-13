@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
@@ -16,6 +17,8 @@ from calculator_app.serializers import (
 )
 from calculator_app.services import calculate_delivery_cost, calculate_order
 import config
+
+logger = logging.getLogger(__name__)
 
 
 class CityFromAPIView(APIView):
@@ -84,6 +87,7 @@ class CalculateAPIView(APIView):
         data = request.data.get("data", None)
         if not data:
             return Response(response)
+        logger.info(data)
         serializer = CalculateRequestSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             # cost = calculate_delivery_cost(**serializer.validated_data)
@@ -103,6 +107,7 @@ class FastCalculateAPIView(APIView):
         data = request.data.get("data", None)
         if not data:
             return Response(response)
+        logger.info(data)
         serializer = FastCalculateRequestSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             cost = calculate_delivery_cost(**serializer.validated_data)
