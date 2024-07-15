@@ -11,6 +11,7 @@ from server.base import FormOfOwnershipSelector, PayerSelector
 from order_app.models import Cargo, Order
 from order_app.serializers import CargorSerializer, OrderSerializer
 from calculator_app.models import Rate
+from order_app.services import fetch_order_status_by_number
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +75,7 @@ class CheckStatusAPIView(APIView):
         num = request.GET.get("num")
         if not num:
             return Response(response)
-        response["data"] = [{"status": "some status"}]
+        response["data"] = [{"status": fetch_order_status_by_number(order_number=num)}]
         response["count"] = 1
         response["success"] = True
         return Response(response)
