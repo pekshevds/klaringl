@@ -123,14 +123,3 @@ class OrderSerializer(DocumentSerializer):
             cargo = self.__fill_cargo(item["cargo"])
             self.__fill_item_order(order, cargo, item)
         return order
-
-
-class MakrUploadedSerializer(DocumentSerializer):
-    # Отправитель
-    order_id = serializers.UUIDField(required=True)
-    uploaded = serializers.BooleanField(required=True)
-
-    def create(self, validated_data: dict) -> None:
-        order = Order.objects.get(id=validated_data.get("order_id"))
-        order.uploaded = validated_data.get("uploaded", order.uploaded)
-        order.save()
