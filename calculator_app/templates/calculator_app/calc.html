@@ -457,7 +457,7 @@
                                 <div class="atf-booking-form-box row">
                                     <div class="mt-3 col-12">
                                         <div class="atf-main-btn"> 
-                                            <a href="{% url 'order:new-order' %}" class="atf-themes-btn atf-themes-btn-one">
+                                            <a href="#" @click="orderConfirm($event)" class="atf-themes-btn atf-themes-btn-one">
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">Офомить заказ</span>
                                             </a>
@@ -754,36 +754,41 @@ const OrderForm = {
             })
             return isValidCalcForm
         },
+        getOrderData () {
+            let city_from_id = $('#departureCity').val()
+            let city_to_id = $('#receivingCity').val()
+            let data = {
+                city_from_id: city_from_id,
+                from_address: this.departurePickupType == 2 ? true : false,
+                by_time_from: this.departureByTime,
+                city_to_id: city_to_id,
+                to_address: this.receivingType == 2 ? true: false,
+                by_time_to: this.receivingByTime,
+                insurance: this.cargoInsurance,
+                return_docs: this.returnDocuments,
+                declared_cost: parseFloat(this.declared_cost ? this.declared_cost : 0),
+                items: this.collectOrderItems()
+            }
+            if (this.departureDate) {
+                data.date_from = this.departureDate
+            }
+            if (this.departureByTime && this.departureTime) {
+                data.time_from = this.departureTime
+            }
+            if (this.receivingDate) {
+                data.date_to = this.receivingDate
+            }
+            if (this.receivingByTime && this.receivingTime) {
+                data.time_to = this.receivingTime
+            }
+
+            return data
+        },
         async calulateOrder () {
             this.price = 0
             this.serverErrors = []
             if (this.checkCalculateValidation()) {
-                let city_from_id = $('#departureCity').val()
-                let city_to_id = $('#receivingCity').val()
-                let data = {
-                    city_from_id: city_from_id,
-                    from_address: this.departurePickupType == 2 ? true : false,
-                    by_time_from: this.departureByTime,
-                    city_to_id: city_to_id,
-                    to_address: this.receivingType == 2 ? true: false,
-                    by_time_to: this.receivingByTime,
-                    insurance: this.cargoInsurance,
-                    return_docs: this.returnDocuments,
-                    declared_cost: parseFloat(this.declared_cost ? this.declared_cost : 0),
-                    items: this.collectOrderItems()
-                }
-                if (this.departureDate) {
-                    data.date_from = this.departureDate
-                }
-                if (this.departureByTime && this.departureTime) {
-                    data.time_from = this.departureTime
-                }
-                if (this.receivingDate) {
-                    data.date_to = this.receivingDate
-                }
-                if (this.receivingByTime && this.receivingTime) {
-                    data.time_to = this.receivingTime
-                }
+                
                 let url = `${window.location.origin}/api/v1/calculator/calculate/`
                 $('#atf-loader').fadeIn(200)
                 await axios({
@@ -792,7 +797,7 @@ const OrderForm = {
                         "Authorization": `Token ${"{{server_api_token}}"}`
                     },
                     url: url,
-                    data: { "data": data},
+                    data: { "data": this.getOrderData()},
                 }).then((resp) => {
                     this.price = resp.data.data.cost
                 }).catch(error => {
@@ -803,6 +808,13 @@ const OrderForm = {
                 })
             }
         },
+        orderConfirm (evt) {
+            evt.preventDefault()
+            window.location.assign(window.location.origin + "/order/new-order/")
+            //const u = new URLSearchParams(this.getOrderData()).toString();
+            //console.log(u)
+            //console.log(this.getOrderData())
+        }
     }
 }
 
