@@ -1,4 +1,5 @@
 import logging
+import json
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
@@ -7,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
 
+from server.base import FormOfOwnershipSelector, PayerSelector
 from calculator_app.models import City, Rate
 from calculator_app.serializers import (
     CitySerializer,
@@ -99,7 +101,8 @@ class RateAPIView(APIView):
 
 class CalculateAPIView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request: HttpRequest) -> HttpResponse:
         response = {"data": {}, "count": 0, "success": False}
@@ -136,17 +139,53 @@ class FastCalculateAPIView(APIView):
 
 
 # процедура вывода страницы Калькулятор стоимости перевозки
-
+def createChoisesJson(choises) -> dict:
+    choises_list = []
+    for key, value in choises:
+        choises_list.append({
+            "value": key,
+            "label": value
+        }) 
+    return choises_list
+def createCitiesJson(query_cities_list) -> dict:
+    dict_cities_list = []
+    for item in query_cities_list:
+        id = "{}".format(item.pk).replace('\ufeff', '')
+        name = "{}".format(item.name).replace('\ufeff', '')
+        dict_cities_list.append({
+            "value": id,
+            "label": name
+        }) 
+    return dict_cities_list
 
 class CalcView(View):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
-
     def get(self, request: HttpRequest) -> HttpResponse:
-        server_api_token = config.SERVER_API_TOKEN
         context = {
-            "cities_list": Rate.cities_to,
-            "cities_from_list": Rate.cities_from,
-            "server_api_token": server_api_token,
+            "cities_list": json.dumps(createCitiesJson(Rate.cities_to())),
+            "cities_from_list": json.dumps(createCitiesJson(Rate.cities_from())),
+            "payer_selector": json.dumps(createChoisesJson(PayerSelector.choices)),
+            "form_ownership_selector": json.dumps(createChoisesJson(FormOfOwnershipSelector.choices)),
         }
+        city_from_id = request.GET.get('city_from_id')
+        if city_from_id:
+            context.update({
+                "city_from_id": city_from_id
+            })
+        city_to_id = request.GET.get('city_to_id')
+        if city_to_id:
+            context.update({
+                "city_to_id": city_to_id
+            })
+        weight = request.GET.get('weight')
+        if weight:
+            context.update({
+                "weight": weight
+            }) 
+        volume = request.GET.get('volume')
+        if volume:
+            context.update({
+                "volume": volume
+            })
         return render(request, "calculator_app/calc.html", context)
