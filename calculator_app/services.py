@@ -175,7 +175,7 @@ def calculate_insurance(declared_cost: Decimal) -> Decimal:
     """
     Расчет стоимости трахования груза"""
     const = Const.info()
-    return declared_cost * (const.insurance_cost / 100)
+    return max(const.min_insurance_cost, declared_cost * (const.insurance_cost / 100))
 
 
 def calculate_prr(weight: Decimal) -> Decimal:

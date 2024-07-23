@@ -55,6 +55,13 @@ class Const(Base):
         blank=True,
         default=0,
     )
+    min_insurance_cost = models.DecimalField(
+        verbose_name="Минимальная сумма страхования",
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        default=0,
+    )
     insurance_cost = models.DecimalField(
         verbose_name="Страхование, %",
         max_digits=15,
@@ -118,6 +125,7 @@ class Const(Base):
                 "warehouse_process_cost",
                 "min_warehouse_process_cost",
                 "return_docs_cost",
+                "min_insurance_cost",
                 "insurance_cost",
                 "prr_cost",
                 "hard_packaging_cost",
@@ -139,6 +147,7 @@ class Const(Base):
                 min_warehouse_process_cost=item.min_warehouse_process_cost,
                 return_docs_cost=item.return_docs_cost,
                 insurance_cost=item.insurance_cost,
+                min_insurance_cost=item.min_insurance_cost,
                 prr_cost=item.prr_cost,
                 hard_packaging_cost=item.hard_packaging_cost,
                 hard_packaging_min_cost=item.hard_packaging_min_cost,
@@ -155,6 +164,7 @@ class Const(Base):
             min_warehouse_process_cost=Decimal0,
             return_docs_cost=Decimal0,
             insurance_cost=Decimal0,
+            min_insurance_cost=Decimal0,
             prr_cost=Decimal0,
             hard_packaging_cost=Decimal0,
             hard_packaging_min_cost=Decimal0,
