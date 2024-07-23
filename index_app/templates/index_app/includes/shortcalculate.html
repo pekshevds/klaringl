@@ -7,7 +7,6 @@
             <div class="col-lg-7" data-aos="fade-up" id="fast_calculate_form">
                 <div class="atf-section-title text-start">
                     <h5 class="sub-title">Запрос расчета перевозки</h5>
-                    {% comment %} <h2 class="title-color">Booking your Logistic <span>Transportation</span> Best Product Solution in the world</h2> {% endcomment %}
                     <div class="row mt-5">
                         <div class="col-lg-12">
                             <div class="atf-booking-form">
@@ -122,13 +121,13 @@
                                         class="mt-3 row col-12 flex-row-reverse padding-right-0">
                                         <div class="col-lg-6 col-md-6 padding-0 text-align-right"
                                         >
-                                            <a 
+                                            <button 
+                                                @click="orderConfirm($event)"
                                                 class="atf-themes-btn atf-themes-btn-one" 
-                                                href="{% url 'calculator:calc' %}"
                                             >
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">Подробный расчет</span>
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                     <Transition>
@@ -220,22 +219,25 @@
                 }
                 return isValidCalcForm
             },
+            getOrderData () {
+                let data = {
+                    city_from_id: $('#departureCity').val(),
+                    city_to_id: $('#receivingCity').val(),
+                    weight: parseFloat(this.weight ? this.weight : 0),
+                    volume: parseFloat(this.volume ? this.volume : 0),
+                }
+                return data
+            },
             async fastCalulateOrder () {
                 this.price = 0
                 this.serverErrors = []
                 if (this.checkCalculateValidation()) {
-                    let data = {
-                        city_from_id: $('#departureCity').val(),
-                        city_to_id: $('#receivingCity').val(),
-                        weight: parseFloat(this.weight ? this.weight : 0),
-                        volume: parseFloat(this.volume ? this.volume : 0),
-                    }
                     let url = `${window.location.origin}/api/v1/calculator/fast-calculate/`
                     this.loading = true
                     await axios({
                         method: 'post',
                         url: url,
-                        data: { "data": data},
+                        data: { "data": this.getOrderData()},
                     }).then((resp) => {
                         this.price = resp.data.data.cost
                     }).catch(error => {
@@ -249,6 +251,10 @@
                         this.loading = false
                     })
                 }
+            },
+            orderConfirm (evt) {
+                evt.preventDefault()
+                window.location.assign(window.location.origin + `/calc/?${new URLSearchParams(this.getOrderData()).toString()}`)
             }
         }
     }

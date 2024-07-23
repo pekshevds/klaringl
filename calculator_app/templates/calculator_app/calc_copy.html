@@ -1,0 +1,859 @@
+{% extends "index_app/base.html" %}
+{% load static %}
+
+{% block local_libraries %}
+<script src="https://unpkg.com/vue@3.0.1/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
+<script src="https://unpkg.com/naive-ui"></script>
+
+{% endblock %}
+
+{% block body %}
+
+<!-- START PRELOADER -->
+{% comment %} <div>
+    <div id="atf-loading">
+        <div id="atf-loading-center">
+            <img src="{% static 'index_app/assets/img/taxi.gif' %}" class="img-fluid" alt="">
+        </div>
+    </div>
+</div> {% endcomment %}
+<!-- END PRELOADER -->	
+
+<!-- start-page-heading -->
+<div class="atf-page-heading atf-size-md atf-dynamic-bg" style="background-image: url({% static 'index_app/assets/img/slider/6.jpg' %}); background-size:cover; background-position: center top;">
+    <div class="container">
+        <div class="atf-page-heading-in text-center">
+            {% comment %} <h1 class="atf-page-heading-title">Our Booking Now</h1> {% endcomment %}
+            <div class="atf-post-label">
+                <span><a href="{% url 'index:index' %}">Главная</a></span>
+                <span>Расчет и оформление заказа</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- .end-page-heading -->
+
+<section class="atf-section-padding" id="order_form">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-8" data-aos="fade-up">
+                <div class="atf-section-title  text-start">
+                    {% comment %} <h5 class="sub-title">Request A Quote</h5> {% endcomment %}
+                    <h2 class="title-color">Расчет и оформление заказа</h2>
+                    <div class="row mt-5">
+                        <div class="col-lg-12">
+                            <div class="atf-booking-form">
+                                <div class="atf-booking-form-box row">
+                                    <h4 class="mb-4">Направление</h4>
+                                    <p>Откуда</p>
+                                    <div class="col-12">
+                                        <div class="atf-booking-form-item col-12 col-md-6 row">
+                                            <n-select
+                                                v-model:value="value"
+                                                filterable
+                                                placeholder="Please select a song"
+                                                :options="options"
+                                            ></n-select>
+                                            {% comment %} <select 
+                                                id="departureCity" 
+                                                class="nice-select departureCity"
+                                            >
+                                                <option data-display="Выберите город" value="">...</option>
+                                                {% for city in cities_from_list %}
+                                                <option value="{{ city.id }}">{{ city.name }}</option>
+                                                {% endfor %}
+                                            </select> {% endcomment %}
+                                            <p 
+                                                v-if="errors.cityFromId" 
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div> 
+                                    </div>
+                                    <div class="mt-4 col-12">
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="departurePickupType" 
+                                                @click="clearDepartureData()"
+                                                @change="checkAllOrderItemsOversize()"
+                                                type="radio" 
+                                                value="1"
+                                            >
+                                            <label class="form-check-label">Сдать в терминале</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="departurePickupType" 
+                                                @change="checkAllOrderItemsOversize()"
+                                                type="radio" 
+                                                value="2"
+                                            >
+                                            <label class="form-check-label">Забрать по адресу</label>
+                                        </div>
+                                    </div>
+                                    <div v-if="departurePickupType == 2" class="mt-3 col-12 row">
+                                        <div class="atf-booking-form-item">
+                                            <div class="form-group mb-0">
+                                                <input type="text" v-model="departureAddress" class="form-control" placeholder="Введите адрес">
+                                            </div>
+                                        </div>
+                                    </div>    
+                                    <p v-if="departurePickupType == 2" class="mt-4">Дата забора</p>
+                                    <div v-if="departurePickupType == 2" class="col-12 row">
+                                        <div class="atf-booking-form-item col-12 col-md-6">
+                                            <div class="form-group mb-0 as-form-group">
+                                                <input v-model="departureDate" type="date" class="form-control">
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    <div v-if="departurePickupType == 2" class="col-12 col-md-6 row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-check">
+                                                <input 
+                                                    v-model="departureByTime"
+                                                    @click="changeDepartureByTime"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
+                                                <label class="form-check-label">Забор по времени</label>
+                                              </div>
+                                        </div>
+                                        <div v-if="departureByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
+                                            <div class="form-group mb-0 as-form-group">
+                                                <input v-model="departureTime" type="time" class="form-control">
+                                            </div>
+                                            <p  
+                                                v-if="errors.departureTime"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div> 
+                                    </div>        
+
+                                    <div class="as-delimiter mt-5"></div>
+                                    <p class="mt-5">Куда</p>
+                                    <div class="col-12">
+                                        <div class="atf-booking-form-item col-12 col-md-6 row">	
+                                            <select id="receivingCity" class="nice-select receivingCity">
+                                                <option data-display="Выберите город" value="">...</option>
+                                                {% for city in cities_list %}
+                                                <option value="{{ city.id }}">{{ city.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <p 
+                                                v-if="errors.city_to_id" 
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div> 
+                                    </div>
+                                    <div class="mt-4 col-12">
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="receivingType"
+                                                @click="clearReceivingData()"
+                                                @change="checkAllOrderItemsOversize()"
+                                                type="radio" 
+                                                value="1"
+                                            >
+                                          <label class="form-check-label">Забрать в терминале</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="receivingType" 
+                                                @change="checkAllOrderItemsOversize()"
+                                                type="radio" 
+                                                value="2"
+                                            >
+                                            <label class="form-check-label">Доставить по адресу</label>
+                                          </div>
+                                    </div>
+                                    <div v-if="receivingType == 2" class="mt-3 col-12 row">
+                                        <div class="atf-booking-form-item">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    type="text" 
+                                                    v-model="receivingAddress" 
+                                                    class="form-control" 
+                                                    placeholder="Введите адрес"
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p v-if="receivingType == 2" class="mt-4">Дата доставки</p>
+                                    <div v-if="receivingType == 2" class="col-12 row">
+                                        <div class="atf-booking-form-item col-12 col-md-6">
+                                            <div class="form-group mb-0 as-form-group">
+                                                <input v-model="receivingDate" type="date" class="form-control">
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    <div v-if="receivingType == 2" class="col-12 col-md-6 row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-check">
+                                                <input 
+                                                    v-model="receivingByTime"
+                                                    @click="changeReceivingByTime"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
+                                                <label class="form-check-label">Доставка по времени</label>
+                                              </div>
+                                        </div>
+                                        <div v-if="receivingByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
+                                            <div class="form-group mb-0 as-form-group">
+                                                <input v-model="receivingTime" type="time" class="form-control">
+                                            </div>
+                                            <p  
+                                                v-if="errors.receivingTime"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div>
+                                    </div>    
+                                </div>
+                            </div>
+                            <div v-for="orderItem, key in orderItems" v-bind:key="orderItem.id" class="atf-booking-form mt-5">
+                                <div class="atf-booking-form-box row">
+                                    <div class="mb-4 row justify-content-around">
+                                        <h4 class="col-12 col-md-8">Место # ${ key + 1 }$</h4>
+                                        <div class="col-12 col-md-4" align="right">
+                                            <button @click="deleteOrderItem(orderItem.id)" v-if="orderItems.length>1">- Удалить место</button>
+                                        </div>
+                                    </div>
+                                    <p class="mt-4">Характер груза</p>
+                                    <div class="col-12 row">
+                                        <div class="atf-booking-form-item col-12">
+                                            <input type="text" v-model="orderItem.itemType" class="form-control" placeholder="Характер груза">
+                                        </div> 
+                                    </div>
+                                    <div class="mt-4 col-12">
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="orderItem.dimensionsType" 
+                                                type="radio" 
+                                                value="1"
+                                            >
+                                            <label class="form-check-label">Общий объем и вес</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="orderItem.dimensionsType" 
+                                                type="radio" 
+                                                value="2"
+                                            >
+                                            <label class="form-check-label">Знаю размеры</label>
+                                        </div>
+                                    </div>
+                                    <div v-if="orderItem.dimensionsType == 1" class="mt-3 col-12 row">
+                                        <div class="atf-booking-form-item col-12 col-md-6">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    type="number" 
+                                                    v-model="orderItem.volume" 
+                                                    @input="checkOrderItemParams(orderItem.id)"
+                                                    class="form-control" 
+                                                    placeholder="Объем, м3"
+                                                    min="0"
+                                                >
+                                            </div>
+                                            <p 
+                                                v-if="orderItem.errors.volume"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div>
+                                        <div class="atf-booking-form-item col-12 col-md-6">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    type="number" 
+                                                    v-model="orderItem.weight" 
+                                                    @input="checkOrderItemParams(orderItem.id)"
+                                                    class="form-control" 
+                                                    placeholder="Вес, кг"
+                                                    min="0"
+                                                >
+                                            </div>
+                                            <p  
+                                                v-if="orderItem.errors.weight"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div v-if="orderItem.dimensionsType == 2" class="mt-4 col-12 row">
+                                        <div class="atf-booking-form-item col-12 col-md-2">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    @input="calculateOrderItemVolume(orderItem.id)" 
+                                                    type="number" 
+                                                    v-model="orderItem.length" 
+                                                    class="form-control" 
+                                                    placeholder="Длина, м"
+                                                    min="0"
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="atf-booking-form-item col-12 col-md-2">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    @input="calculateOrderItemVolume(orderItem.id)"
+                                                    type="number" 
+                                                    v-model="orderItem.width" 
+                                                    class="form-control" 
+                                                    placeholder="Ширина, м"
+                                                    min="0"
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="atf-booking-form-item col-12 col-md-2">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    @input="calculateOrderItemVolume(orderItem.id)"
+                                                    type="number" 
+                                                    v-model="orderItem.height" 
+                                                    class="form-control"  
+                                                    placeholder="Высота, м"
+                                                    min="0"
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="atf-booking-form-item col-12 col-md-3">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    type="number" 
+                                                    v-model="orderItem.volume" 
+                                                    @input="checkOrderItemParams(orderItem.id)"
+                                                    class="form-control" 
+                                                    placeholder="Объем, м3"
+                                                    min="0"
+                                                >
+                                            </div>
+                                            <p  
+                                                v-if="orderItem.errors.volume"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div>
+                                        <div class="atf-booking-form-item col-12 col-md-3">
+                                            <div class="form-group mb-0">
+                                                <input 
+                                                    type="number" 
+                                                    v-model="orderItem.weight" 
+                                                    @input="checkOrderItemParams(orderItem.id)"
+                                                    class="form-control" 
+                                                    placeholder="Вес, кг"
+                                                    min="0"
+                                                >
+                                            </div>
+                                            <p 
+                                                v-if="orderItem.errors.weight"
+                                                class="asOrderFormErrorMessage"
+                                            >
+                                                Обязательное поле!
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p class="mt-4 mb-3">Дополнительно:</p>
+                                    <div class=" col-12 row">
+                                        <div class="col-12 col-md-6 pl-3 pr-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" v-model="orderItem.softPackaging" type="checkbox">
+                                                <label class="form-check-label">Мягкая упаковка</label>
+                                              </div>
+                                              <div class="form-check">
+                                                <input class="form-check-input" v-model="orderItem.hard_packaging" type="checkbox">
+                                                <label class="form-check-label">Жесткая упаковка</label>
+                                              </div>
+                                              <div class="form-check">
+                                                <input class="form-check-input" v-model="orderItem.palletizing" type="checkbox">
+                                                <label class="form-check-label">Паллетирование</label>
+                                              </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 pl-3 pr-3">
+                                            <div v-if="departurePickupType==2 && !orderItem.errors.fromOversize" class="form-check">
+                                                <input class="form-check-input" v-model="orderItem.prr_from" type="checkbox">
+                                                <label class="form-check-label">Погрузка при заборе груза (ПРР при заборе)</label>
+                                            </div>
+                                            <div v-if="receivingType==2 && !orderItem.errors.toOversize" class="form-check">
+                                                <input class="form-check-input" v-model="orderItem.prr_to" type="checkbox">
+                                                <label class="form-check-label">Выгрузка при доставке (ПРР при доставке)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div 
+                                    v-if="(key+1) == orderItems.length" 
+                                    class="mt-3 atf-booking-form-box row justify-content-end"
+                                >
+                                    <div class="col-12 col-md-4" style="text-align:right;">
+                                        <div class="atf-main-btn"> 
+                                            <button @click="addOrderItem" class="atf-themes-btn  atf-themes-btn-one">
+                                                <i class="btn-curve"></i>
+                                                <span class="btn-title">+ Добавить место</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="atf-booking-form mt-5">
+                                <div class="atf-booking-form-box row">
+                                    <h4 class="mb-4">Дополнительные услуги</h4>
+                                    <div class=" col-12 row">
+                                        <div class="col-6 p-3">
+                                            <div class="form-check">
+                                                <input v-model="cargoInsurance" class="form-check-input" type="checkbox">
+                                                <label class="form-check-label">Страхование груза</label>
+                                              </div>
+                                        </div>
+                                        <div class="col-6 p-3">
+                                            <div class="form-check">
+                                                <input v-model="returnDocuments" class="form-check-input" type="checkbox">
+                                                <label class="form-check-label">Возврат пакета документов</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 row">
+                                            <div class="col-12 col-md-5">
+                                                <p>Объявленная стоимость груза:</p>
+                                                <div class="atf-booking-form-item">
+                                                    <input type="text" v-model="declared_cost" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>    
+                                    </div>
+                                    <div class="mt-3 col-12">
+                                        {% comment %} <div class="atf-main-btn"> 
+                                            <button @click="checkout" class="atf-themes-btn  atf-themes-btn-one">
+                                                <i class="btn-curve"></i>
+                                                <span class="btn-title">Офомить заказ</span>
+                                            </button>
+                                        </div> {% endcomment %}
+                                        <div class="atf-main-btn"> 
+                                            <button @click="calulateOrder" class="atf-themes-btn  atf-themes-btn-one">
+                                                <i class="btn-curve"></i>
+                                                <span class="btn-title">Рассчитать стоимость</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="price" class="atf-booking-form mt-1">
+                                <div class="atf-booking-form-box row justify-content-around">
+                                    <div class="col-6 col-md-6 margin-auto">
+                                        <h4 class="">Стоимость перевозки:</h4>
+                                    </div>
+                                    <div class="col-6 col-md-6 order-price-block">
+                                        <h4>${ orderPrice }$ &#8381;</h4>
+                                    </div>
+                                </div>
+                                <div class="atf-booking-form-box row">
+                                    <div class="mt-3 col-12">
+                                        <div class="atf-main-btn"> 
+                                            <a href="#" @click="orderConfirm($event)" class="atf-themes-btn atf-themes-btn-one">
+                                                <i class="btn-curve"></i>
+                                                <span class="btn-title">Офомить заказ</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="serverErrors.length > 0">
+                                <div class="atf-facilities-services d-flex mt-2 text-left">
+                                    <div class="atf-facilities-text ms-3">
+                                        <p 
+                                            v-for="error in serverErrors" 
+                                            v-bind:key="error.id"
+                                        >
+                                        ${error}$
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+              
+            <div class="col-12 col-xl-4">
+                <div class="atf-facilities-services d-flex mt-5 text-left">
+                    <div class="atf-facilities-text ms-3">
+                        <h5 class="mb-3">Предварительный расчет</h5>
+                        <p>Данная стоимость является ориентировочной. Окончательная стоимость перевозки будет известна после поступления груза на склад отправления</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block local_scripts %}
+<script>
+    $(document).ready(function() {
+        $('.receivingCity').niceSelect();
+        $('.departureCity').niceSelect();
+    });
+</script>
+
+<script type='text/javascript'>
+	axios.defaults.xsrfCookieName = 'csrftoken'
+	axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
+</script>
+
+<script type="module" setup>
+const { createApp } = Vue
+// store
+const store = Vuex.createStore({
+  state () {
+    return {
+        loading: false,
+        orderItems: [
+            {   
+                id: 1,
+                itemType: "",
+                dimensionsType: 1,
+                volume: "",
+                weight: "",
+                length: "",
+                height: "",
+                width: "",
+                hard_packaging: false,
+                softPackaging: false,
+                palletizing: false,
+                prr_from: false,
+                prr_to: false,
+                errors: {}
+            },
+        ],
+    }
+  },
+  mutations: {
+    addOrderItem (state, payload) {
+      state.orderItems.push({
+            id: payload,
+            itemType: "",
+            dimensionsType: 1,
+            volume: "",
+            weight: "",
+            length: "",
+            height: "",
+            width: "",
+            hard_packaging: false,
+            softPackaging: false,
+            palletizing: false,
+            prr_from: false,
+            prr_to: false,
+            errors: {}
+        })
+    },
+    deleteOrderItem (state, payload) {
+        state.orderItems.splice(payload, 1)
+    },
+    switchLoadingStatus (state, payload) {
+        state.loading = payload
+    }
+  }
+})
+const OrderForm = {
+    data() {
+        return {
+            orderItemsQty: 1,
+            departureDate: "",
+            departureTime: "",
+            departureByTime: false,
+            departurePickupType: 1,
+            departureAddress: "",
+            receivingDate: "",
+            receivingTime: "",
+            receivingByTime: false,
+            receivingType: 1,
+            receivingAddress: "",
+            cargoInsurance: false,
+            returnDocuments: false,
+            declared_cost: "",
+            errors: {},
+            price: 0,
+            serverErrors: [],
+            options: [
+                {
+                    value: 'Option1',
+                    label: 'Option1',
+                },
+                {
+                    value: 'Option2',
+                    label: 'Option2',
+                },
+                {
+                    value: 'Option3',
+                    label: 'Option3',
+                },
+                {
+                    value: 'Option4',
+                    label: 'Option4',
+                },
+                {
+                    value: 'Option5',
+                    label: 'Option5',
+                },
+            ],
+            value: ""
+        }
+    },
+    delimiters: ["${", "}$"],
+    computed: {
+        orderItems () {
+            return store.state.orderItems
+        },
+        orderPrice () {
+            return Math.floor(this.price).toLocaleString()
+        },
+        loadingStatus () {
+            return store.state.loading
+        }
+    },
+    methods: {
+        changeDepartureByTime () {
+            this.departureByTime= !this.departureByTime
+            if (!this.departureByTime) {
+                this.departureTime = ""
+            }
+        },
+        clearDepartureData () {
+            this.departureAddress = ""
+            this.departureDate = ""
+            this.departureTime = ""
+            this.departureByTime = false
+        },
+        changeReceivingByTime () {
+            this.receivingByTime= !this.receivingByTime
+            if (!this.receivingByTime) {
+                this.receivingTime = ""
+            }
+        },
+        clearReceivingData () {
+            this.receivingAddress = ""
+            this.receivingDate = ""
+            this.receivingTime = ""
+            this.receivingByTime = false
+        },
+        createOrderItemType (id) {
+            return `itemType${id}`
+        },
+        addOrderItem () {
+            store.commit('addOrderItem', this.orderItemsQty + 1)
+            this.orderItemsQty ++
+        },
+        calculateOrderItemVolume (id) {
+            let orderItemObject = store.state.orderItems.find(el => el.id == id)
+            if (orderItemObject.dimensionsType == 1) {
+                orderItemObject.length = ""
+                orderItemObject.height = ""
+                orderItemObject.width = ""
+                orderItemObject.volume = ""
+            }
+            if (orderItemObject.dimensionsType == 2) {
+                orderItemObject.volume = ""
+                if (orderItemObject.length &&  orderItemObject.height && orderItemObject.width) {
+                    let volume = parseFloat(orderItemObject.length) * parseFloat(orderItemObject.height) * parseFloat(orderItemObject.width)
+                    orderItemObject.volume = volume.toFixed(3)
+                } 
+                this.checkOrderItemParams(id)
+            }
+        },
+        checkAllOrderItemsOversize () {
+            store.state.orderItems.forEach(orderItem => {
+                this.checkOrderItemParams(orderItem.id)
+            })
+        },
+        checkOrderItemParams (id) {
+            let el = store.state.orderItems.find(el => el.id == id)
+            if ((el.weight>=35||el.weight==""||el.weight==0) || (el.volume>=0.3||el.volume==""||el.volume==0)) {
+                if (this.departurePickupType == 2) {
+                    el.errors.fromOversize = true
+                    el.prr_from = false
+                } else {
+                    el.errors.fromOversize = false
+                }
+                if (this.receivingType == 2) {
+                    el.errors.toOversize = true
+                    el.prr_to = false
+                } else {
+                    el.errors.toOversize = false
+                }
+            } else {
+                el.errors.fromOversize = false
+                el.errors.toOversize = false
+            }
+        },
+        deleteOrderItem (id) {
+            let el = store.state.orderItems.find(el => el.id == id)
+            let index = store.state.orderItems.indexOf(el)
+            store.commit('deleteOrderItem', index)
+        },
+        getOrderFullWeight () {
+            let orderFullWeight = 0
+            this.orderItems.forEach((item) => {
+                orderFullWeight += parseFloat(item.weight ? item.weight : 0)
+            })
+            return orderFullWeight
+        },
+        getOrderFullVolume () {
+            let orderFullVolume = 0
+            this.orderItems.forEach((item) => {
+                orderFullVolume += parseFloat(item.volume ? item.volume : 0)
+            })
+            return orderFullVolume
+        },
+        fastCalculateOrder () {
+            $('#departureCity').niceSelect('update')
+            $('#receivingCity').niceSelect('update')
+            let data = {
+                city_from_name: $('#departureCity').val(),
+                city_to_name: $('#receivingCity').val(),
+                weight: this.getOrderFullWeight(),
+                volume: this.getOrderFullVolume(),
+            }
+            console.log(data)
+        },
+        collectOrderItems () {
+            let OrderItemList = []
+            this.orderItems.forEach((el) => {
+                let item = {
+                    weight: parseFloat(el.weight ? el.weight : 0),
+                    volume: parseFloat(el.volume ? el.volume : 0),
+                    length: parseFloat(el.length ? el.length : 0),
+                    height: parseFloat(el.height ? el.height : 0),
+                    width: parseFloat(el.width ? el.width : 0),
+                    soft_packaging: el.softPackaging,
+                    hard_packaging: el.hard_packaging,
+                    palletizing: el.palletizing,
+                    prr_from: el.prr_from,
+                    prr_to: el.prr_to,
+                }
+                OrderItemList.push(item)
+            })
+            return OrderItemList
+        },
+        checkCalculateValidation () {
+            let isValidCalcForm = true
+            this.errors = {}
+            let city_from_id = $('#departureCity').val()
+            if (!city_from_id) {
+                isValidCalcForm = false
+                this.errors.cityFromId = true
+            }
+            let city_to_id = $('#receivingCity').val()
+            if (!city_to_id) {
+                isValidCalcForm = false
+                this.errors.city_to_id = true
+            }
+            if (this.departureByTime && !this.departureTime ) {
+                this.errors.departureTime = true
+                isValidCalcForm = false
+            }
+            if (this.receivingByTime && !this.receivingTime ) {
+                this.errors.receivingTime = true
+                isValidCalcForm = false
+            }
+            this.orderItems.forEach((el) => {
+                el.errors = {}
+                if (!el.volume) {
+                    el.errors.volume = true
+                    isValidCalcForm = false
+                }
+                if (!el.weight) {
+                    el.errors.weight = true
+                    isValidCalcForm = false
+                }
+            })
+            return isValidCalcForm
+        },
+        getOrderData () {
+            let city_from_id = $('#departureCity').val()
+            let city_to_id = $('#receivingCity').val()
+            let data = {
+                city_from_id: city_from_id,
+                from_address: this.departurePickupType == 2 ? true : false,
+                by_time_from: this.departureByTime,
+                city_to_id: city_to_id,
+                to_address: this.receivingType == 2 ? true: false,
+                by_time_to: this.receivingByTime,
+                insurance: this.cargoInsurance,
+                return_docs: this.returnDocuments,
+                declared_cost: parseFloat(this.declared_cost ? this.declared_cost : 0),
+                items: this.collectOrderItems()
+            }
+            if (this.departureDate) {
+                data.date_from = this.departureDate
+            }
+            if (this.departureByTime && this.departureTime) {
+                data.time_from = this.departureTime
+            }
+            if (this.receivingDate) {
+                data.date_to = this.receivingDate
+            }
+            if (this.receivingByTime && this.receivingTime) {
+                data.time_to = this.receivingTime
+            }
+
+            return data
+        },
+        async calulateOrder () {
+            this.price = 0
+            this.serverErrors = []
+            if (this.checkCalculateValidation()) {
+                
+                let url = `${window.location.origin}/api/v1/calculator/calculate/`
+                $('#atf-loader').fadeIn(200)
+                await axios({
+                    method: 'post',
+                    headers: {
+                        "Authorization": `Token ${"{{server_api_token}}"}`
+                    },
+                    url: url,
+                    data: { "data": this.getOrderData()},
+                }).then((resp) => {
+                    this.price = resp.data.data.cost
+                }).catch(error => {
+                    this.serverErrors.push("Сервис временно недоступен, попробуйте сделать расчет позднее")
+                    console.log(error)
+                }).finally(() => {
+                    $('#atf-loader').fadeOut(500)
+                })
+            }
+        },
+        orderConfirm (evt) {
+            evt.preventDefault()
+            window.location.assign(window.location.origin + "/order/new-order/", new URLSearchParams(this.getOrderData()).toString())
+            //const u = new URLSearchParams(this.getOrderData()).toString();
+            //console.log(u)
+            //console.log(this.getOrderData())
+        }
+    }
+}
+const app = createApp(OrderForm)
+app.use(naive)
+app.use(store)
+
+//app.config.compilerOptions.isCustomElement = (tag) => ['el-select', 'el-option'].includes(tag);
+
+app.mount('#order_form')
+
+</script>
+
+{% endblock %}

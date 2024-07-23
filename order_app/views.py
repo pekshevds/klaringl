@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
 
-from server.base import FormOfOwnershipSelector, PayerSelector
+# from server.base import FormOfOwnershipSelector, PayerSelector
 from order_app.models import Cargo, Order
 from order_app.serializers import (
     CargorSerializer,
@@ -97,18 +97,18 @@ class CheckStatusAPIView(APIView):
         return Response(response)
 
 
-class NewOrderView(View):
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.AllowAny]
+# class NewOrderView(View):
+#     authentication_classes = [authentication.TokenAuthentication]
+#     permission_classes = [permissions.AllowAny]
 
-    def get(self, request: HttpRequest) -> HttpResponse:
-        context = {
-            "cities_list": Rate.cities_to,
-            "cities_from_list": Rate.cities_from,
-            "payer_selector": dict(PayerSelector.choices),
-            "form_ownership_selector": dict(FormOfOwnershipSelector.choices),
-        }
-        return render(request, "order_app/new-order.html", context)
+#     def get(self, request: HttpRequest) -> HttpResponse:
+#         context = {
+#             "cities_list": Rate.cities_to,
+#             "cities_from_list": Rate.cities_from,
+#             "payer_selector": dict(PayerSelector.choices),
+#             "form_ownership_selector": dict(FormOfOwnershipSelector.choices),
+#         }
+#         return render(request, "order_app/new-order.html", context)
 
 
 class MarkUploadedAPIView(APIView):

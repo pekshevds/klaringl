@@ -5,26 +5,14 @@
 <script src="https://unpkg.com/vue@3.0.1/dist/vue.global.prod.js"></script>
 <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
-
+<script src="https://unpkg.com/naive-ui"></script>
 {% endblock %}
 
 {% block body %}
-
-<!-- START PRELOADER -->
-{% comment %} <div>
-    <div id="atf-loading">
-        <div id="atf-loading-center">
-            <img src="{% static 'index_app/assets/img/taxi.gif' %}" class="img-fluid" alt="">
-        </div>
-    </div>
-</div> {% endcomment %}
-<!-- END PRELOADER -->	
-
 <!-- start-page-heading -->
 <div class="atf-page-heading atf-size-md atf-dynamic-bg" style="background-image: url({% static 'index_app/assets/img/slider/6.jpg' %}); background-size:cover; background-position: center top;">
     <div class="container">
         <div class="atf-page-heading-in text-center">
-            {% comment %} <h1 class="atf-page-heading-title">Our Booking Now</h1> {% endcomment %}
             <div class="atf-post-label">
                 <span><a href="{% url 'index:index' %}">Главная</a></span>
                 <span>Расчет и оформление заказа</span>
@@ -33,14 +21,13 @@
     </div>
 </div>
 <!-- .end-page-heading -->
-
 <section class="atf-section-padding" id="order_form">
     <div class="container">
         <div class="row">
             <div class="col-12 col-xl-8" data-aos="fade-up">
                 <div class="atf-section-title  text-start">
                     {% comment %} <h5 class="sub-title">Request A Quote</h5> {% endcomment %}
-                    <h2 class="title-color">Расчет и оформление заказа ${ count }$</h2>
+                    <h2 class="title-color">Расчет и оформление заказа</h2>
                     <div class="row mt-5">
                         <div class="col-lg-12">
                             <div class="atf-booking-form">
@@ -48,16 +35,15 @@
                                     <h4 class="mb-4">Направление</h4>
                                     <p>Откуда</p>
                                     <div class="col-12">
-                                        <div class="atf-booking-form-item col-12 col-md-6 row">
-                                            <select 
-                                                id="departureCity" 
-                                                class="nice-select departureCity"
-                                            >
-                                                <option data-display="Выберите город" value="">...</option>
-                                                {% for city in cities_from_list %}
-                                                <option value="{{ city.id }}">{{ city.name }}</option>
-                                                {% endfor %}
-                                            </select>
+                                        <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
+                                            <n-select
+                                                v-model:value="departureCity"
+                                                filterable
+                                                placeholder="Выберите город"
+                                                :options="citiesFromList"
+                                                @update:value="dataChanged"
+                                                :disabled="orderCreatedSuccess"
+                                            ></n-select>
                                             <p 
                                                 v-if="errors.cityFromId" 
                                                 class="asOrderFormErrorMessage"
@@ -72,7 +58,8 @@
                                                 class="form-check-input" 
                                                 v-model="departurePickupType" 
                                                 @click="clearDepartureData()"
-                                                @change="checkAllOrderItemsOversize()"
+                                                @change="checkAllOrderItemsOversize(); dataChanged()"
+                                                :disabled="orderCreatedSuccess"
                                                 type="radio" 
                                                 value="1"
                                             >
@@ -82,63 +69,178 @@
                                             <input 
                                                 class="form-check-input" 
                                                 v-model="departurePickupType" 
-                                                @change="checkAllOrderItemsOversize()"
+                                                @change="checkAllOrderItemsOversize(); dataChanged()"
+                                                :disabled="orderCreatedSuccess"
                                                 type="radio" 
                                                 value="2"
                                             >
                                             <label class="form-check-label">Забрать по адресу</label>
                                         </div>
                                     </div>
-                                    <div v-if="departurePickupType == 2" class="mt-3 col-12 row">
-                                        <div class="atf-booking-form-item">
-                                            <div class="form-group mb-0">
-                                                <input type="text" v-model="departureAddress" class="form-control" placeholder="Введите адрес">
+                                    <Transition>
+                                        <div v-if="departurePickupType == 2" class="departure-by-address-info">
+                                            <di class="mt-3 col-12 row">
+                                                <div class="atf-booking-form-item">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            type="text" 
+                                                            v-model="departureAddress" 
+                                                            :disabled="orderCreatedSuccess"
+                                                            class="form-control" 
+                                                            placeholder="Введите адрес"
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </di>   
+                                            <p class="mt-4">Дата забора</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0 as-form-group">
+                                                        <input 
+                                                            v-model="departureDate" 
+                                                            type="date" 
+                                                            class="form-control"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                    </div>
+                                                </div> 
                                             </div>
-                                        </div>
-                                    </div>    
-                                    <p v-if="departurePickupType == 2" class="mt-4">Дата забора</p>
-                                    <div v-if="departurePickupType == 2" class="col-12 row">
-                                        <div class="atf-booking-form-item col-12 col-md-6">
-                                            <div class="form-group mb-0 as-form-group">
-                                                <input v-model="departureDate" type="date" class="form-control">
+                                            <div class="col-12 col-md-6">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-check">
+                                                        <input 
+                                                            v-model="departureByTime"
+                                                            @click="changeDepartureByTime(); dataChanged()"
+                                                            class="form-check-input" 
+                                                            :disabled="orderCreatedSuccess"
+                                                            type="checkbox"
+                                                        >
+                                                        <label class="form-check-label">Забор по времени</label>
+                                                    </div>
+                                                </div>
+                                                <div v-if="departureByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
+                                                    <div class="form-group mb-0 as-form-group">
+                                                        <input 
+                                                            v-model="departureTime" 
+                                                            @change="dataChanged"
+                                                            type="time" 
+                                                            class="form-control"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.departureTime"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div> 
                                             </div>
-                                        </div> 
-                                    </div>
-                                    <div v-if="departurePickupType == 2" class="col-12 col-md-6 row">
-                                        <div class="col-12 col-md-6">
-                                            <div class="form-check">
-                                                <input 
-                                                    v-model="departureByTime"
-                                                    @click="changeDepartureByTime"
-                                                    class="form-check-input" 
-                                                    type="checkbox"
+                                        </div>    
+                                    </Transition>    
+                                    <Transition>   
+                                        <div v-if="price && orderRegistration" class="sender-info">
+                                            <h4 class="mt-4 mb-4">Отправитель</h4>
+                                            <p>Форма собственности</p>
+                                            <div class="col-12">
+                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
+                                                    <n-select 
+                                                        v-model:value="formFrom"
+                                                        :disabled="orderCreatedSuccess"
+                                                        :options="formOwnershipSelector"
+                                                    >
+                                                    </n-select>
+                                                </div> 
+                                            </div>
+                                            <p class="mt-3">Наименование</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="departureName" 
+                                                        class="form-control"
+                                                        placeholder="Наименование отправителя"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.departureName"
+                                                    class="asOrderFormErrorMessage"
                                                 >
-                                                <label class="form-check-label">Забор по времени</label>
-                                              </div>
-                                        </div>
-                                        <div v-if="departureByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
-                                            <div class="form-group mb-0 as-form-group">
-                                                <input v-model="departureTime" type="time" class="form-control">
+                                                    Обязательное поле!
+                                                </p>
                                             </div>
-                                            <p  
-                                                v-if="errors.departureTime"
-                                                class="asOrderFormErrorMessage"
-                                            >
-                                                Обязательное поле!
-                                            </p>
-                                        </div> 
-                                    </div>        
-
+                                            <p class="mt-3">Контактное лицо</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="departureFace" 
+                                                        class="form-control" 
+                                                        placeholder="ФИО"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.departureFace"
+                                                    class="asOrderFormErrorMessage"
+                                                >
+                                                    Обязательное поле!
+                                                </p>
+                                            </div>
+                                            <div class="mt-3 col-12 row">
+                                                <div class="atf-booking-form-item col-lg-6 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            v-phone
+                                                            type="text" 
+                                                            v-model="departureTel" 
+                                                            class="form-control" 
+                                                            placeholder="Телефон"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.departureTel"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div>
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            type="email" 
+                                                            v-model="departureEmail" 
+                                                            class="form-control" 
+                                                            placeholder="email"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.departureEmail"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        ${ errors.departureEmail }$
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Transition>      
                                     <div class="as-delimiter mt-5"></div>
                                     <p class="mt-5">Куда</p>
                                     <div class="col-12">
-                                        <div class="atf-booking-form-item col-12 col-md-6 row">	
-                                            <select id="receivingCity" class="nice-select receivingCity">
-                                                <option data-display="Выберите город" value="">...</option>
-                                                {% for city in cities_list %}
-                                                <option value="{{ city.id }}">{{ city.name }}</option>
-                                                {% endfor %}
-                                            </select>
+                                        <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">	
+                                            <n-select
+                                                v-model:value="receivingCity"
+                                                filterable
+                                                placeholder="Выберите город"
+                                                :options="citiesToList"
+                                                @update:value="dataChanged"
+                                                :disabled="orderCreatedSuccess"
+                                            ></n-select>
                                             <p 
                                                 v-if="errors.city_to_id" 
                                                 class="asOrderFormErrorMessage"
@@ -153,7 +255,8 @@
                                                 class="form-check-input" 
                                                 v-model="receivingType"
                                                 @click="clearReceivingData()"
-                                                @change="checkAllOrderItemsOversize()"
+                                                @change="checkAllOrderItemsOversize(); dataChanged()"
+                                                :disabled="orderCreatedSuccess"
                                                 type="radio" 
                                                 value="1"
                                             >
@@ -163,57 +266,166 @@
                                             <input 
                                                 class="form-check-input" 
                                                 v-model="receivingType" 
-                                                @change="checkAllOrderItemsOversize()"
+                                                @change="checkAllOrderItemsOversize(); dataChanged()"
+                                                :disabled="orderCreatedSuccess"
                                                 type="radio" 
                                                 value="2"
                                             >
                                             <label class="form-check-label">Доставить по адресу</label>
                                           </div>
                                     </div>
-                                    <div v-if="receivingType == 2" class="mt-3 col-12 row">
-                                        <div class="atf-booking-form-item">
-                                            <div class="form-group mb-0">
-                                                <input 
-                                                    type="text" 
-                                                    v-model="receivingAddress" 
-                                                    class="form-control" 
-                                                    placeholder="Введите адрес"
+                                    <Transition>
+                                        <div v-if="receivingType == 2" class="receiving-by-address-info">
+                                            <div class="mt-3 col-12 row">
+                                                <div class="atf-booking-form-item">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            type="text" 
+                                                            v-model="receivingAddress" 
+                                                            class="form-control" 
+                                                            placeholder="Введите адрес"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-4">Дата доставки</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0 as-form-group">
+                                                        <input 
+                                                            v-model="receivingDate" 
+                                                            type="date" 
+                                                            class="form-control"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-check">
+                                                        <input 
+                                                            v-model="receivingByTime"
+                                                            @click="changeReceivingByTime(); dataChanged()"
+                                                            class="form-check-input" 
+                                                            :disabled="orderCreatedSuccess"
+                                                            type="checkbox"
+                                                        >
+                                                        <label class="form-check-label">Доставка по времени</label>
+                                                    </div>
+                                                </div>
+                                                <div v-if="receivingByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
+                                                    <div class="form-group mb-0 as-form-group">
+                                                        <input 
+                                                            v-model="receivingTime" 
+                                                            type="time" 
+                                                            class="form-control"
+                                                            @change="dataChanged"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.receivingTime"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </Transition>  
+                                    <Transition>
+                                        <div v-if="price && orderRegistration" class="recipient-info">
+                                            <h4 class="mt-4 mb-4">Получатель</h4>
+                                            <p>Форма собственности</p>
+                                            <div class="col-12">
+                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
+                                                    <n-select 
+                                                        v-model:value="formTo"
+                                                        :disabled="orderCreatedSuccess"
+                                                        :options="formOwnershipSelector"
+                                                    >
+                                                    </n-select>
+                                                </div> 
+                                            </div>
+                                            <p class="mt-3">Наименование</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="receivingName" 
+                                                        class="form-control" 
+                                                        placeholder="Наименование получателя"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.receivingName"
+                                                    class="asOrderFormErrorMessage"
                                                 >
+                                                    Обязательное поле!
+                                                </p>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <p v-if="receivingType == 2" class="mt-4">Дата доставки</p>
-                                    <div v-if="receivingType == 2" class="col-12 row">
-                                        <div class="atf-booking-form-item col-12 col-md-6">
-                                            <div class="form-group mb-0 as-form-group">
-                                                <input v-model="receivingDate" type="date" class="form-control">
-                                            </div>
-                                        </div> 
-                                    </div>
-                                    <div v-if="receivingType == 2" class="col-12 col-md-6 row">
-                                        <div class="col-12 col-md-6">
-                                            <div class="form-check">
-                                                <input 
-                                                    v-model="receivingByTime"
-                                                    @click="changeReceivingByTime"
-                                                    class="form-check-input" 
-                                                    type="checkbox"
+                                            <p class="mt-3">Контактное лицо</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="receivingFace" 
+                                                        class="form-control" 
+                                                        placeholder="ФИО"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.receivingFace"
+                                                    class="asOrderFormErrorMessage"
                                                 >
-                                                <label class="form-check-label">Доставка по времени</label>
-                                              </div>
-                                        </div>
-                                        <div v-if="receivingByTime" class="atf-booking-form-item col-12 col-md-6 p-md-0">
-                                            <div class="form-group mb-0 as-form-group">
-                                                <input v-model="receivingTime" type="time" class="form-control">
+                                                    Обязательное поле!
+                                                </p>
                                             </div>
-                                            <p  
-                                                v-if="errors.receivingTime"
-                                                class="asOrderFormErrorMessage"
-                                            >
-                                                Обязательное поле!
-                                            </p>
-                                        </div>
-                                    </div>    
+                                            <div class="mt-3 col-12 row">
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            v-phone
+                                                            type="text" 
+                                                            v-model="receivingTel" 
+                                                            class="form-control" 
+                                                            placeholder="Телефон"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.receivingTel"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div>
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            type="email" 
+                                                            v-model="receivingEmail" 
+                                                            class="form-control" 
+                                                            placeholder="email"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.receivingEmail"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        ${ errors.receivingEmail }$
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>    
+                                    </Transition>    
                                 </div>
                             </div>
                             <div v-for="orderItem, key in orderItems" v-bind:key="orderItem.id" class="atf-booking-form mt-5">
@@ -221,20 +433,37 @@
                                     <div class="mb-4 row justify-content-around">
                                         <h4 class="col-12 col-md-8">Место # ${ key + 1 }$</h4>
                                         <div class="col-12 col-md-4" align="right">
-                                            <button @click="deleteOrderItem(orderItem.id)" v-if="orderItems.length>1">- Удалить место</button>
+                                            <button 
+                                                @click="deleteOrderItem(orderItem.id); dataChanged()" 
+                                                v-if="orderItems.length>1 && !orderCreatedSuccess"
+                                                >- Удалить место
+                                            </button>
                                         </div>
                                     </div>
                                     <p class="mt-4">Характер груза</p>
                                     <div class="col-12 row">
                                         <div class="atf-booking-form-item col-12">
-                                            <input type="text" v-model="orderItem.itemType" class="form-control" placeholder="Характер груза">
+                                            <input 
+                                                type="text" 
+                                                v-model="orderItem.itemType" 
+                                                :disabled="orderCreatedSuccess"
+                                                class="form-control" 
+                                                placeholder="Характер груза"
+                                            >
                                         </div> 
+                                        <p  
+                                            v-if="orderItem.errors.itemType"
+                                            class="asOrderFormErrorMessage"
+                                        >
+                                            Обязательное поле!
+                                        </p>
                                     </div>
                                     <div class="mt-4 col-12">
                                         <div class="form-check form-check-inline">
                                             <input 
                                                 class="form-check-input" 
                                                 v-model="orderItem.dimensionsType" 
+                                                :disabled="orderCreatedSuccess"
                                                 type="radio" 
                                                 value="1"
                                             >
@@ -244,6 +473,7 @@
                                             <input 
                                                 class="form-check-input" 
                                                 v-model="orderItem.dimensionsType" 
+                                                :disabled="orderCreatedSuccess"
                                                 type="radio" 
                                                 value="2"
                                             >
@@ -256,7 +486,8 @@
                                                 <input 
                                                     type="number" 
                                                     v-model="orderItem.volume" 
-                                                    @input="checkOrderItemParams(orderItem.id)"
+                                                    @input="checkOrderItemParams(orderItem.id); dataChanged()"
+                                                    :disabled="orderCreatedSuccess"
                                                     class="form-control" 
                                                     placeholder="Объем, м3"
                                                     min="0"
@@ -274,7 +505,8 @@
                                                 <input 
                                                     type="number" 
                                                     v-model="orderItem.weight" 
-                                                    @input="checkOrderItemParams(orderItem.id)"
+                                                    @input="checkOrderItemParams(orderItem.id); dataChanged()"
+                                                    :disabled="orderCreatedSuccess"
                                                     class="form-control" 
                                                     placeholder="Вес, кг"
                                                     min="0"
@@ -295,6 +527,7 @@
                                                     @input="calculateOrderItemVolume(orderItem.id)" 
                                                     type="number" 
                                                     v-model="orderItem.length" 
+                                                    :disabled="orderCreatedSuccess"
                                                     class="form-control" 
                                                     placeholder="Длина, м"
                                                     min="0"
@@ -305,6 +538,7 @@
                                             <div class="form-group mb-0">
                                                 <input 
                                                     @input="calculateOrderItemVolume(orderItem.id)"
+                                                    :disabled="orderCreatedSuccess"
                                                     type="number" 
                                                     v-model="orderItem.width" 
                                                     class="form-control" 
@@ -317,6 +551,7 @@
                                             <div class="form-group mb-0">
                                                 <input 
                                                     @input="calculateOrderItemVolume(orderItem.id)"
+                                                    :disabled="orderCreatedSuccess"
                                                     type="number" 
                                                     v-model="orderItem.height" 
                                                     class="form-control"  
@@ -330,7 +565,8 @@
                                                 <input 
                                                     type="number" 
                                                     v-model="orderItem.volume" 
-                                                    @input="checkOrderItemParams(orderItem.id)"
+                                                    @input="checkOrderItemParams(orderItem.id); dataChanged()"
+                                                    :disabled="orderCreatedSuccess"
                                                     class="form-control" 
                                                     placeholder="Объем, м3"
                                                     min="0"
@@ -349,6 +585,7 @@
                                                     type="number" 
                                                     v-model="orderItem.weight" 
                                                     @input="checkOrderItemParams(orderItem.id)"
+                                                    :disabled="orderCreatedSuccess"
                                                     class="form-control" 
                                                     placeholder="Вес, кг"
                                                     min="0"
@@ -363,28 +600,58 @@
                                         </div>
                                     </div>
                                     <p class="mt-4 mb-3">Дополнительно:</p>
-                                    <div class=" col-12 row">
+                                    <div class="col-12 row">
                                         <div class="col-12 col-md-6 pl-3 pr-3">
                                             <div class="form-check">
-                                                <input class="form-check-input" v-model="orderItem.softPackaging" type="checkbox">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="orderItem.softPackaging" 
+                                                    :disabled="orderCreatedSuccess"
+                                                    @change="dataChanged"
+                                                    type="checkbox"
+                                                >
                                                 <label class="form-check-label">Мягкая упаковка</label>
                                               </div>
                                               <div class="form-check">
-                                                <input class="form-check-input" v-model="orderItem.hard_packaging" type="checkbox">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="orderItem.hard_packaging" 
+                                                    :disabled="orderCreatedSuccess"
+                                                    @change="dataChanged"
+                                                    type="checkbox"
+                                                >
                                                 <label class="form-check-label">Жесткая упаковка</label>
                                               </div>
                                               <div class="form-check">
-                                                <input class="form-check-input" v-model="orderItem.palletizing" type="checkbox">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="orderItem.palletizing" 
+                                                    :disabled="orderCreatedSuccess"
+                                                    @change="dataChanged"
+                                                    type="checkbox"
+                                                >
                                                 <label class="form-check-label">Паллетирование</label>
                                               </div>
                                         </div>
                                         <div class="col-12 col-md-6 pl-3 pr-3">
                                             <div v-if="departurePickupType==2 && !orderItem.errors.fromOversize" class="form-check">
-                                                <input class="form-check-input" v-model="orderItem.prr_from" type="checkbox">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="orderItem.prr_from" 
+                                                    :disabled="orderCreatedSuccess"
+                                                    @change="dataChanged"
+                                                    type="checkbox"
+                                                >
                                                 <label class="form-check-label">Погрузка при заборе груза (ПРР при заборе)</label>
                                             </div>
                                             <div v-if="receivingType==2 && !orderItem.errors.toOversize" class="form-check">
-                                                <input class="form-check-input" v-model="orderItem.prr_to" type="checkbox">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="orderItem.prr_to" 
+                                                    :disabled="orderCreatedSuccess"
+                                                    @change="dataChanged"
+                                                    type="checkbox"
+                                                >
                                                 <label class="form-check-label">Выгрузка при доставке (ПРР при доставке)</label>
                                             </div>
                                         </div>
@@ -396,7 +663,11 @@
                                 >
                                     <div class="col-12 col-md-4" style="text-align:right;">
                                         <div class="atf-main-btn"> 
-                                            <button @click="addOrderItem" class="atf-themes-btn  atf-themes-btn-one">
+                                            <button 
+                                                @click="addOrderItem(); dataChanged()" 
+                                                class="atf-themes-btn atf-themes-btn-one"
+                                                v-if="!orderCreatedSuccess"
+                                            >
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">+ Добавить место</span>
                                             </button>
@@ -404,19 +675,162 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div v-if="price && orderRegistration" class="atf-booking-form mt-5">
+                                <div class="atf-booking-form-box row">
+                                    <h4 class="mb-4">Плательщик</h4>
+                                    <div class="mb-4 col-12">
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="payerType" 
+                                                @click="clearPayerData()"
+                                                type="radio" 
+                                                value="SD"
+                                                :disabled="orderCreatedSuccess"
+                                            >
+                                            <label class="form-check-label">Отправитель</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="payerType" 
+                                                @click="clearPayerData()"
+                                                type="radio" 
+                                                value="RP"
+                                                :disabled="orderCreatedSuccess"
+                                            >
+                                            <label class="form-check-label">Получатель</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input 
+                                                class="form-check-input" 
+                                                v-model="payerType" 
+                                                type="radio" 
+                                                value="PR"
+                                                :disabled="orderCreatedSuccess"
+                                            >
+                                            <label class="form-check-label">Третье лицо</label>
+                                        </div>
+                                    </div>
+                                    <Transition>
+                                        <div v-show="payerType == 'PR'">
+                                            <p>Форма собственности</p>
+                                            <div class="col-12">
+                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
+                                                    <n-select 
+                                                        v-model:value="formPayer"
+                                                        :disabled="orderCreatedSuccess"
+                                                        :options="formOwnershipSelector"
+                                                    >
+                                                    </n-select>
+                                                </div> 
+                                            </div>    
+                                            <p class="mt-3">Наименование</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="payerName" 
+                                                        class="form-control" 
+                                                        placeholder="Наименование плательщика"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.payerName"
+                                                    class="asOrderFormErrorMessage"
+                                                >
+                                                    Обязательное поле!
+                                                </p>
+                                            </div>
+                                            <p class="mt-3">Контактное лицо</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="payerFace" 
+                                                        class="form-control" 
+                                                        placeholder="ФИО"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.payerFace"
+                                                    class="asOrderFormErrorMessage"
+                                                >
+                                                    Обязательное поле!
+                                                </p>
+                                            </div>
+                                            <div class="mt-3 col-12 row">
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            v-phone
+                                                            type="text" 
+                                                            v-model="payerTel" 
+                                                            class="form-control" 
+                                                            placeholder="Телефон"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.payerTel"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div>
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            type="email" 
+                                                            v-model="payerEmail" 
+                                                            class="form-control" 
+                                                            placeholder="email"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.payerEmail"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        ${ errors.payerEmail }$
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Transition>
+                                </div>
+                            </div> 
+
                             <div class="atf-booking-form mt-5">
                                 <div class="atf-booking-form-box row">
                                     <h4 class="mb-4">Дополнительные услуги</h4>
                                     <div class=" col-12 row">
                                         <div class="col-6 p-3">
                                             <div class="form-check">
-                                                <input v-model="cargoInsurance" class="form-check-input" type="checkbox">
+                                                <input 
+                                                    v-model="cargoInsurance" 
+                                                    :disabled="orderCreatedSuccess"
+                                                    @change="dataChanged"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
                                                 <label class="form-check-label">Страхование груза</label>
                                               </div>
                                         </div>
                                         <div class="col-6 p-3">
                                             <div class="form-check">
-                                                <input v-model="returnDocuments" class="form-check-input" type="checkbox">
+                                                <input 
+                                                    v-model="returnDocuments" 
+                                                    :disabled="orderCreatedSuccess"
+                                                    @change="dataChanged"
+                                                    class="form-check-input" 
+                                                    type="checkbox"
+                                                >
                                                 <label class="form-check-label">Возврат пакета документов</label>
                                             </div>
                                         </div>
@@ -424,20 +838,32 @@
                                             <div class="col-12 col-md-5">
                                                 <p>Объявленная стоимость груза:</p>
                                                 <div class="atf-booking-form-item">
-                                                    <input type="text" v-model="declared_cost" class="form-control">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="declared_cost" 
+                                                        :disabled="orderCreatedSuccess"
+                                                        @input="dataChanged"
+                                                        class="form-control"
+                                                    >
                                                 </div>
                                             </div>
                                         </div>    
                                     </div>
                                     <div class="mt-3 col-12">
-                                        {% comment %} <div class="atf-main-btn"> 
-                                            <button @click="checkout" class="atf-themes-btn  atf-themes-btn-one">
-                                                <i class="btn-curve"></i>
-                                                <span class="btn-title">Офомить заказ</span>
-                                            </button>
-                                        </div> {% endcomment %}
                                         <div class="atf-main-btn"> 
-                                            <button @click="calulateOrder" class="atf-themes-btn  atf-themes-btn-one">
+                                            <button 
+                                                v-if="loading"
+                                                class="atf-themes-btn atf-themes-btn-one" 
+                                                style="padding: 5px 56px 3px;"
+                                            >
+                                                <div class="spinner-border text-light" role="status">
+                                                </div>
+                                            </button>
+                                            <button 
+                                                v-else
+                                                @click="calulateOrder"
+                                                class="atf-themes-btn atf-themes-btn-one"
+                                            >
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">Рассчитать стоимость</span>
                                             </button>
@@ -456,27 +882,65 @@
                                 </div>
                                 <div class="atf-booking-form-box row">
                                     <div class="mt-3 col-12">
-                                        <div class="atf-main-btn"> 
-                                            <a href="{% url 'order:new-order' %}" class="atf-themes-btn atf-themes-btn-one">
+                                        <div v-if="orderCreatedSuccess" class="atf-main-btn"> 
+                                            <a 
+                                                href="{% url "calculator:calc" %}"
+                                                class="atf-themes-btn atf-themes-btn-one">
+                                                <i class="btn-curve"></i>
+                                                <span class="btn-title">Новый заказ</span>
+                                            </a>
+                                        </div>
+                                        <div v-if="orderRegistration && !orderCreatedSuccess" class="atf-main-btn"> 
+                                            <button 
+                                                v-if="loading"
+                                                class="atf-themes-btn atf-themes-btn-one" 
+                                                style="padding: 5px 56px 3px;"
+                                            >
+                                                <div class="spinner-border text-light" role="status">
+                                                </div>
+                                            </button>
+                                            <button 
+                                                v-else
+                                                @click="createOrder" 
+                                                class="atf-themes-btn atf-themes-btn-one">
+                                                <i class="btn-curve"></i>
+                                                <span class="btn-title">Отправить заказ</span>
+                                            </button>
+                                        </div>
+                                        <div v-else-if="!orderRegistration && !orderCreatedSuccess" class="atf-main-btn"> 
+                                            <button 
+                                                v-if="loading"
+                                                class="atf-themes-btn atf-themes-btn-one" 
+                                                style="padding: 5px 56px 3px;"
+                                            >
+                                                <div class="spinner-border text-light" role="status">
+                                                </div>
+                                            </button>
+                                            <button 
+                                                v-else
+                                                @click="orderRegistrationOn" 
+                                                class="atf-themes-btn atf-themes-btn-one">
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">Офомить заказ</span>
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div v-if="serverErrors.length > 0">
-                                <div class="atf-facilities-services d-flex mt-2 text-left">
-                                    <div class="atf-facilities-text ms-3">
-                                        <p 
-                                            v-for="error in serverErrors" 
-                                            v-bind:key="error.id"
-                                        >
-                                        ${error}$
-                                        </p>
+                            <Transition>
+                                <div v-if="serverInfo.length > 0">
+                                    <div class="atf-facilities-services d-flex mt-2 text-left">
+                                        <div class="atf-facilities-text ms-3">
+                                            <p 
+                                                v-for="error in serverInfo" 
+                                                v-bind:key="error.id"
+                                            >
+                                            ${error}$
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>  
+                                </div>  
+                            </Transition>
                         </div>
                     </div>
                 </div>
@@ -496,19 +960,12 @@
 {% endblock %}
 
 {% block local_scripts %}
-<script>
-    $(document).ready(function() {
-        $('.receivingCity').niceSelect();
-        $('.departureCity').niceSelect();
-    });
-</script>
-
 <script type='text/javascript'>
 	axios.defaults.xsrfCookieName = 'csrftoken'
 	axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 </script>
 
-<script type="module">
+<script type="module" setup>
 const { createApp } = Vue
 // store
 const store = Vuex.createStore({
@@ -562,27 +1019,48 @@ const store = Vuex.createStore({
     }
   }
 })
-
 const OrderForm = {
     data() {
         return {
             orderItemsQty: 1,
+            departureCity: "",
             departureDate: "",
             departureTime: "",
             departureByTime: false,
             departurePickupType: 1,
             departureAddress: "",
+            formFrom: "FZ",
+            departureName: "",
+            departureFace: "",
+            departureTel: "",
+            departureEmail: "",
+            receivingCity: "",
             receivingDate: "",
             receivingTime: "",
             receivingByTime: false,
             receivingType: 1,
             receivingAddress: "",
+            formTo: "FZ",
+            receivingName: "",
+            receivingFace: "",
+            receivingTel: "",
+            receivingEmail: "",
+            payerType: "SD",
+            formPayer: "FZ",
+            payerName: "",
+            payerFace: "",
+            payerTel: "",
+            payerEmail: "",
             cargoInsurance: false,
             returnDocuments: false,
             declared_cost: "",
             errors: {},
             price: 0,
-            serverErrors: []
+            orderRegistration: false,
+            serverInfo: [],
+            createOrderinfo: "",
+            loading: false,
+            orderCreatedSuccess: false,
         }
     },
     delimiters: ["${", "}$"],
@@ -595,9 +1073,62 @@ const OrderForm = {
         },
         loadingStatus () {
             return store.state.loading
+        },
+        citiesFromList () {
+            return JSON.parse('{{ cities_from_list | escapejs }}')
+        },
+        citiesToList () {
+            return JSON.parse('{{ cities_list | escapejs }}')
+        },
+        formOwnershipSelector () {
+            return JSON.parse('{{ form_ownership_selector | escapejs }}')
+        },
+        isValidDepartureEmail() {
+            return /^[^@]+@\w+(\.\w+)+\w$/.test(this.departureEmail)
+        },
+        isValidReceivingEmail() {
+            return /^[^@]+@\w+(\.\w+)+\w$/.test(this.receivingEmail)
+        },
+        isValidPayerEmail() {
+            return /^[^@]+@\w+(\.\w+)+\w$/.test(this.payerEmail)
+        },
+        cityFromId () {
+            return '{{ city_from_id }}'
+        },
+        cityToId () {
+            return '{{ city_to_id }}'
+        },
+        orderItemWeight () {
+            return '{{ weight }}'
+        },
+        orderItemVolume () {
+            return '{{ volume }}'
+        }
+    },
+    mounted() {
+        if (this.cityFromId) {
+            this.departureCity = this.cityFromId
+        }
+        if (this.cityToId) {
+            this.receivingCity = this.cityToId
+        }
+        let orderItemObject = store.state.orderItems.find(el => el.id == 1)
+        if (this.orderItemWeight) {
+            orderItemObject.weight = this.orderItemWeight
+        }
+        if (this.orderItemVolume) {
+            orderItemObject.volume = this.orderItemVolume
         }
     },
     methods: {
+        dataChanged () {
+            this.price = 0
+            this.orderRegistration = false
+            this.serverInfo = []
+        },
+        orderRegistrationOn () {
+            this.orderRegistration = true
+        },
         changeDepartureByTime () {
             this.departureByTime= !this.departureByTime
             if (!this.departureByTime) {
@@ -622,6 +1153,12 @@ const OrderForm = {
             this.receivingTime = ""
             this.receivingByTime = false
         },
+        clearPayerData () {
+            this.payerName = ""
+            this.payerFace = ""
+            this.payerTel = ""
+            this.payerEmail = ""
+        },
         createOrderItemType (id) {
             return `itemType${id}`
         },
@@ -635,14 +1172,24 @@ const OrderForm = {
                 orderItemObject.length = ""
                 orderItemObject.height = ""
                 orderItemObject.width = ""
-                orderItemObject.volume = ""
             }
             if (orderItemObject.dimensionsType == 2) {
                 orderItemObject.volume = ""
-                if (orderItemObject.length &&  orderItemObject.height && orderItemObject.width) {
-                    let volume = parseFloat(orderItemObject.length) * parseFloat(orderItemObject.height) * parseFloat(orderItemObject.width)
-                    orderItemObject.volume = volume.toFixed(3)
-                } 
+                let length = parseFloat(0)
+                if (orderItemObject.length) {
+                    length = parseFloat(orderItemObject.length)
+                }
+                let height = parseFloat(0)
+                if (orderItemObject.height) {
+                    height = parseFloat(orderItemObject.height)
+                }
+                let width = parseFloat(0)
+                if (orderItemObject.width) {
+                    width = parseFloat(orderItemObject.width)
+                }
+                let volume = length * height * width
+                
+                orderItemObject.volume = volume.toFixed(3)
                 this.checkOrderItemParams(id)
             }
         },
@@ -676,32 +1223,7 @@ const OrderForm = {
             let index = store.state.orderItems.indexOf(el)
             store.commit('deleteOrderItem', index)
         },
-        getOrderFullWeight () {
-            let orderFullWeight = 0
-            this.orderItems.forEach((item) => {
-                orderFullWeight += parseFloat(item.weight ? item.weight : 0)
-            })
-            return orderFullWeight
-        },
-        getOrderFullVolume () {
-            let orderFullVolume = 0
-            this.orderItems.forEach((item) => {
-                orderFullVolume += parseFloat(item.volume ? item.volume : 0)
-            })
-            return orderFullVolume
-        },
-        fastCalculateOrder () {
-            $('#departureCity').niceSelect('update')
-            $('#receivingCity').niceSelect('update')
-            let data = {
-                city_from_name: $('#departureCity').val(),
-                city_to_name: $('#receivingCity').val(),
-                weight: this.getOrderFullWeight(),
-                volume: this.getOrderFullVolume(),
-            }
-            console.log(data)
-        },
-        collectOrderItems () {
+        collectCalculateItems () {
             let OrderItemList = []
             this.orderItems.forEach((el) => {
                 let item = {
@@ -723,13 +1245,11 @@ const OrderForm = {
         checkCalculateValidation () {
             let isValidCalcForm = true
             this.errors = {}
-            let city_from_id = $('#departureCity').val()
-            if (!city_from_id) {
+            if (!this.departureCity) {
                 isValidCalcForm = false
                 this.errors.cityFromId = true
             }
-            let city_to_id = $('#receivingCity').val()
-            if (!city_to_id) {
+            if (!this.receivingCity) {
                 isValidCalcForm = false
                 this.errors.city_to_id = true
             }
@@ -743,7 +1263,7 @@ const OrderForm = {
             }
             this.orderItems.forEach((el) => {
                 el.errors = {}
-                if (!el.volume) {
+                if (el.volume == 0) {
                     el.errors.volume = true
                     isValidCalcForm = false
                 }
@@ -754,59 +1274,357 @@ const OrderForm = {
             })
             return isValidCalcForm
         },
+        getCalculateData () {
+            let data = {
+                city_from_id: this.departureCity,
+                from_address: this.departurePickupType == 2 ? true : false,
+                by_time_from: this.departureByTime,
+                city_to_id: this.receivingCity,
+                to_address: this.receivingType == 2 ? true: false,
+                by_time_to: this.receivingByTime,
+                insurance: this.cargoInsurance,
+                return_docs: this.returnDocuments,
+                declared_cost: parseFloat(this.declared_cost ? this.declared_cost : 0),
+                items: this.collectCalculateItems()
+            }
+            if (this.departureDate) {
+                data.date_from = this.departureDate
+            }
+            if (this.departureByTime && this.departureTime) {
+                data.time_from = this.departureTime
+            }
+            if (this.receivingDate) {
+                data.date_to = this.receivingDate
+            }
+            if (this.receivingByTime && this.receivingTime) {
+                data.time_to = this.receivingTime
+            }
+            return data
+        },
         async calulateOrder () {
             this.price = 0
-            this.serverErrors = []
+            this.serverInfo = []
             if (this.checkCalculateValidation()) {
-                let city_from_id = $('#departureCity').val()
-                let city_to_id = $('#receivingCity').val()
-                let data = {
-                    city_from_id: city_from_id,
-                    from_address: this.departurePickupType == 2 ? true : false,
-                    by_time_from: this.departureByTime,
-                    city_to_id: city_to_id,
-                    to_address: this.receivingType == 2 ? true: false,
-                    by_time_to: this.receivingByTime,
-                    insurance: this.cargoInsurance,
-                    return_docs: this.returnDocuments,
-                    declared_cost: parseFloat(this.declared_cost ? this.declared_cost : 0),
-                    items: this.collectOrderItems()
-                }
-                if (this.departureDate) {
-                    data.date_from = this.departureDate
-                }
-                if (this.departureByTime && this.departureTime) {
-                    data.time_from = this.departureTime
-                }
-                if (this.receivingDate) {
-                    data.date_to = this.receivingDate
-                }
-                if (this.receivingByTime && this.receivingTime) {
-                    data.time_to = this.receivingTime
-                }
                 let url = `${window.location.origin}/api/v1/calculator/calculate/`
-                $('#atf-loader').fadeIn(200)
+                this.loading = true
                 await axios({
                     method: 'post',
                     headers: {
-                        "Authorization": `Token ${"{{server_api_token}}"}`
                     },
                     url: url,
-                    data: { "data": data},
+                    data: { "data": this.getCalculateData()},
                 }).then((resp) => {
                     this.price = resp.data.data.cost
                 }).catch(error => {
-                    this.serverErrors.push("Сервис временно недоступен, попробуйте сделать расчет позднее")
+                    this.serverInfo.push("Сервис временно недоступен, попробуйте сделать расчет позднее")
                     console.log(error)
                 }).finally(() => {
-                    $('#atf-loader').fadeOut(500)
+                    this.loading = false
                 })
+            } else {
+                this.serverInfo.push("Проверьте корректность заполнения формы!")
             }
         },
-    }
+        checkOrderValidation () {
+            let isValidCalcForm = true
+            this.errors = {}
+            if (!this.departureCity) {
+                isValidCalcForm = false
+                this.errors.cityFromId = true
+            }
+            if (!this.receivingCity) {
+                isValidCalcForm = false
+                this.errors.city_to_id = true
+            }
+            if (this.departureByTime && !this.departureTime ) {
+                this.errors.departureTime = true
+                isValidCalcForm = false
+            }
+            if (this.receivingByTime && !this.receivingTime ) {
+                this.errors.receivingTime = true
+                isValidCalcForm = false
+            }
+            if (this.departurePickupType == 2 && !this.departureAddress) {
+                this.errors.departureAddress = true
+                isValidCalcForm = false
+            }
+            if (this.receivingType == 2 && !this.receivingAddress) {
+                this.errors.receivingAddress = true
+                isValidCalcForm = false
+            }
+            if (!this.departureName) {
+                this.errors.departureName = true
+                isValidCalcForm = false
+            }
+            if (!this.departureFace) {
+                this.errors.departureFace = true
+                isValidCalcForm = false
+            }
+            if (!this.departureTel) {
+                this.errors.departureTel = true
+                isValidCalcForm = false
+            }
+            if (!this.departureEmail) {
+                this.errors.departureEmail = "Обязательное поле"
+                isValidCalcForm = false
+            }
+            if (this.departureEmail!="" && !this.isValidDepartureEmail) {
+                this.errors.departureEmail = "Не корректный email"
+                isValidCalcForm = false
+            }
+            if (!this.receivingName) {
+                this.errors.receivingName = true
+                isValidCalcForm = false
+            }
+            if (!this.receivingFace) {
+                this.errors.receivingFace = true
+                isValidCalcForm = false
+            }
+            if (!this.receivingTel) {
+                this.errors.receivingTel = true
+                isValidCalcForm = false
+            }
+            if (!this.receivingEmail) {
+                this.errors.receivingEmail = "Обязательное поле"
+                isValidCalcForm = false
+            }
+            if (this.receivingEmail!="" && !this.isValidReceivingEmail) {
+                this.errors.receivingEmail = "Не корректный email"
+                isValidCalcForm = false
+            }
+            if (this.payerType == "PR") { 
+                if (!this.payerName) {
+                    this.errors.payerName = true
+                    isValidCalcForm = false
+                }
+                if (!this.payerFace) {
+                    this.errors.payerFace = true
+                    isValidCalcForm = false
+                }
+                if (!this.payerTel) {
+                    this.errors.payerTel = true
+                    isValidCalcForm = false
+                }
+                if (!this.payerEmail) {
+                    this.errors.payerEmail = "Обязательное поле"
+                    isValidCalcForm = false
+                }
+                if (this.payerEmail!="" && !this.isValidPayerEmail) {
+                    this.errors.payerEmail = "Не корректный email"
+                    isValidCalcForm = false
+                }
+            }   
+            this.orderItems.forEach((el) => {
+                el.errors = {}
+                if (!el.volume) {
+                    el.errors.volume = true
+                    isValidCalcForm = false
+                }
+                if (!el.weight) {
+                    el.errors.weight = true
+                    isValidCalcForm = false
+                }
+                if (!el.itemType) {
+                    el.errors.itemType = true
+                    isValidCalcForm = false
+                }
+            })
+            return isValidCalcForm
+        },
+        collectOrderItems () {
+            let OrderItemList = []
+            this.orderItems.forEach((el) => {
+                let item = {
+                    cargo: {
+                        name: el.itemType,
+                        weight: parseFloat(el.weight ? el.weight : 0),
+                        volume: parseFloat(el.volume ? el.volume : 0),
+                        length: parseFloat(el.length ? el.length : 0),
+                        height: parseFloat(el.height ? el.height : 0),
+                        width: parseFloat(el.width ? el.width : 0),
+                    },
+                    soft_packaging: el.softPackaging,
+                    hard_packaging: el.hard_packaging,
+                    palletizing: el.palletizing,
+                    prr_from: el.prr_from,
+                    prr_to: el.prr_to,
+                }
+                OrderItemList.push(item)
+            })
+            return OrderItemList
+        },
+        getOrderData () {
+            let data = {
+                city_from_id: this.departureCity,
+                form_from: this.formFrom,
+                name_from: this.departureName,
+                face_from: this.departureFace,
+                tel_from: this.departureTel,
+                email_from: this.departureEmail,
+                from_address: this.departurePickupType == 2 ? true : false,
+                from_time: this.departureByTime,
+                city_to_id: this.receivingCity,
+                form_to: this.formTo,
+                name_to: this.receivingName,
+                face_to: this.receivingFace,
+                tel_to: this.receivingTel,
+                email_to: this.receivingEmail,
+                to_address: this.receivingType == 2 ? true: false,
+                to_time: this.receivingByTime,
+                payer: this.payerType,
+                insurance: this.cargoInsurance,
+                return_docs: this.returnDocuments,
+                declared_cost: parseFloat(this.declared_cost ? this.declared_cost : 0),
+                items: this.collectOrderItems()
+            }
+            if (this.departurePickupType == 2) {
+                data.address_from = this.departureAddress
+            }
+            if (this.departureDate) {
+                data.date_from = this.departureDate
+            }
+            if (this.departureByTime && this.departureTime) {
+                data.time_from = this.departureTime
+            }
+            if (this.receivingType == 2) {
+                data.address_to = this.receivingAddress
+            }
+            if (this.receivingDate) {
+                data.date_to = this.receivingDate
+            }
+            if (this.receivingByTime && this.receivingTime) {
+                data.time_to = this.receivingTime
+            }
+            if (this.payerType == 'PR') {
+                data.form_payer = this.formPayer
+                data.name_payer = this.payerName
+                data.face_payer = this.payerFace
+                data.tel_payer = this.payerTel
+                data.email_payer = this.payerEmail
+            }
+            return data
+        },
+        async createOrder () {
+            this.serverInfo = []
+            this.createOrderinfo = ""
+            if (this.checkOrderValidation()) {
+                let url = `${window.location.origin}/api/v1/order/orders/`
+                this.loading = true
+                await axios({
+                    method: 'post',
+                    headers: {
+                    },
+                    url: url,
+                    data: { "data": this.getOrderData()},
+                }).then((resp) => {
+                    this.createOrderinfo = "Заказ успешно создан!"
+                    this.serverInfo.push("Заказ успешно создан!")
+                    this.orderCreatedSuccess = true
+                }).catch(error => {
+                    this.serverInfo.push("Сервис временно недоступен, попробуйте создать заказ позднее")
+                    console.log(error)
+                }).finally(() => {
+                    this.loading = false
+                })
+            } else {
+                this.serverInfo.push("Проверьте корректность заполнения формы!")
+            }
+        },
+    },
+    directives: {
+        phone: {
+            mounted(el) {
+                function replaceNumberForInput(value) {
+                    let val = ''
+                    const x = value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,4})/)
+                    if (!x[2] && x[1] !== '') {
+                        val = x[1] === '8' ? x[1] : '8' + x[1]
+                    } else {
+                        val = !x[3] ? x[1] + x[2] : x[1] + '(' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '')
+                    }
+                    return val
+                };
+                function replaceNumberForPaste(value) {
+                    const r = value.replace(/\D/g, '')
+                    let val = r
+                    if (val.charAt(0) !== '8') {
+                      val = '8' + val.slice(1)
+                    }
+                    return replaceNumberForInput(val)
+                };
+                el.oninput = function(e) {
+                    if (!e.isTrusted) {
+                        return
+                    }
+                    this.value = replaceNumberForInput(this.value)
+                };
+                el.onpaste = function() {
+                    setTimeout(() => {
+                        const pasteVal = el.value
+                        this.value = replaceNumberForPaste(pasteVal)
+                    })
+                };
+                el.onchange = function() {
+                    setTimeout(() => {
+                        const pasteVal = el.value
+                        this.value = replaceNumberForPaste(pasteVal)
+                    })
+                };
+            }
+        }
+    },
 }
+const app = createApp(OrderForm)
+app.use(naive)
+app.use(store)
+app.mount('#order_form')
 
-createApp(OrderForm).use(store).mount('#order_form')
+
 </script>
-
+<style scoped>
+    .n-base-selection-label {
+        margin: 0;
+        height: 60px !important;
+        line-height: 58px;
+        border-radius: 0;
+        min-width: 200px !important;
+        font-size: 16px;
+        font-weight: 500;
+        width: 100%;
+    }
+    .n-select {
+        padding: 0;
+    }
+    .n-base-selection .n-base-selection-label .n-base-selection-input {
+        color: #677a85 !important;
+    }
+    .n-base-selection .n-base-selection-label .n-base-selection-label__render-label {
+        color: #677a85 !important;
+    }
+    .n-base-select-menu .n-base-select-option.n-base-select-option--selected {
+        color: #677a85 !important;
+    }
+    .n-base-select-menu .n-base-select-option {;
+        color: #677a85 !important;
+    }
+    .n-base-select-menu .n-base-select-option .n-base-select-option__check {
+        color: #f76868 !important;
+    }
+    .n-base-selection__state-border {
+        border: 1px solid #d3d8db !important;
+    }
+    .n-base-selection--active .n-base-selection__border {
+        box-shadow: none !important;
+    }
+    .n-base-selection--focus .n-base-selection__border {
+        box-shadow: none !important;
+    }
+    .n-base-selection .n-base-selection-label .n-base-selection-input {
+        caret-color: #677a85;
+    }
+    .n-base-selection .n-base-selection__border, .n-base-selection .n-base-selection__state-border {
+        box-shadow: none !important;
+        border: 1px solid #d3d8db !important;
+    }
+</style>
 {% endblock %}

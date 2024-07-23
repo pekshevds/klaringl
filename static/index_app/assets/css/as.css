@@ -1,3 +1,7 @@
+.atf-booking-form-item.padding-right-20 {
+    padding-right: 20px !important;
+}
+
 .v-enter-active,
 .v-leave-active {
     transition: opacity 0.5s ease;
