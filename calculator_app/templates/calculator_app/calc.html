@@ -137,98 +137,7 @@
                                                 </div> 
                                             </div>
                                         </div>    
-                                    </Transition>    
-                                    <Transition>   
-                                        <div v-if="price && orderRegistration" class="sender-info">
-                                            <h4 class="mt-4 mb-4">Отправитель</h4>
-                                            <p>Форма собственности</p>
-                                            <div class="col-12">
-                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
-                                                    <n-select 
-                                                        v-model:value="formFrom"
-                                                        :disabled="orderCreatedSuccess"
-                                                        :options="formOwnershipSelector"
-                                                    >
-                                                    </n-select>
-                                                </div> 
-                                            </div>
-                                            <p class="mt-3">Наименование</p>
-                                            <div class="col-12 row">
-                                                <div class="atf-booking-form-item col-12">
-                                                    <input 
-                                                        type="text" 
-                                                        v-model="departureName" 
-                                                        class="form-control"
-                                                        placeholder="Наименование отправителя"
-                                                        :disabled="orderCreatedSuccess"
-                                                    >
-                                                </div> 
-                                                <p  
-                                                    v-if="errors.departureName"
-                                                    class="asOrderFormErrorMessage"
-                                                >
-                                                    Обязательное поле!
-                                                </p>
-                                            </div>
-                                            <p class="mt-3">Контактное лицо</p>
-                                            <div class="col-12 row">
-                                                <div class="atf-booking-form-item col-12">
-                                                    <input 
-                                                        type="text" 
-                                                        v-model="departureFace" 
-                                                        class="form-control" 
-                                                        placeholder="ФИО"
-                                                        :disabled="orderCreatedSuccess"
-                                                    >
-                                                </div> 
-                                                <p  
-                                                    v-if="errors.departureFace"
-                                                    class="asOrderFormErrorMessage"
-                                                >
-                                                    Обязательное поле!
-                                                </p>
-                                            </div>
-                                            <div class="mt-3 col-12 row">
-                                                <div class="atf-booking-form-item col-lg-6 col-md-6">
-                                                    <div class="form-group mb-0">
-                                                        <input 
-                                                            v-phone
-                                                            type="text" 
-                                                            v-model="departureTel" 
-                                                            class="form-control" 
-                                                            placeholder="Телефон"
-                                                            :disabled="orderCreatedSuccess"
-                                                        >
-                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
-                                                    </div>
-                                                    <p  
-                                                        v-if="errors.departureTel"
-                                                        class="asOrderFormErrorMessage"
-                                                    >
-                                                        Обязательное поле!
-                                                    </p>
-                                                </div>
-                                                <div class="atf-booking-form-item col-12 col-md-6">
-                                                    <div class="form-group mb-0">
-                                                        <input 
-                                                            type="email" 
-                                                            v-model="departureEmail" 
-                                                            class="form-control" 
-                                                            placeholder="email"
-                                                            :disabled="orderCreatedSuccess"
-                                                        >
-                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
-                                                    </div>
-                                                    <p  
-                                                        v-if="errors.departureEmail"
-                                                        class="asOrderFormErrorMessage"
-                                                    >
-                                                        ${ errors.departureEmail }$
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Transition>      
+                                    </Transition>       
                                     <div class="as-delimiter mt-5"></div>
                                     <p class="mt-5">Куда</p>
                                     <div class="col-12">
@@ -334,97 +243,6 @@
                                                 </div>
                                             </div> 
                                         </div>
-                                    </Transition>  
-                                    <Transition>
-                                        <div v-if="price && orderRegistration" class="recipient-info">
-                                            <h4 class="mt-4 mb-4">Получатель</h4>
-                                            <p>Форма собственности</p>
-                                            <div class="col-12">
-                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
-                                                    <n-select 
-                                                        v-model:value="formTo"
-                                                        :disabled="orderCreatedSuccess"
-                                                        :options="formOwnershipSelector"
-                                                    >
-                                                    </n-select>
-                                                </div> 
-                                            </div>
-                                            <p class="mt-3">Наименование</p>
-                                            <div class="col-12 row">
-                                                <div class="atf-booking-form-item col-12">
-                                                    <input 
-                                                        type="text" 
-                                                        v-model="receivingName" 
-                                                        class="form-control" 
-                                                        placeholder="Наименование получателя"
-                                                        :disabled="orderCreatedSuccess"
-                                                    >
-                                                </div> 
-                                                <p  
-                                                    v-if="errors.receivingName"
-                                                    class="asOrderFormErrorMessage"
-                                                >
-                                                    Обязательное поле!
-                                                </p>
-                                            </div>
-                                            <p class="mt-3">Контактное лицо</p>
-                                            <div class="col-12 row">
-                                                <div class="atf-booking-form-item col-12">
-                                                    <input 
-                                                        type="text" 
-                                                        v-model="receivingFace" 
-                                                        class="form-control" 
-                                                        placeholder="ФИО"
-                                                        :disabled="orderCreatedSuccess"
-                                                    >
-                                                </div> 
-                                                <p  
-                                                    v-if="errors.receivingFace"
-                                                    class="asOrderFormErrorMessage"
-                                                >
-                                                    Обязательное поле!
-                                                </p>
-                                            </div>
-                                            <div class="mt-3 col-12 row">
-                                                <div class="atf-booking-form-item col-12 col-md-6">
-                                                    <div class="form-group mb-0">
-                                                        <input 
-                                                            v-phone
-                                                            type="text" 
-                                                            v-model="receivingTel" 
-                                                            class="form-control" 
-                                                            placeholder="Телефон"
-                                                            :disabled="orderCreatedSuccess"
-                                                        >
-                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
-                                                    </div>
-                                                    <p  
-                                                        v-if="errors.receivingTel"
-                                                        class="asOrderFormErrorMessage"
-                                                    >
-                                                        Обязательное поле!
-                                                    </p>
-                                                </div>
-                                                <div class="atf-booking-form-item col-12 col-md-6">
-                                                    <div class="form-group mb-0">
-                                                        <input 
-                                                            type="email" 
-                                                            v-model="receivingEmail" 
-                                                            class="form-control" 
-                                                            placeholder="email"
-                                                            :disabled="orderCreatedSuccess"
-                                                        >
-                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
-                                                    </div>
-                                                    <p  
-                                                        v-if="errors.receivingEmail"
-                                                        class="asOrderFormErrorMessage"
-                                                    >
-                                                        ${ errors.receivingEmail }$
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>    
                                     </Transition>    
                                 </div>
                             </div>
@@ -675,137 +493,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div v-if="price && orderRegistration" class="atf-booking-form mt-5">
-                                <div class="atf-booking-form-box row">
-                                    <h4 class="mb-4">Плательщик</h4>
-                                    <div class="mb-4 col-12">
-                                        <div class="form-check form-check-inline">
-                                            <input 
-                                                class="form-check-input" 
-                                                v-model="payerType" 
-                                                @click="clearPayerData()"
-                                                type="radio" 
-                                                value="SD"
-                                                :disabled="orderCreatedSuccess"
-                                            >
-                                            <label class="form-check-label">Отправитель</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input 
-                                                class="form-check-input" 
-                                                v-model="payerType" 
-                                                @click="clearPayerData()"
-                                                type="radio" 
-                                                value="RP"
-                                                :disabled="orderCreatedSuccess"
-                                            >
-                                            <label class="form-check-label">Получатель</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input 
-                                                class="form-check-input" 
-                                                v-model="payerType" 
-                                                type="radio" 
-                                                value="PR"
-                                                :disabled="orderCreatedSuccess"
-                                            >
-                                            <label class="form-check-label">Третье лицо</label>
-                                        </div>
-                                    </div>
-                                    <Transition>
-                                        <div v-show="payerType == 'PR'">
-                                            <p>Форма собственности</p>
-                                            <div class="col-12">
-                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
-                                                    <n-select 
-                                                        v-model:value="formPayer"
-                                                        :disabled="orderCreatedSuccess"
-                                                        :options="formOwnershipSelector"
-                                                    >
-                                                    </n-select>
-                                                </div> 
-                                            </div>    
-                                            <p class="mt-3">Наименование</p>
-                                            <div class="col-12 row">
-                                                <div class="atf-booking-form-item col-12">
-                                                    <input 
-                                                        type="text" 
-                                                        v-model="payerName" 
-                                                        class="form-control" 
-                                                        placeholder="Наименование плательщика"
-                                                        :disabled="orderCreatedSuccess"
-                                                    >
-                                                </div> 
-                                                <p  
-                                                    v-if="errors.payerName"
-                                                    class="asOrderFormErrorMessage"
-                                                >
-                                                    Обязательное поле!
-                                                </p>
-                                            </div>
-                                            <p class="mt-3">Контактное лицо</p>
-                                            <div class="col-12 row">
-                                                <div class="atf-booking-form-item col-12">
-                                                    <input 
-                                                        type="text" 
-                                                        v-model="payerFace" 
-                                                        class="form-control" 
-                                                        placeholder="ФИО"
-                                                        :disabled="orderCreatedSuccess"
-                                                    >
-                                                </div> 
-                                                <p  
-                                                    v-if="errors.payerFace"
-                                                    class="asOrderFormErrorMessage"
-                                                >
-                                                    Обязательное поле!
-                                                </p>
-                                            </div>
-                                            <div class="mt-3 col-12 row">
-                                                <div class="atf-booking-form-item col-12 col-md-6">
-                                                    <div class="form-group mb-0">
-                                                        <input 
-                                                            v-phone
-                                                            type="text" 
-                                                            v-model="payerTel" 
-                                                            class="form-control" 
-                                                            placeholder="Телефон"
-                                                            :disabled="orderCreatedSuccess"
-                                                        >
-                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
-                                                    </div>
-                                                    <p  
-                                                        v-if="errors.payerTel"
-                                                        class="asOrderFormErrorMessage"
-                                                    >
-                                                        Обязательное поле!
-                                                    </p>
-                                                </div>
-                                                <div class="atf-booking-form-item col-12 col-md-6">
-                                                    <div class="form-group mb-0">
-                                                        <input 
-                                                            type="email" 
-                                                            v-model="payerEmail" 
-                                                            class="form-control" 
-                                                            placeholder="email"
-                                                            :disabled="orderCreatedSuccess"
-                                                        >
-                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
-                                                    </div>
-                                                    <p  
-                                                        v-if="errors.payerEmail"
-                                                        class="asOrderFormErrorMessage"
-                                                    >
-                                                        ${ errors.payerEmail }$
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Transition>
-                                </div>
-                            </div> 
-
                             <div class="atf-booking-form mt-5">
                                 <div class="atf-booking-form-box row">
                                     <h4 class="mb-4">Дополнительные услуги</h4>
@@ -850,7 +537,7 @@
                                         </div>    
                                     </div>
                                     <div class="mt-3 col-12">
-                                        <div class="atf-main-btn"> 
+                                        <div v-if="!price" class="atf-main-btn"> 
                                             <button 
                                                 v-if="loading"
                                                 class="atf-themes-btn atf-themes-btn-one" 
@@ -871,62 +558,385 @@
                                     </div>
                                 </div>
                             </div>
-                            <div v-if="price" class="atf-booking-form mt-1">
-                                <div class="atf-booking-form-box row justify-content-around">
-                                    <div class="col-6 col-md-6 margin-auto">
-                                        <h4 class="">Стоимость перевозки:</h4>
-                                    </div>
-                                    <div class="col-6 col-md-6 order-price-block">
-                                        <h4>${ orderPrice }$ &#8381;</h4>
+                            <Transition> 
+                                <div v-if="price && orderRegistration" class="atf-booking-form mt-5">
+                                    <div class="atf-booking-form-box row">
+                                        <div class="sender-info">
+                                            <h4 class="mt-4 mb-4">Отправитель</h4>
+                                            <p>Форма собственности</p>
+                                            <div class="col-12">
+                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
+                                                    <n-select 
+                                                        v-model:value="formFrom"
+                                                        :disabled="orderCreatedSuccess"
+                                                        :options="formOwnershipSelector"
+                                                    >
+                                                    </n-select>
+                                                </div> 
+                                            </div>
+                                            <p class="mt-3">Наименование</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="departureName" 
+                                                        class="form-control"
+                                                        placeholder="Наименование отправителя"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.departureName"
+                                                    class="asOrderFormErrorMessage"
+                                                >
+                                                    Обязательное поле!
+                                                </p>
+                                            </div>
+                                            <p class="mt-3">Контактное лицо</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="departureFace" 
+                                                        class="form-control" 
+                                                        placeholder="ФИО"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.departureFace"
+                                                    class="asOrderFormErrorMessage"
+                                                >
+                                                    Обязательное поле!
+                                                </p>
+                                            </div>
+                                            <div class="mt-3 col-12 row">
+                                                <div class="atf-booking-form-item col-lg-6 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            v-phone
+                                                            type="text" 
+                                                            v-model="departureTel" 
+                                                            class="form-control" 
+                                                            placeholder="Телефон"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.departureTel"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div>
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            type="email" 
+                                                            v-model="departureEmail" 
+                                                            class="form-control" 
+                                                            placeholder="email"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.departureEmail"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        ${ errors.departureEmail }$
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>        
                                     </div>
                                 </div>
-                                <div class="atf-booking-form-box row">
-                                    <div class="mt-3 col-12">
-                                        <div v-if="orderCreatedSuccess" class="atf-main-btn"> 
-                                            <a 
-                                                href="{% url "calculator:calc" %}"
-                                                class="atf-themes-btn atf-themes-btn-one">
-                                                <i class="btn-curve"></i>
-                                                <span class="btn-title">Новый заказ</span>
-                                            </a>
-                                        </div>
-                                        <div v-if="orderRegistration && !orderCreatedSuccess" class="atf-main-btn"> 
-                                            <button 
-                                                v-if="loading"
-                                                class="atf-themes-btn atf-themes-btn-one" 
-                                                style="padding: 5px 56px 3px;"
-                                            >
-                                                <div class="spinner-border text-light" role="status">
+                            </Transition>
+                            <Transition> 
+                                <div v-if="price && orderRegistration" class="atf-booking-form mt-5">
+                                    <div class="atf-booking-form-box row">
+                                        <div class="recipient-info">
+                                            <h4 class="mt-4 mb-4">Получатель</h4>
+                                            <p>Форма собственности</p>
+                                            <div class="col-12">
+                                                <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
+                                                    <n-select 
+                                                        v-model:value="formTo"
+                                                        :disabled="orderCreatedSuccess"
+                                                        :options="formOwnershipSelector"
+                                                    >
+                                                    </n-select>
+                                                </div> 
+                                            </div>
+                                            <p class="mt-3">Наименование</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="receivingName" 
+                                                        class="form-control" 
+                                                        placeholder="Наименование получателя"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.receivingName"
+                                                    class="asOrderFormErrorMessage"
+                                                >
+                                                    Обязательное поле!
+                                                </p>
+                                            </div>
+                                            <p class="mt-3">Контактное лицо</p>
+                                            <div class="col-12 row">
+                                                <div class="atf-booking-form-item col-12">
+                                                    <input 
+                                                        type="text" 
+                                                        v-model="receivingFace" 
+                                                        class="form-control" 
+                                                        placeholder="ФИО"
+                                                        :disabled="orderCreatedSuccess"
+                                                    >
+                                                </div> 
+                                                <p  
+                                                    v-if="errors.receivingFace"
+                                                    class="asOrderFormErrorMessage"
+                                                >
+                                                    Обязательное поле!
+                                                </p>
+                                            </div>
+                                            <div class="mt-3 col-12 row">
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            v-phone
+                                                            type="text" 
+                                                            v-model="receivingTel" 
+                                                            class="form-control" 
+                                                            placeholder="Телефон"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-phone"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.receivingTel"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
                                                 </div>
-                                            </button>
-                                            <button 
-                                                v-else
-                                                @click="createOrder" 
-                                                class="atf-themes-btn atf-themes-btn-one">
-                                                <i class="btn-curve"></i>
-                                                <span class="btn-title">Отправить заказ</span>
-                                            </button>
-                                        </div>
-                                        <div v-else-if="!orderRegistration && !orderCreatedSuccess" class="atf-main-btn"> 
-                                            <button 
-                                                v-if="loading"
-                                                class="atf-themes-btn atf-themes-btn-one" 
-                                                style="padding: 5px 56px 3px;"
-                                            >
-                                                <div class="spinner-border text-light" role="status">
+                                                <div class="atf-booking-form-item col-12 col-md-6">
+                                                    <div class="form-group mb-0">
+                                                        <input 
+                                                            type="email" 
+                                                            v-model="receivingEmail" 
+                                                            class="form-control" 
+                                                            placeholder="email"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                        <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
+                                                    </div>
+                                                    <p  
+                                                        v-if="errors.receivingEmail"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        ${ errors.receivingEmail }$
+                                                    </p>
                                                 </div>
-                                            </button>
-                                            <button 
-                                                v-else
-                                                @click="orderRegistrationOn" 
-                                                class="atf-themes-btn atf-themes-btn-one">
-                                                <i class="btn-curve"></i>
-                                                <span class="btn-title">Офомить заказ</span>
-                                            </button>
+                                            </div>
+                                        </div>     
+                                    </div>
+                                </div>
+                            </Transition>
+                            <Transition> 
+                                <div v-if="price && orderRegistration" class="atf-booking-form mt-5">
+                                    <div class="atf-booking-form-box row">
+                                        <h4 class="mb-4">Плательщик</h4>
+                                        <div class="mb-4 col-12">
+                                            <div class="form-check form-check-inline">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="payerType" 
+                                                    @click="clearPayerData()"
+                                                    type="radio" 
+                                                    value="SD"
+                                                    :disabled="orderCreatedSuccess"
+                                                >
+                                                <label class="form-check-label">Отправитель</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="payerType" 
+                                                    @click="clearPayerData()"
+                                                    type="radio" 
+                                                    value="RP"
+                                                    :disabled="orderCreatedSuccess"
+                                                >
+                                                <label class="form-check-label">Получатель</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input 
+                                                    class="form-check-input" 
+                                                    v-model="payerType" 
+                                                    type="radio" 
+                                                    value="PR"
+                                                    :disabled="orderCreatedSuccess"
+                                                >
+                                                <label class="form-check-label">Третье лицо</label>
+                                            </div>
+                                        </div>
+                                        <Transition>
+                                            <div v-show="payerType == 'PR'">
+                                                <p>Форма собственности</p>
+                                                <div class="col-12">
+                                                    <div class="atf-booking-form-item col-12 col-md-6 row padding-right-20">
+                                                        <n-select 
+                                                            v-model:value="formPayer"
+                                                            :disabled="orderCreatedSuccess"
+                                                            :options="formOwnershipSelector"
+                                                        >
+                                                        </n-select>
+                                                    </div> 
+                                                </div>    
+                                                <p class="mt-3">Наименование</p>
+                                                <div class="col-12 row">
+                                                    <div class="atf-booking-form-item col-12">
+                                                        <input 
+                                                            type="text" 
+                                                            v-model="payerName" 
+                                                            class="form-control" 
+                                                            placeholder="Наименование плательщика"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                    </div> 
+                                                    <p  
+                                                        v-if="errors.payerName"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div>
+                                                <p class="mt-3">Контактное лицо</p>
+                                                <div class="col-12 row">
+                                                    <div class="atf-booking-form-item col-12">
+                                                        <input 
+                                                            type="text" 
+                                                            v-model="payerFace" 
+                                                            class="form-control" 
+                                                            placeholder="ФИО"
+                                                            :disabled="orderCreatedSuccess"
+                                                        >
+                                                    </div> 
+                                                    <p  
+                                                        v-if="errors.payerFace"
+                                                        class="asOrderFormErrorMessage"
+                                                    >
+                                                        Обязательное поле!
+                                                    </p>
+                                                </div>
+                                                <div class="mt-3 col-12 row">
+                                                    <div class="atf-booking-form-item col-12 col-md-6">
+                                                        <div class="form-group mb-0">
+                                                            <input 
+                                                                v-phone
+                                                                type="text" 
+                                                                v-model="payerTel" 
+                                                                class="form-control" 
+                                                                placeholder="Телефон"
+                                                                :disabled="orderCreatedSuccess"
+                                                            >
+                                                            <div class="input-group-addon"><i class="fas fa-phone"></i></div>
+                                                        </div>
+                                                        <p  
+                                                            v-if="errors.payerTel"
+                                                            class="asOrderFormErrorMessage"
+                                                        >
+                                                            Обязательное поле!
+                                                        </p>
+                                                    </div>
+                                                    <div class="atf-booking-form-item col-12 col-md-6">
+                                                        <div class="form-group mb-0">
+                                                            <input 
+                                                                type="email" 
+                                                                v-model="payerEmail" 
+                                                                class="form-control" 
+                                                                placeholder="email"
+                                                                :disabled="orderCreatedSuccess"
+                                                            >
+                                                            <div class="input-group-addon"><i class="fas fa-envelope"></i></div>
+                                                        </div>
+                                                        <p  
+                                                            v-if="errors.payerEmail"
+                                                            class="asOrderFormErrorMessage"
+                                                        >
+                                                            ${ errors.payerEmail }$
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Transition>
+                                    </div>
+                                </div>
+                            </Transition>
+                            <Transition>
+                                <div v-if="price" class="atf-booking-form mt-5">
+                                    <div class="atf-booking-form-box row justify-content-around">
+                                        <div class="col-6 col-md-6 margin-auto">
+                                            <h4 class="">Стоимость перевозки:</h4>
+                                        </div>
+                                        <div class="col-6 col-md-6 order-price-block">
+                                            <h4>${ orderPrice }$ &#8381;</h4>
+                                        </div>
+                                    </div>
+                                    <div class="atf-booking-form-box row">
+                                        <div class="mt-3 col-12">
+                                            <div v-if="orderCreatedSuccess" class="atf-main-btn"> 
+                                                <a 
+                                                    href="{% url "calculator:calc" %}"
+                                                    class="atf-themes-btn atf-themes-btn-one">
+                                                    <i class="btn-curve"></i>
+                                                    <span class="btn-title">Новый заказ</span>
+                                                </a>
+                                            </div>
+                                            <div v-if="orderRegistration && !orderCreatedSuccess" class="atf-main-btn"> 
+                                                <button 
+                                                    v-if="loading"
+                                                    class="atf-themes-btn atf-themes-btn-one" 
+                                                    style="padding: 5px 56px 3px;"
+                                                >
+                                                    <div class="spinner-border text-light" role="status">
+                                                    </div>
+                                                </button>
+                                                <button 
+                                                    v-else
+                                                    @click="createOrder" 
+                                                    class="atf-themes-btn atf-themes-btn-one">
+                                                    <i class="btn-curve"></i>
+                                                    <span class="btn-title">Отправить заказ</span>
+                                                </button>
+                                            </div>
+                                            <div v-else-if="!orderRegistration && !orderCreatedSuccess" class="atf-main-btn"> 
+                                                <button 
+                                                    v-if="loading"
+                                                    class="atf-themes-btn atf-themes-btn-one" 
+                                                    style="padding: 5px 56px 3px;"
+                                                >
+                                                    <div class="spinner-border text-light" role="status">
+                                                    </div>
+                                                </button>
+                                                <button 
+                                                    v-else
+                                                    @click="orderRegistrationOn" 
+                                                    class="atf-themes-btn atf-themes-btn-one">
+                                                    <i class="btn-curve"></i>
+                                                    <span class="btn-title">Офомить заказ</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Transition>    
                             <Transition>
                                 <div v-if="serverInfo.length > 0">
                                     <div class="atf-facilities-services d-flex mt-2 text-left">
