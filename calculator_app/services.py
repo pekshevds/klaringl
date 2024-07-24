@@ -116,13 +116,107 @@ def calculate_cost_by_volume(rate: Rate, volume: Decimal) -> Decimal:
     return cost_by_volume
 
 
+def calculate_expedition_cost_by_weight(rate: Rate, weight: Decimal) -> Decimal:
+    if not rate:
+        return decimal_0
+    cost_by_weight = decimal_0
+    if decimal_0 < weight <= Decimal("25"):
+        cost_by_weight = rate.cost_by_weight_0_25
+
+    if Decimal("25") < weight <= Decimal("50"):
+        cost_by_weight = rate.cost_by_weight_25_50
+
+    if Decimal("50") < weight <= Decimal("150"):
+        cost_by_weight = rate.cost_by_weight_50_150
+
+    if Decimal("150") < weight <= Decimal("300"):
+        cost_by_weight = rate.cost_by_weight_150_300
+
+    if Decimal("300") < weight <= Decimal("500"):
+        cost_by_weight = rate.cost_by_weight_300_500
+
+    if Decimal("500") < weight <= Decimal("1000"):
+        cost_by_weight = rate.cost_by_weight_500_1000
+
+    if Decimal("1000") < weight <= Decimal("1500"):
+        cost_by_weight = rate.cost_by_weight_1000_1500
+
+    if Decimal("1500") < weight <= Decimal("2000"):
+        cost_by_weight = rate.cost_by_weight_1500_2000
+
+    if Decimal("2000") < weight <= Decimal("3000"):
+        cost_by_weight = rate.cost_by_weight_2000_3000
+
+    if Decimal("3000") < weight <= Decimal("5000"):
+        cost_by_weight = rate.cost_by_weight_3000_5000
+
+    if Decimal("5000") < weight <= Decimal("10000"):
+        cost_by_weight = rate.cost_by_weight_5000_10000
+
+    if weight > Decimal("10000"):
+        cost_by_weight = rate.cost_by_weight_10000_inf
+    return cost_by_weight
+
+
+def calculate_expedition_cost_by_volume(rate: Rate, volume: Decimal) -> Decimal:
+    if not rate:
+        return decimal_0
+    cost_by_volume = decimal_0
+    if decimal_0 < volume <= Decimal("0.1"):
+        cost_by_volume = rate.cost_by_volume_0_01
+
+    if Decimal("0.1") < volume <= Decimal("0.2"):
+        cost_by_volume = rate.cost_by_volume_01_02
+
+    if Decimal("0.2") < volume <= Decimal("0.6"):
+        cost_by_volume = rate.cost_by_volume_02_06
+
+    if Decimal("0.6") < volume <= Decimal("1.2"):
+        cost_by_volume = rate.cost_by_volume_06_12
+
+    if Decimal("1.2") < volume <= Decimal("2"):
+        cost_by_volume = rate.cost_by_volume_12_20
+
+    if Decimal("2") < volume <= Decimal("4"):
+        cost_by_volume = rate.cost_by_volume_20_40
+
+    if Decimal("4") < volume <= Decimal("6"):
+        cost_by_volume = rate.cost_by_volume_40_60
+
+    if Decimal("6") < volume <= Decimal("8"):
+        cost_by_volume = rate.cost_by_volume_60_80
+
+    if Decimal("8") < volume <= Decimal("12"):
+        cost_by_volume = rate.cost_by_volume_80_120
+
+    if Decimal("12") < volume <= Decimal("20"):
+        cost_by_volume = rate.cost_by_volume_120_200
+
+    if Decimal("20") < volume <= Decimal("40"):
+        cost_by_volume = rate.cost_by_volume_200_400
+
+    if volume > Decimal("40"):
+        cost_by_volume = rate.cost_by_volume_400_inf
+    return cost_by_volume
+
+
 def calculate_delivery_cost_by_rate(
-    rate: Rate | ExpeditionRate,
+    rate: Rate,
     weight: Decimal = decimal_0,
     volume: Decimal = decimal_0,
 ) -> Decimal:
     cost_by_weight = calculate_cost_by_weight(rate, weight)
     cost_by_volume = calculate_cost_by_volume(rate, volume)
+    return max(cost_by_weight, cost_by_volume)
+
+
+def calculate_expedition_cost_by_rate(
+    rate: ExpeditionRate,
+    weight: Decimal = decimal_0,
+    volume: Decimal = decimal_0,
+) -> Decimal:
+    cost_by_weight = calculate_expedition_cost_by_weight(rate, weight)
+    cost_by_volume = calculate_expedition_cost_by_volume(rate, volume)
     return max(cost_by_weight, cost_by_volume)
 
 
@@ -163,7 +257,7 @@ def calculate_delevery_by_address(order: dict, param_name: str):
     total_volume = sum([item.get("volume", 0) for item in order["items"]])
     city = City.find_by_id(order.get(param_name))
     rate = expedition_rate_by_city(city_to=city)
-    return calculate_delivery_cost_by_rate(rate, total_weight, total_volume)
+    return calculate_expedition_cost_by_rate(rate, total_weight, total_volume)
 
 
 def calculate_delevery_from_address(order):
