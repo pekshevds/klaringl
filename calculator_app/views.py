@@ -9,16 +9,16 @@ from rest_framework.response import Response
 from rest_framework import permissions, authentication
 
 from server.base import FormOfOwnershipSelector, PayerSelector
-from calculator_app.models import City, Rate
+from calculator_app.models import City, Rate, ExpeditionRate
 from calculator_app.serializers import (
     CitySerializer,
     RateSerializer,
+    ExpeditionRateSerializer,
     FastCalculateRequestSerializer,
     CalculateRequestSerializer,
     CalculateResponseSerializer,
 )
 from calculator_app.services import calculate_delivery_cost, calculate_order
-import config
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +99,33 @@ class RateAPIView(APIView):
         return Response(response)
 
 
+class ExpeditionRateAPIView(APIView):
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        authentication.BasicAuthentication,
+    ]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        queryset = ExpeditionRate.objects.all()
+        serializer = ExpeditionRateSerializer(queryset, many=True)
+        response = {"data": serializer.data, "count": len(queryset), "success": True}
+        return Response(response)
+
+    def post(self, request: HttpRequest) -> Response:
+        response = {"data": [], "count": 0, "success": False}
+        data = request.data.get("data")
+        if not data:
+            return Response(response)
+        serializer = ExpeditionRateSerializer(data=data, many=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            response["data"] = serializer.data
+            response["count"] = len(serializer.data)
+            response["success"] = True
+        return Response(response)
+
+
 class CalculateAPIView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -139,53 +166,45 @@ class FastCalculateAPIView(APIView):
 
 
 # процедура вывода страницы Калькулятор стоимости перевозки
-def createChoisesJson(choises) -> dict:
+def createChoisesJson(choises) -> list[dict]:
     choises_list = []
     for key, value in choises:
-        choises_list.append({
-            "value": key,
-            "label": value
-        }) 
+        choises_list.append({"value": key, "label": value})
     return choises_list
-def createCitiesJson(query_cities_list) -> dict:
+
+
+def createCitiesJson(query_cities_list) -> list[dict]:
     dict_cities_list = []
     for item in query_cities_list:
-        id = "{}".format(item.pk).replace('\ufeff', '')
-        name = "{}".format(item.name).replace('\ufeff', '')
-        dict_cities_list.append({
-            "value": id,
-            "label": name
-        }) 
+        id = "{}".format(item.pk).replace("\ufeff", "")
+        name = "{}".format(item.name).replace("\ufeff", "")
+        dict_cities_list.append({"value": id, "label": name})
     return dict_cities_list
+
 
 class CalcView(View):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
+
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             "cities_list": json.dumps(createCitiesJson(Rate.cities_to())),
             "cities_from_list": json.dumps(createCitiesJson(Rate.cities_from())),
             "payer_selector": json.dumps(createChoisesJson(PayerSelector.choices)),
-            "form_ownership_selector": json.dumps(createChoisesJson(FormOfOwnershipSelector.choices)),
+            "form_ownership_selector": json.dumps(
+                createChoisesJson(FormOfOwnershipSelector.choices)
+            ),
         }
-        city_from_id = request.GET.get('city_from_id')
+        city_from_id = request.GET.get("city_from_id")
         if city_from_id:
-            context.update({
-                "city_from_id": city_from_id
-            })
-        city_to_id = request.GET.get('city_to_id')
+            context.update({"city_from_id": city_from_id})
+        city_to_id = request.GET.get("city_to_id")
         if city_to_id:
-            context.update({
-                "city_to_id": city_to_id
-            })
-        weight = request.GET.get('weight')
+            context.update({"city_to_id": city_to_id})
+        weight = request.GET.get("weight")
         if weight:
-            context.update({
-                "weight": weight
-            }) 
-        volume = request.GET.get('volume')
+            context.update({"weight": weight})
+        volume = request.GET.get("volume")
         if volume:
-            context.update({
-                "volume": volume
-            })
+            context.update({"volume": volume})
         return render(request, "calculator_app/calc.html", context)

@@ -67,11 +67,11 @@ class Directory(Base):
         return f"{self.name}"
 
     @classmethod
-    def find_by_name(cls, name: str) -> object:
+    def find_by_name(cls, name: str):
         return cls.objects.filter(name=name).first()
 
     @classmethod
-    def find_by_id(cls, id: models.UUIDField) -> object:
+    def find_by_id(cls, id: models.UUIDField):
         return cls.objects.filter(id=id).first()
 
     class Meta:

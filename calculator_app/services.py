@@ -1,7 +1,7 @@
 from decimal import Decimal
 from datetime import time
 from django.shortcuts import get_object_or_404
-from calculator_app.models import Rate, City
+from calculator_app.models import Rate, City, ExpeditionRate
 from index_app.models import Const
 
 
@@ -26,6 +26,10 @@ def city_by_id(city_id: str) -> City | None:
 
 def rate_by_cities(city_from: City, city_to: City) -> Rate | None:
     return Rate.objects.filter(city_from=city_from, city_to=city_to).first()
+
+
+def expedition_rate_by_city(city_to: City) -> ExpeditionRate | None:
+    return ExpeditionRate.objects.filter(city_to=city_to).first()
 
 
 def calculate_cost_by_weight(rate: Rate, weight: Decimal) -> Decimal:
@@ -113,7 +117,9 @@ def calculate_cost_by_volume(rate: Rate, volume: Decimal) -> Decimal:
 
 
 def calculate_delivery_cost_by_rate(
-    rate: Rate, weight: Decimal = decimal_0, volume: Decimal = decimal_0
+    rate: Rate | ExpeditionRate,
+    weight: Decimal = decimal_0,
+    volume: Decimal = decimal_0,
 ) -> Decimal:
     cost_by_weight = calculate_cost_by_weight(rate, weight)
     cost_by_volume = calculate_cost_by_volume(rate, volume)
@@ -150,6 +156,22 @@ def calculate_delevery_on_time(deliver_time: time) -> Decimal:
     if deliver_time < time_09:
         return const.nigth_deliver_cost
     return const.time_deliver_cost
+
+
+def calculate_delevery_by_address(order: dict, param_name: str):
+    total_weight = sum([item.get("weight", 0) for item in order["items"]])
+    total_volume = sum([item.get("volume", 0) for item in order["items"]])
+    city = City.find_by_id(order.get(param_name))
+    rate = expedition_rate_by_city(city_to=city)
+    return calculate_delivery_cost_by_rate(rate, total_weight, total_volume)
+
+
+def calculate_delevery_from_address(order):
+    return calculate_delevery_by_address(order, param_name="city_from_id")
+
+
+def calculate_delevery_to_address(order):
+    return calculate_delevery_by_address(order, param_name="city_to_id")
 
 
 def calculate_warehouse_process(volume: Decimal) -> Decimal:
@@ -214,7 +236,7 @@ def calculate_base_cost(order: dict) -> Decimal:
     total_volume = sum([item.get("volume", 0) for item in order["items"]])
     city_from = City.find_by_id(order.get("city_from_id"))
     city_to = City.find_by_id(order.get("city_to_id"))
-    rate = rate_by_cities(city_from, city_to)
+    rate = rate_by_cities(city_from=city_from, city_to=city_to)
     return calculate_delivery_cost_by_rate(rate, total_weight, total_volume)
 
 
@@ -227,11 +249,15 @@ def calculate_order(order: dict) -> Decimal:
     # Расчет базовой стоимости по общему весу, объему и тарифам
     base_cost = calculate_base_cost(order)
     cost = base_cost
-    # Расчет стоимсоти забора у двери по времени
-    if order.get("from_address", False) and order.get("by_time_from", False):
-        cost += calculate_delevery_on_time(order.get("time_from", noon))
-    if order.get("to_address", False) and order.get("by_time_to", False):
-        cost += calculate_delevery_on_time(order.get("time_to", noon))
+    # Расчет стоимости забора у двери по времени
+    if order.get("from_address", False):
+        cost += calculate_delevery_from_address(order)
+        if order.get("by_time_from", False):
+            cost += calculate_delevery_on_time(order.get("time_from", noon))
+    if order.get("to_address", False):
+        cost += calculate_delevery_to_address(order)
+        if order.get("by_time_to", False):
+            cost += calculate_delevery_on_time(order.get("time_to", noon))
     if order.get("return_docs", False):
         cost += calculate_return_docs()
     if order.get("insurance", False):

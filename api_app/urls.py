@@ -5,6 +5,7 @@ from calculator_app.views import (
     CityFromAPIView,
     CityToAPIView,
     RateAPIView,
+    ExpeditionRateAPIView,
     FastCalculateAPIView,
     CalculateAPIView,
 )
@@ -25,6 +26,11 @@ urlpatterns = [
     path("calculator/cities/from/", CityFromAPIView.as_view(), name="city-from"),
     path("calculator/cities/to/", CityToAPIView.as_view(), name="city-to"),
     path("calculator/rates/", RateAPIView.as_view(), name="rate"),
+    path(
+        "calculator/expedition-rates/",
+        ExpeditionRateAPIView.as_view(),
+        name="expedition-rate",
+    ),
     path(
         "calculator/fast-calculate/",
         FastCalculateAPIView.as_view(),
