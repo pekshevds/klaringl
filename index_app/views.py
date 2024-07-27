@@ -5,19 +5,17 @@ from django.core.paginator import Paginator
 from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import News, Vacancy, Document, Const, Branch
 
-from calculator_app.models import (
-    Rate
-)
+from calculator_app.models import Rate
 
 
 class IndexView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         news = News.last_news.all()
         context = {
-            "const": Const.info(), 
+            "const": Const.info(),
             "cities_list": Rate.cities_to,
-            "cities_from_list":  Rate.cities_from,
-            "news": news
+            "cities_from_list": Rate.cities_from,
+            "news": news,
         }
         return render(request, "index_app/index.html", context)
 
@@ -157,3 +155,13 @@ class MessageView(View):
         if form.is_valid():
             print(form.cleaned_data)
         return redirect(request.META.get("HTTP_REFERER"))
+
+
+class LkView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        context = {"const": Const.info()}
+        return render(request, "index_app/lk.html", context)
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        context = {"const": Const.info()}
+        return render(request, "index_app/lk.html", context)

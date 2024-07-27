@@ -17,6 +17,7 @@ from index_app.views import (
     ContactsView,
     MessageView,
     BranchOfficesView,
+    LkView,
 )
 
 app_name = "index"
@@ -55,4 +56,5 @@ urlpatterns = [
     path("documentation/", DocumentationView.as_view(), name="documentation"),
     path("contacts/", ContactsView.as_view(), name="contacts"),
     path("message/", MessageView.as_view(), name="message"),
+    path("lk/", LkView.as_view(), name="lk"),
 ]

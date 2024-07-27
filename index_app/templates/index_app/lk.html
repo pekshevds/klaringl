@@ -1,0 +1,76 @@
+{% extends "index_app/base.html" %}
+{% load static %}
+
+{% block body %}
+
+<!-- start-page-heading -->
+<div class="atf-page-heading atf-size-md atf-dynamic-bg" style="background-image: url({% static 'index_app/assets/img/slider/6.jpg' %}); background-size:cover; background-position: center top;">
+	<div class="container">
+		<div class="atf-page-heading-in text-center">
+			<h1 class="atf-page-heading-title">Личный кабинет</h1>
+			<div class="atf-post-label">
+				<span><a href="{% url 'index:index' %}">Домой</a></span>
+				<span>Личный кабинет</span>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- .atf-page-heading -->
+
+<!-- START ABOUT -->
+
+<section id="contact_info">
+    <div class="container">
+        <!-- <div class="row">
+            <div class="col-lg-4 atf-section-padding">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d8015.198595761624!2d30.29517880983911!3d59.852467420007635!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46963bbb86de9da3%3A0x2e537ed7886f953!2sKLARIN%20GL!5e0!3m2!1sru!2sru!4v1715745013056!5m2!1sru!2sru" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>            
+        </div> -->
+        <div class="row">
+            {% for item in items %}
+            <div class="col-lg-4 atf-section-padding">
+                <div class="atf-contact-info ps-lg-5" data-aos="fade-up">
+                    <div class="atf-section-title title-color">
+                        <h3>{{ item.name }}</h3>
+                        <p class="f-15 mt-3 "></p>
+                    </div>
+                
+                    <div class="atf-contact-details mt-4">
+                        <div class="atf-contact-icon">
+                            <i class="fa fa-home"></i>
+                        </div>
+                        <div class="atf-contact-address">
+                            <h5>Адрес</h5>
+                            <p>{{ item.address }}</p>
+                        </div>
+                    </div>
+                
+                    <div class="atf-contact-details mt-4">
+                        <div class="atf-contact-icon">
+                            <i class="fa fa-phone"></i>
+                        </div>
+                        <div class="atf-contact-address">
+                            <h5>Телефон</h5>
+                            <p><a href="tel:{{ const.tel }}">{{ item.tel }}</a></p>
+                        </div>
+                    </div>
+            
+                    <div class="atf-contact-details mt-4">
+                        <div class="atf-contact-icon">
+                            <i class="fa fa-envelope"></i>
+                        </div>
+                        <div class="atf-contact-address">
+                            <h5>E-mail</h5>
+                            <p><a href="mailto:{{ const.email }}">{{ item.email }}</a></p>
+                        </div>
+                    </div>
+                </div><!--- END CONTACT -->
+            </div><!--- END COL -->
+            {% endfor %}
+        </div><!--- END ROW -->		
+    </div><!--- END CONTAINER -->
+</section>
+<!-- END ABOUT -->
+
+
+{% endblock %}
