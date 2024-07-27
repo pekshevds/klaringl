@@ -1,11 +1,16 @@
 from django.contrib import admin
-from auth_app.models import User
-from auth_app.models import Pin
+from auth_app.models import User, Pin, Customer
+
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    fields = ["id", "name"]
+    list_display = ["name"]
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ["__str__"]
+    list_display = ["username", "customer"]
 
 
 @admin.register(Pin)
