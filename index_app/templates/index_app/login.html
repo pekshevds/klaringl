@@ -1,0 +1,248 @@
+{% extends "index_app/base.html" %}
+{% load static %}
+
+{% block local_libraries %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+<script src="https://unpkg.com/primevue/umd/primevue.min.js"></script>
+<script src="https://unpkg.com/@primevue/themes/umd/aura.min.js"></script>
+
+{% endblock %}
+
+{% block body %}
+<!-- start-page-heading -->
+<div class="atf-page-heading atf-size-md atf-dynamic-bg" style="background-image: url({% static 'index_app/assets/img/slider/6.jpg' %}); background-size:cover; background-position: center top;">
+	<div class="container">
+		<div class="atf-page-heading-in text-center">
+			<h1 class="atf-page-heading-title">Авторизация</h1>
+			<div class="atf-post-label">
+				<span><a href="{% url 'index:index' %}">Домой</a></span>
+				<span>Авторизация</span>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- .atf-page-heading -->
+
+<section id="loginForm" style="padding: 50px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10 col-11 aos-init aos-animate as-animate">
+                <div class="atf-section-title  text-left">
+                    <h2 class="title-color text-center">Вход</h2>
+                    <div class="contact mt-4">
+                        <div class="atf-contact-form form">
+                            <div class="row justify-content-center">
+                                <div class="form-group col-12 col-lg-10">
+                                    <input
+                                        v-model="email"
+                                        class="form-control" 
+                                        placeholder="Email"
+                                        @input="errors.email = ''; pinCodeSended = false; pincode = ''"
+                                    >
+                                    <p  
+                                        v-if="errors.email"
+                                        class="asOrderFormErrorMessage"
+                                    >
+                                        ${ errors.email }$
+                                    </p>
+                                </div>
+                                <Transition>
+                                    <div v-if="pinCodeSended" class="form-group col-12 col-lg-10 text-center">
+                                        <input-otp 
+                                            v-model="pincode" 
+                                            integerOnly
+                                            :length="6"
+                                        >
+                                            <template #default="{ attrs, events}">
+                                                <input type="text" v-bind="attrs" v-on="events" class="custom-otp-input" />
+                                            </template>
+                                        </input-otp>
+                                    </div>
+                                </Transition>
+                                <p  
+                                    v-if="errors.pincode"
+                                    class="asOrderFormErrorMessage text-center"
+                                >
+                                    ${ errors.pincode }$
+                                </p>
+                                <div v-if="pinCodeSended" class="col-lg-12 mt-3">
+                                    <div class="atf-contact-btn text-center">
+                                        <button 
+                                            v-if="loading"
+                                            class="atf-themes-btn atf-themes-btn-one" 
+                                            style="padding: 5px 56px 3px;"
+                                        >
+                                            <div class="spinner-border text-light" role="status">
+                                            </div>
+                                        </button>
+                                        <button 
+                                            v-else 
+                                            @click="checkPinCode"
+                                            class="atf-themes-btn  atf-themes-btn-one"
+                                        >
+                                            <span class="btn-title">Подтвердить</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div v-else class="col-lg-12 mt-3">
+                                    <div class="atf-contact-btn text-center">
+                                        <button 
+                                            v-if="loading"
+                                            class="atf-themes-btn atf-themes-btn-one" 
+                                            style="padding: 5px 56px 3px;"
+                                        >
+                                            <div class="spinner-border text-light" role="status">
+                                            </div>
+                                        </button>
+                                        <button 
+                                            v-else 
+                                            @click="requestForPinCode" 
+                                            class="atf-themes-btn  atf-themes-btn-one"
+                                        >
+                                            <span class="btn-title">Отправить</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="form-message"></p>
+                    </div>
+                </div>
+            </div><!--- END COL -->
+        </div><!--- END ROW -->
+    </div><!--- END CONTAINER -->
+</section>
+
+{% endblock %}
+
+{% block local_scripts %}
+<script type='text/javascript'>
+	axios.defaults.xsrfCookieName = 'csrftoken'
+	axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
+</script>
+
+<script type="module" setup>
+    const { createApp } = Vue
+    const Loginform = {
+        data () {
+            return {
+                email: "",
+                pincode: "",
+                serverErrors: {},
+                errors: {},
+                loading: false,
+                message: "",
+                pinCodeSended: false,
+            }
+        },
+        delimiters: ["${", "}$"],
+        computed: {
+            isValidEmail() {
+                return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email)
+            },
+        },
+        mounted () {
+        },
+        methods: {
+            requestForPinCode () {
+                this.errors = {} 
+                this.pinCodeSended = false
+                if (!this.email) {
+                    this.errors.email = "Обязательное поле!"
+                    return
+                }
+                if (this.isValidEmail) {
+                    if (!this.pinCodeSended) {
+                        let url = `${window.location.origin}/auth/get-pin/?recipient=${this.email}`
+                        this.loading = true
+                        axios
+                            .get(url)
+                            .then((response) => {
+                                if (response.data.success == true) {
+                                    this.pinCodeSended = true
+                                } else {
+                                    this.errors.email = 'Пользователь с таким Email не найден!'
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            })
+                            .finally(() => (this.loading = false))
+                    }
+                } else {
+                    this.errors.email = "Введен не корректный Email"
+                }
+            },
+            checkPinCode () {
+                this.errors = {}
+                let pinCode = this.pincode.toString()
+                if (pinCode.length === 6) {
+                    let url = `${window.location.origin}/auth/get-token/`
+                    let data = {
+                        "username": this.email,
+                        "pincode": this.pincode
+                    }
+                    this.loading = true
+                    axios({
+                        method: 'post',
+						mode: 'same-origin',
+						headers: {
+							'Content-Type': 'multipart/form-data',
+						},
+						url: url,
+						data: data,
+                    }).then(response => {
+                        if (response.data.success == true) {
+                            window.location.assign(window.location.origin + `/lk/`)
+                        } else {
+                            this.errors.pincode = "Введен не корректный ПИН КОД!"
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    }).finally(() => (this.loading = false))
+                } else {
+                    this.errors.pincode = "Не корректный формат ПИН кода"
+                }
+            }
+        }
+    }
+    const app = createApp(Loginform)
+    app.use(PrimeVue.Config, {
+        theme: {
+            preset: PrimeVue.Themes.Aura
+        }
+    })
+    app.component('input-otp', PrimeVue.InputOtp)  
+    app.mount('#loginForm')
+</script>
+
+<style scoped>
+    .custom-otp-input {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+        text-align: center;
+        border: 1px solid #cbd5e1;
+        background: transparent;
+        color: #334155;
+    }
+    
+    .custom-otp-input:focus {
+        outline: 2px solid #000;
+    }
+
+    .p-component {
+        justify-content: space-between;
+    }
+
+    @media (max-width: 500px) {
+        .custom-otp-input {
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+        }
+    }
+    
+</style>
+{% endblock %}

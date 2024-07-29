@@ -2,10 +2,15 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 from django.core.paginator import Paginator
+from django.db.models import Sum
+from django.contrib.auth import logout
+
+from datetime import datetime, timedelta
+
 from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import News, Vacancy, Document, Const, Branch
-
 from calculator_app.models import Rate
+from order_app.models import Order, ItemOrder
 
 
 class IndexView(View):
@@ -156,12 +161,57 @@ class MessageView(View):
             print(form.cleaned_data)
         return redirect(request.META.get("HTTP_REFERER"))
 
-
 class LkView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        context = {"const": Const.info()}
-        return render(request, "index_app/lk.html", context)
+        if request.user.is_authenticated:
+            context = {"const": Const.info()}
+            inpt_date_from = request.GET.get("date_from")
+            inpt_date_to = request.GET.get("date_to")
+            if inpt_date_from:
+                date_from = datetime.strptime(inpt_date_from, '%Y-%m-%d').date()
+            else:
+                date_from = (datetime.now() - timedelta(days = 30)).date()
+            if inpt_date_to:
+                date_to = datetime.strptime(inpt_date_to, '%Y-%m-%d').date()
+            else: 
+                date_to = datetime.now().date()
+            context.update({
+                "date_from": date_from.strftime('%Y-%m-%d'),
+                "date_to": date_to.strftime('%Y-%m-%d'),
+            })    
+            orders_list = Order.objects.filter(author=request.user, date__gte=date_from, date__lte=date_to).order_by('-date')
+            total_volume = 0
+            total_weight = 0
+            for item in orders_list:
+                order_items = ItemOrder.objects.filter(order=item)
+                for itmOrd in order_items:
+                    total_volume += itmOrd.cargo.volume
+                    total_weight += itmOrd.cargo.weight
+            if orders_list:
+                totals = {
+                    "summ": format(orders_list.aggregate(Sum('cost'))["cost__sum"], '.2f'),
+                    "total_volume": format(total_volume, '.2f'),
+                    "total_weight": format(total_weight, '.2f')
+                }
+                context.update({
+                    "orders_list": Order.objects.filter(author=request.user),
+                    "order_totals": totals,
+                })
+            return render(request, "index_app/lk.html", context)
+        else:
+            return redirect("index:login")
+    
+class LoginView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            return redirect("index:lk")
+        else:
+            context = {"const": Const.info()}
+            return render(request, "index_app/login.html", context)
 
-    def post(self, request: HttpRequest) -> HttpResponse:
+class LogoutView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
         context = {"const": Const.info()}
-        return render(request, "index_app/lk.html", context)
+        if request.user.is_authenticated:
+            logout(request) 
+        return redirect("index:login")

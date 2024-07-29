@@ -1,3 +1,5 @@
+from django.contrib.auth import login
+
 from rest_framework import permissions, authentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,6 +12,7 @@ from auth_app.services import (
     update_or_create_user_token,
     use_pin_code,
 )
+
 
 
 class UserView(APIView):
@@ -76,5 +79,6 @@ class TokenView(APIView):
             token = update_or_create_user_token(user=user)
             if token is not None:
                 use_pin_code(pincode)
+                login(request, user)
                 return Response({"data": {"token": token.key}, "success": True})
         return Response({"data": None, "success": False})

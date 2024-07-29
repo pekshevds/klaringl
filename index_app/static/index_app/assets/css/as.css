@@ -1,3 +1,21 @@
+
+
+.as-animate {
+    padding: 3em 3em;
+    border: 1px solid #eaeaea;
+	border-radius: 4px;
+	background: #fff;
+    box-shadow: 5px 5px 5px #eaeaea;
+}
+
+.as_sidebar__social a {
+    padding: 5px 15px;
+}
+
+.atf_header_top .atf-drop-menu a:hover{
+	color:  var(--thm-white);
+}
+
 .atf-booking-form-item.padding-right-20 {
     padding-right: 20px !important;
 }

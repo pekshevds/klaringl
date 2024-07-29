@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from server.base import (
     Directory,
     Item,
@@ -204,6 +205,15 @@ class Order(Document):
 
     def __str__(self) -> str:
         return f"Заказ №{self.number} от {format(self.date, '%F')}"
+
+    def get_order_items(self):
+        return ItemOrder.objects.filter(order=self)
+    
+    def get_order_volume(self):
+        return self.get_order_items().aggregate(Sum('cargo__volume'))['cargo__volume__sum']
+    
+    def get_order_weight(self):
+        return self.get_order_items().aggregate(Sum('cargo__weight'))['cargo__weight__sum']
 
     class Meta:
         verbose_name = "Заказ"

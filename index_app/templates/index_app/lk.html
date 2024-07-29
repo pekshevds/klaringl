@@ -1,6 +1,10 @@
 {% extends "index_app/base.html" %}
 {% load static %}
 
+{% block local_libraries %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+{% endblock %}
+
 {% block body %}
 
 <!-- start-page-heading -->
@@ -15,62 +19,134 @@
 		</div>
 	</div>
 </div>
-<!-- .atf-page-heading -->
-
-<!-- START ABOUT -->
 
 <section id="contact_info">
     <div class="container">
-        <!-- <div class="row">
-            <div class="col-lg-4 atf-section-padding">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d8015.198595761624!2d30.29517880983911!3d59.852467420007635!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46963bbb86de9da3%3A0x2e537ed7886f953!2sKLARIN%20GL!5e0!3m2!1sru!2sru!4v1715745013056!5m2!1sru!2sru" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>            
-        </div> -->
-        <div class="row">
-            {% for item in items %}
-            <div class="col-lg-4 atf-section-padding">
-                <div class="atf-contact-info ps-lg-5" data-aos="fade-up">
-                    <div class="atf-section-title title-color">
-                        <h3>{{ item.name }}</h3>
-                        <p class="f-15 mt-3 "></p>
-                    </div>
-                
-                    <div class="atf-contact-details mt-4">
-                        <div class="atf-contact-icon">
-                            <i class="fa fa-home"></i>
-                        </div>
-                        <div class="atf-contact-address">
-                            <h5>Адрес</h5>
-                            <p>{{ item.address }}</p>
-                        </div>
-                    </div>
-                
-                    <div class="atf-contact-details mt-4">
-                        <div class="atf-contact-icon">
-                            <i class="fa fa-phone"></i>
-                        </div>
-                        <div class="atf-contact-address">
-                            <h5>Телефон</h5>
-                            <p><a href="tel:{{ const.tel }}">{{ item.tel }}</a></p>
-                        </div>
-                    </div>
-            
-                    <div class="atf-contact-details mt-4">
-                        <div class="atf-contact-icon">
-                            <i class="fa fa-envelope"></i>
-                        </div>
-                        <div class="atf-contact-address">
-                            <h5>E-mail</h5>
-                            <p><a href="mailto:{{ const.email }}">{{ item.email }}</a></p>
+        <div class="row atf-section-padding">
+            <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">
+                <div class="atf-section-title  text-left">
+                    <div class="contact mt-4">
+                        <div id="orderFilter" class="atf-contact-form form">
+                            <div class="row">
+                                <div class="form-group col-lg-6">
+                                    <span>Дата с:</span>
+                                    <input 
+                                        v-model="dateFrom"
+                                        type="date" 
+                                        class="form-control">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <span>Дата по:</span>
+                                    <input 
+                                        v-model="dateTo"
+                                        type="date" 
+                                        class="form-control" 
+                                    >
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-lg-4">
+                                    <button @click="getOrdersList" class="atf-themes-btn  atf-themes-btn-one">
+                                        <i class="btn-curve"></i>
+                                        <span class="btn-title">Отобрать</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div><!--- END CONTACT -->
+                </div>
+            </div>
+            {% if orders_list %}
+            {% for item in orders_list %}
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Номер</th>
+                            <th scope="col">Дата</th>
+                            <th scope="col">Отправление</th>
+                            <th scope="col">Получение</th>
+                            <th scope="col">Объем, м3</th>
+                            <th scope="col">Вес, кг</th>
+                            <th scope="col">Стоимость, руб.</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in orders_list%}
+                        <tr>
+                            <td>{{ item.number }}</td>
+                            <td>{{ item.date }}</td>
+                            <td>{{ item.city_from.name }}</td>
+                            <td>{{ item.city_to.name }}</td>
+                            <td>{{ item.get_order_volume }}</td>
+                            <td>{{ item.get_order_weight }}</td>
+                            <td>{{ item.cost }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="3" class="table-secondary"></td>
+                            <td class="table-secondary" style="text-align: right;">Итого:</td>
+                            <td class="table-secondary">{{ order_totals.total_volume }}</td>
+                            <td class="table-secondary">{{ order_totals.total_weight }}</td>
+                            <td class="table-secondary">{{ order_totals.summ }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div><!--- END COL -->
             {% endfor %}
+            {% else %}
+            <div class="row justify-content-center">
+                <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">
+                    <div class="atf-section-title  text-center ">
+                        <h2 class="title-color">В указанные даты заказов не создано</h2>
+                        <p class="f-15 mt-3">Выберите другие даты для поиска</p>
+                    </div>
+                </div><!--- END COL -->
+            </div>
+            {% endif %}
         </div><!--- END ROW -->		
     </div><!--- END CONTAINER -->
 </section>
 <!-- END ABOUT -->
 
 
+{% endblock %}
+
+{% block local_scripts %}
+<script type="module" setup>
+    const { createApp } = Vue
+    const orderFilter = {
+        data () {
+            return {
+                dateFrom: "",
+                dateTo: "",
+            }
+        },
+        mounted () {
+            this.dateFrom = '{{ date_from }}'
+            this.dateTo = '{{ date_to }}'
+        },
+        computed: {
+            orderListFilterData () {
+                let data = {}
+                if (this.dateFrom) {
+                    data.date_from = this.dateFrom
+                }
+                if (this.dateTo) {
+                    data.date_to = this.dateTo
+                }
+                return data
+            },
+        },
+        methods: {
+            getOrdersList () {
+                window.location.assign(window.location.origin + `/lk/?${new URLSearchParams(this.orderListFilterData).toString()}`)
+            }
+        }
+    }
+    const app = createApp(orderFilter)
+    app.mount('#orderFilter')
+</script>    
 {% endblock %}

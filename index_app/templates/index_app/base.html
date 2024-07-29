@@ -87,7 +87,19 @@
 							 </div>
 						</div>
 
-						<div class="col-lg-5">							
+						<div class="col-lg-5">		
+							<div class="atf-drop-menu ltn__currency-menu atf-language-menu float-end">
+								<ul>
+									<li>
+										{% if user.is_authenticated %}
+										<a href="{% url 'index:lk' %}">{{ user.email }}</a>
+										<a href="{% url 'index:logout' %}">Выход</a>
+										{% else %}
+										<a href="{% url 'index:login' %}">Войти</a>
+										{% endif %}
+									</li>
+								</ul>
+							</div>					
 							<div class="atf_header_top_right">	
 								<ul class="atf_header-social me-3">
 									<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
@@ -296,6 +308,15 @@
 							<li><a href="#"><i class="fab fa-linkedin"></i></a></li>
 						</ul>
 					</div>
+					<div class="as_sidebar__social pt-2">
+						{% if user.is_authenticated %}
+						<a href="{% url 'index:lk' %}" class="atf-themes-btn  atf-themes-btn-one">{{ user.email }}</a>
+						<a href="{% url 'index:logout' %}" class="atf-themes-btn  atf-themes-btn-one">Выход</a>
+						{% else %}
+						<a href="{% url 'index:login' %}" class="atf-themes-btn  atf-themes-btn-one">Войти</a>
+						{% endif %}
+						
+					</div>
 					</div>
 				</div>
 			</div>
@@ -349,7 +370,7 @@
 								<li><a href="{% url 'index:contacts' %}"><i class="fas fa-caret-right me-2"></i>Контакты</a></li>
 								<li><a href="{% url 'index:news' %}"><i class="fas fa-caret-right me-2"></i>Новости</a></li>
 								<li><a href="{% url 'calculator:calc' %}"><i class="fas fa-caret-right me-2"></i>Калькулятор</a></li>
-								<li><a href="{% url 'index:lk' %}"><i class="fas fa-caret-right me-2"></i>Личный кабинет</a></li>
+								{% comment %} <li><a href="{% url 'index:lk' %}"><i class="fas fa-caret-right me-2"></i>Личный кабинет</a></li> {% endcomment %}
 							</ul>
 						</div><!--- END COL -->
 												
