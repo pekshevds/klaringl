@@ -11,6 +11,7 @@ from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import News, Vacancy, Document, Const, Branch
 from calculator_app.models import Rate
 from order_app.models import Order, ItemOrder
+from order_app.services import fetch_customer_orders
 
 
 class IndexView(View):
@@ -161,46 +162,47 @@ class MessageView(View):
             print(form.cleaned_data)
         return redirect(request.META.get("HTTP_REFERER"))
 
+
 class LkView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             context = {"const": Const.info()}
-            inpt_date_from = request.GET.get("date_from")
-            inpt_date_to = request.GET.get("date_to")
-            if inpt_date_from:
-                date_from = datetime.strptime(inpt_date_from, '%Y-%m-%d').date()
-            else:
-                date_from = (datetime.now() - timedelta(days = 30)).date()
-            if inpt_date_to:
-                date_to = datetime.strptime(inpt_date_to, '%Y-%m-%d').date()
-            else: 
-                date_to = datetime.now().date()
-            context.update({
-                "date_from": date_from.strftime('%Y-%m-%d'),
-                "date_to": date_to.strftime('%Y-%m-%d'),
-            })    
-            orders_list = Order.objects.filter(author=request.user, date__gte=date_from, date__lte=date_to).order_by('-date')
+            date_from = request.GET.get(
+                "date_from",
+                (datetime.now() - timedelta(days=30)).date().strftime("%Y-%m-%d"),
+            )
+            date_to = request.GET.get(
+                "date_to", datetime.now().date().strftime("%Y-%m-%d")
+            )
+            id = request.user.customer.id
+            result = fetch_customer_orders(
+                customer_id=id, date_from=date_from, date_to=date_to
+            )
             total_volume = 0
             total_weight = 0
-            for item in orders_list:
-                order_items = ItemOrder.objects.filter(order=item)
-                for itmOrd in order_items:
-                    total_volume += itmOrd.cargo.volume
-                    total_weight += itmOrd.cargo.weight
-            if orders_list:
+            summ = 0
+            if result:
+                orders_list = result.get("orders", [])
+                for item in orders_list:
+                    summ += item.get("summ", 0)
+                    total_volume += item.get("volume", 0)
+                    total_weight += item.get("weight", 0)
                 totals = {
-                    "summ": format(orders_list.aggregate(Sum('cost'))["cost__sum"], '.2f'),
-                    "total_volume": format(total_volume, '.2f'),
-                    "total_weight": format(total_weight, '.2f')
+                    "summ": format(summ, ".2f"),
+                    "total_volume": format(total_volume, ".2f"),
+                    "total_weight": format(total_weight, ".2f"),
                 }
-                context.update({
-                    "orders_list": Order.objects.filter(author=request.user),
-                    "order_totals": totals,
-                })
+                context.update(
+                    {
+                        "orders_list": orders_list,
+                        "order_totals": totals,
+                    }
+                )
             return render(request, "index_app/lk.html", context)
         else:
             return redirect("index:login")
-    
+
+
 class LoginView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
@@ -209,9 +211,10 @@ class LoginView(View):
             context = {"const": Const.info()}
             return render(request, "index_app/login.html", context)
 
+
 class LogoutView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {"const": Const.info()}
         if request.user.is_authenticated:
-            logout(request) 
+            logout(request)
         return redirect("index:login")

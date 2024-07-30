@@ -39,3 +39,17 @@ def fetch_order_status_by_number(order_number: str) -> str:
         data = responce.json()
         status = data.get("status") if data.get("status") != "" else status
     return status
+
+
+def fetch_customer_orders(
+    customer_id: str, date_from: str, date_to: str
+) -> dict | None:
+    url = f"http://{config.ENTERPRISE_HOST}:{config.ENTERPRISE_PORT}/OLK/hs/orders/orders/?id={customer_id}&from=\
+        {date_from}&to={date_to}"
+    headers = {"content-type": "application/json; charset=utf8"}
+    basic = HTTPBasicAuth(config.ENTERPRISE_USER, config.ENTERPRISE_PASSWORD)
+    responce = requests.get(url=url, headers=headers, auth=basic)
+    data = None
+    if responce.ok:
+        data = responce.json()
+    return data
