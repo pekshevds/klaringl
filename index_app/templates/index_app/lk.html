@@ -1,5 +1,6 @@
 {% extends "index_app/base.html" %}
 {% load static %}
+{% load django_jsonform %}
 
 {% block local_libraries %}
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
@@ -57,7 +58,6 @@
                 </div>
             </div>
             {% if orders_list %}
-            {% for item in orders_list %}
             <div class="col-12">
                 <div class="table-responsive">
                     <table class="table">
@@ -70,18 +70,20 @@
                             <th scope="col">Объем, м3</th>
                             <th scope="col">Вес, кг</th>
                             <th scope="col">Стоимость, руб.</th>
+                            <th scope="col">Статус</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in orders_list%}
+                        {% for item in orders_list %}
                         <tr>
                             <td>{{ item.number }}</td>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.city_from.name }}</td>
-                            <td>{{ item.city_to.name }}</td>
-                            <td>{{ item.get_order_volume }}</td>
-                            <td>{{ item.get_order_weight }}</td>
-                            <td>{{ item.cost }}</td>
+                            <td>{{ item.date | parse_datetime | date:'d-m-Y' }}</td>
+                            <td>{{ item.from.name }}, {{ item.region_from.name }}</td>
+                            <td>{{ item.to.name }}, {{ item.region_to.name }}</td>
+                            <td>{{ item.volume }}</td>
+                            <td>{{ item.weight }}</td>
+                            <td>{{ item.summ }}</td>
+                            <td>{{ item.status }}</td>
                         </tr>
                         {% endfor %}
                         <tr>
@@ -90,12 +92,12 @@
                             <td class="table-secondary">{{ order_totals.total_volume }}</td>
                             <td class="table-secondary">{{ order_totals.total_weight }}</td>
                             <td class="table-secondary">{{ order_totals.summ }}</td>
+                            <td class="table-secondary"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div><!--- END COL -->
-            {% endfor %}
             {% else %}
             <div class="row justify-content-center">
                 <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">

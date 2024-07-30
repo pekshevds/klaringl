@@ -169,11 +169,15 @@ class LkView(View):
             context = {"const": Const.info()}
             date_from = request.GET.get(
                 "date_from",
-                (datetime.now() - timedelta(days=30)).date().strftime("%Y-%m-%d"),
+                (datetime.now() - timedelta(days=4)).date().strftime("%Y-%m-%d"),
             )
             date_to = request.GET.get(
                 "date_to", datetime.now().date().strftime("%Y-%m-%d")
             )
+            context.update({
+                "date_from": date_from,
+                "date_to": date_to
+            })
             id = request.user.customer.id
             result = fetch_customer_orders(
                 customer_id=id, date_from=date_from, date_to=date_to

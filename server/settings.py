@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "calculator_app.apps.CalculatorAppConfig",
     "order_app.apps.OrderAppConfig",
     "api_app.apps.ApiAppConfig",
+    'django_jsonform'
 ]
 
 MIDDLEWARE = [
