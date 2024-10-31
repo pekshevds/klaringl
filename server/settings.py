@@ -28,9 +28,8 @@ SECRET_KEY = config.SECRET_KEY
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "klaringl.annasoft.site",
-    "www.klaringl.annasoft.site",
-    "127.0.0.1",
+    "klaringl.su",
+    "www.klaringl.su",
     "127.0.0.1",
     "localhost",
 ]
