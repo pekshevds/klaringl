@@ -599,7 +599,7 @@ button, input, textarea:focus {
 	margin-top: 0;
 }
 .site-logo img {
-    max-width: 147px;
+    max-width: 200px;
     height: auto;
     margin-bottom: 10px;
 }
