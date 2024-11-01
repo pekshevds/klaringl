@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 from django.core.paginator import Paginator
-from django.db.models import Sum
 from django.contrib.auth import logout
 
 from datetime import datetime, timedelta
@@ -10,7 +9,6 @@ from datetime import datetime, timedelta
 from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import News, Vacancy, Document, Const, Branch
 from calculator_app.models import Rate
-from order_app.models import Order, ItemOrder
 from order_app.services import fetch_customer_orders
 
 
@@ -22,6 +20,7 @@ class IndexView(View):
             "cities_list": Rate.cities_to,
             "cities_from_list": Rate.cities_from,
             "news": news,
+            "title": "Решения для логистики, перевозок и доставки.",
         }
         return render(request, "index_app/index.html", context)
 
@@ -174,10 +173,7 @@ class LkView(View):
             date_to = request.GET.get(
                 "date_to", datetime.now().date().strftime("%Y-%m-%d")
             )
-            context.update({
-                "date_from": date_from,
-                "date_to": date_to
-            })
+            context.update({"date_from": date_from, "date_to": date_to})
             id = request.user.customer.id
             result = fetch_customer_orders(
                 customer_id=id, date_from=date_from, date_to=date_to
