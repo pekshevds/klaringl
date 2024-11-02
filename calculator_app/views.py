@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
 
+from index_app.models import Const
 from server.base import FormOfOwnershipSelector, PayerSelector
 from calculator_app.models import City, Rate, ExpeditionRate
 from calculator_app.serializers import (
@@ -188,6 +189,7 @@ class CalcView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
+            "const": Const.info(),
             "cities_list": json.dumps(createCitiesJson(Rate.cities_to())),
             "cities_from_list": json.dumps(createCitiesJson(Rate.cities_from())),
             "payer_selector": json.dumps(createChoisesJson(PayerSelector.choices)),
