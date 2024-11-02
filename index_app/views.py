@@ -174,28 +174,38 @@ class LkView(View):
                 "date_to", datetime.now().date().strftime("%Y-%m-%d")
             )
             context.update({"date_from": date_from, "date_to": date_to})
-            id = request.user.customer.id
-            result = fetch_customer_orders(
-                customer_id=id, date_from=date_from, date_to=date_to
-            )
-            total_volume = 0
-            total_weight = 0
-            summ = 0
-            if result:
-                orders_list = result.get("orders", [])
-                for item in orders_list:
-                    summ += item.get("summ", 0)
-                    total_volume += item.get("volume", 0)
-                    total_weight += item.get("weight", 0)
-                totals = {
-                    "summ": format(summ, ".2f"),
-                    "total_volume": format(total_volume, ".2f"),
-                    "total_weight": format(total_weight, ".2f"),
-                }
+            customer = request.user.customer
+            if customer:
+                id = request.user.customer.id
+                result = fetch_customer_orders(
+                    customer_id=id, date_from=date_from, date_to=date_to
+                )
+                total_volume = 0
+                total_weight = 0
+                summ = 0
+                if result:
+                    orders_list = result.get("orders", [])
+                    for item in orders_list:
+                        summ += item.get("summ", 0)
+                        total_volume += item.get("volume", 0)
+                        total_weight += item.get("weight", 0)
+                    totals = {
+                        "summ": format(summ, ".2f"),
+                        "total_volume": format(total_volume, ".2f"),
+                        "total_weight": format(total_weight, ".2f"),
+                    }
+                    context.update(
+                        {
+                            "orders_list": orders_list,
+                            "order_totals": totals,
+                        }
+                    )
+                else:
+                    context.update({"error": "Не верно выбран период для отбора"})
+            else:
                 context.update(
                     {
-                        "orders_list": orders_list,
-                        "order_totals": totals,
+                        "error": "Не указан покупатель/клиент для вашего пользователя (обратитесь к администратору)"
                     }
                 )
             return render(request, "index_app/lk.html", context)
