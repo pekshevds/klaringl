@@ -7,7 +7,7 @@ from django.contrib.auth import logout
 from datetime import datetime, timedelta
 
 from index_app.forms import GetInTouchForm, MessageForm
-from index_app.models import News, Vacancy, Document, Const, Branch
+from index_app.models import News, Vacancy, Document, Const, Branch, Question
 from calculator_app.models import Rate
 from order_app.services import fetch_customer_orders
 
@@ -100,7 +100,7 @@ class BranchOfficesView(View):
 
 class ContactsView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        context = {"const": Const.info()}
+        context = {"const": Const.info(), "questions": Question.objects.all()}
         return render(request, "index_app/contacts.html", context)
 
 

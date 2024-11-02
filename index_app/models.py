@@ -228,6 +228,22 @@ class News(Directory):
         ordering = ["-created_at"]
 
 
+class Question(Directory):
+    name = models.CharField(
+        verbose_name="Вопрос",
+        max_length=150,
+        null=True,
+        blank=True,
+        db_index=True,
+    )
+    answer = models.TextField(verbose_name="Ответ", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Вопрос"
+        verbose_name_plural = "Вопросы"
+        ordering = ["-created_at"]
+
+
 class ActiveVacancyManager(models.Manager):
     def get_queryset(self) -> models.QuerySet:
         return super().get_queryset().filter(active=True)

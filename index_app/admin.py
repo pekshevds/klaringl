@@ -1,5 +1,5 @@
 from django.contrib import admin
-from index_app.models import News, Vacancy, Document, Tag, Branch, Const
+from index_app.models import News, Vacancy, Document, Tag, Branch, Const, Question
 
 
 @admin.register(Branch)
@@ -21,6 +21,12 @@ class NewsAdmin(admin.ModelAdmin):
     list_display = ["name", "created_at", "updated_at", "active", "author", "tag"]
     search_fields = ["name"]
     list_filter = ["active", "author", "tag"]
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ["name", "created_at", "updated_at"]
+    search_fields = ["name"]
 
 
 @admin.register(Vacancy)
