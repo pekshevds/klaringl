@@ -34,21 +34,17 @@
 							<i class="btn-curve"></i>
 							<span class="btn-title">Предварительный расчет</span>
 						</a>
-
-						<a class="atf-themes-btn  atf-themes-btn-one ms-2" href="#">
-							<i class="btn-curve"></i>
-							<span class="btn-title">Оформить заявку</span>
-						</a>
-
-						<a class="atf-themes-btn  atf-themes-btn-one ms-2" href="#">
+						
+						<a class="atf-themes-btn  atf-themes-btn-one ms-2" href="{% url 'index:index'  %}">
 							<i class="btn-curve"></i>
 							<span class="btn-title">Статус груза</span>
 						</a>
-
-						<a class="atf-themes-btn  atf-themes-btn-one ms-2" href="#">
+						{% if user.is_authenticated %}
+						<a class="atf-themes-btn  atf-themes-btn-one ms-2" href="{% url 'index:lk' %}">
 							<i class="btn-curve"></i>
 							<span class="btn-title">Личный кабинет</span>
 						</a>
+						{% endif %}
 					</div>
                 </div>
             </div><!--- END COL -->            
