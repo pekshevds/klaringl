@@ -183,6 +183,15 @@ def createCitiesJson(query_cities_list) -> list[dict]:
     return dict_cities_list
 
 
+class CheckView(View):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        context = {"const": Const.info()}
+        return render(request, "calculator_app/check.html", context)
+
+
 class CalcView(View):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
