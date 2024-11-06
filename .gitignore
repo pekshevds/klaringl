@@ -8,7 +8,6 @@ passenger_wsgi.py
 *.docx
 *.zip
 tmp/
-static/
 
 # C extensions
 *.so
