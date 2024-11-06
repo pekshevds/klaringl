@@ -1,6 +1,10 @@
 from django.contrib import admin
 from index_app.models import News, Vacancy, Document, Tag, Branch, Const, Question
 
+admin.site.site_header = "Панель администрирования klaringl"
+admin.site.site_title = "Панель администрирования klaringl"
+admin.site.index_title = "Добро пожаловать!"
+
 
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):
