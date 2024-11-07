@@ -4,7 +4,20 @@
 {% block body %}
 
 <!-- START HOME -->
-<section id="home" class="atf-header-area atf-align-items-details" style="background-image: url({% static 'index_app/assets/img/klaringl/index_bg.jpg' %});  background-size:cover; background-position: center center;">
+<section 
+    id="home" 
+    class="atf-header-area atf-align-items-details" 
+    {% if time_of_the_year == 'winter' %}
+    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/winter_bg.jpg' %});  background-size:cover; background-position: center center;"
+    {% elif time_of_the_year == 'spring' %}
+    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/spring_bg.jpg' %});  background-size:cover; background-position: center center;"
+    {% elif time_of_the_year == 'summer' %}
+    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/summer_bg.jpg' %});  background-size:cover; background-position: center center;"
+    {% elif time_of_the_year == 'autumn' %}
+    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/autumn_bg.jpg' %});  background-size:cover; background-position: center center;"
+    {% endif %}
+>
+    {{ time_of_the_year }}
     <div class="container">
         <div class="row justify-content-left">
              <!--LEFT COL-->
