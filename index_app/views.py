@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth import logout
 
 from datetime import datetime, timedelta
-
+from index_app.utils import get_current_time_of_the_year
 from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import News, Vacancy, Document, Const, Branch, Question
 from calculator_app.models import Rate
@@ -21,6 +21,7 @@ class IndexView(View):
             "cities_from_list": Rate.cities_from,
             "news": news,
             "title": "Решения для логистики, перевозок и доставки.",
+            "time_of_the_year": get_current_time_of_the_year(),
         }
         return render(request, "index_app/index.html", context)
 
