@@ -1,3 +1,4 @@
+from typing import Any
 from decimal import Decimal
 from datetime import time
 from django.shortcuts import get_object_or_404
@@ -252,9 +253,25 @@ def calculate_delevery_on_time(deliver_time: time) -> Decimal:
     return const.time_deliver_cost
 
 
+def calculate_total_weight_and_total_volume(
+    items: list[dict[str, Any]],
+) -> tuple[Decimal, Decimal]:
+    total_weight = sum([item.get("weight", 0) for item in items])
+    total_volume = sum(
+        [
+            item.get("volume", 0) * Decimal("1.3")
+            if item.get("hard_packaging", False)
+            else item.get("volume", 0)
+            for item in items
+        ]
+    )
+    return total_weight, total_volume
+
+
 def calculate_delevery_by_address(order: dict, param_name: str):
-    total_weight = sum([item.get("weight", 0) for item in order["items"]])
-    total_volume = sum([item.get("volume", 0) for item in order["items"]])
+    """total_weight = sum([item.get("weight", 0) for item in order["items"]])
+    total_volume = sum([item.get("volume", 0) for item in order["items"]])"""
+    total_weight, total_volume = calculate_total_weight_and_total_volume(order["items"])
     city = City.find_by_id(order.get(param_name))
     rate = expedition_rate_by_city(city_to=city)
     return calculate_expedition_cost_by_rate(rate, total_weight, total_volume)
@@ -305,7 +322,7 @@ def calculate_hard_packaging(volume: Decimal) -> Decimal:
     """
     Расчет стоимости жесткой упаковки/обрешетки"""
     const = Const.info()
-    cost = (volume * Decimal("1.3")) * const.hard_packaging_cost
+    cost = volume * const.hard_packaging_cost
     if cost < const.hard_packaging_min_cost:
         cost = const.hard_packaging_min_cost
     return cost
@@ -326,8 +343,9 @@ def calculate_palletizing() -> Decimal:
 
 
 def calculate_base_cost(order: dict) -> Decimal:
-    total_weight = sum([item.get("weight", 0) for item in order["items"]])
-    total_volume = sum([item.get("volume", 0) for item in order["items"]])
+    """total_weight = sum([item.get("weight", 0) for item in order["items"]])
+    total_volume = sum([item.get("volume", 0) for item in order["items"]])"""
+    total_weight, total_volume = calculate_total_weight_and_total_volume(order["items"])
     city_from = City.find_by_id(order.get("city_from_id"))
     city_to = City.find_by_id(order.get("city_to_id"))
     rate = rate_by_cities(city_from=city_from, city_to=city_to)
