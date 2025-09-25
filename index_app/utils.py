@@ -24,4 +24,4 @@ def get_current_time_of_the_year() -> str:
         TimeOfTheYear.AUTUMN,
         TimeOfTheYear.AUTUMN,
     ]
-    return months[datetime.now().month - 1].value
+    return months[datetime.now().month].value
