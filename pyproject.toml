@@ -16,6 +16,7 @@ markdown = "^3.6"
 mysqlclient = "2.2.4"
 requests = "^2.32.3"
 django-jsonform = "2.22.0"
+pillow = "^11.3.0"
 
 
 [build-system]

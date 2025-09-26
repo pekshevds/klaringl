@@ -225,7 +225,7 @@ class LoginView(View):
 
 class LogoutView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        context = {"const": Const.info()}
+        # context = {"const": Const.info()}
         if request.user.is_authenticated:
             logout(request)
         return redirect("index:login")

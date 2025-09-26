@@ -5,6 +5,18 @@ from server.base import Directory, Base
 from auth_app.models import User
 
 
+class Picture(Base):
+    title = models.CharField(verbose_name="Имя", max_length=150)
+    image = models.ImageField(verbose_name="Изображение", upload_to="pictures/")
+
+    def __str__(self):
+        return f"{self.title}"
+
+    class Meta:
+        verbose_name = "Изображение"
+        verbose_name_plural = "Изображения"
+
+
 class Const(Base):
     address = models.CharField(
         verbose_name="Адрес", max_length=255, blank=True, null=True, default=""
@@ -104,6 +116,38 @@ class Const(Base):
         blank=True,
         default=0,
     )
+    autumn = models.ForeignKey(
+        Picture,
+        verbose_name="Осень",
+        on_delete=models.PROTECT,
+        related_name="autumn",
+        null=True,
+        blank=True,
+    )
+    spring = models.ForeignKey(
+        Picture,
+        verbose_name="Весна",
+        on_delete=models.PROTECT,
+        related_name="spring",
+        null=True,
+        blank=True,
+    )
+    summer = models.ForeignKey(
+        Picture,
+        verbose_name="Лето",
+        on_delete=models.PROTECT,
+        related_name="summer",
+        null=True,
+        blank=True,
+    )
+    winter = models.ForeignKey(
+        Picture,
+        verbose_name="Зима",
+        on_delete=models.PROTECT,
+        related_name="winter",
+        null=True,
+        blank=True,
+    )
 
     def save(self, *args, **kwargs):
         """
@@ -132,6 +176,10 @@ class Const(Base):
                 "hard_packaging_min_cost",
                 "soft_packaging_cost",
                 "palletizing_cost",
+                "autumn",
+                "spring",
+                "summer",
+                "winter",
             ],
         )
         Decimal0 = Decimal("0")
@@ -153,6 +201,10 @@ class Const(Base):
                 hard_packaging_min_cost=item.hard_packaging_min_cost,
                 soft_packaging_cost=item.soft_packaging_cost,
                 palletizing_cost=item.palletizing_cost,
+                autumn=item.autumn,
+                spring=item.spring,
+                summer=item.summer,
+                winter=item.winter,
             )
         return Const(
             address="",
@@ -170,6 +222,10 @@ class Const(Base):
             hard_packaging_min_cost=Decimal0,
             soft_packaging_cost=Decimal0,
             palletizing_cost=Decimal0,
+            autumn=None,
+            spring=None,
+            summer=None,
+            winter=None,
         )
 
     class Meta:

@@ -8,13 +8,13 @@
     id="home" 
     class="atf-header-area atf-align-items-details" 
     {% if time_of_the_year == 'winter' %}
-    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/winter_bg.jpg' %});  background-size:cover; background-position: center center;"
+    style="background-image: url({{const.winter.image.url}});  background-size:cover; background-position: center center;"
     {% elif time_of_the_year == 'spring' %}
-    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/spring_bg.jpg' %});  background-size:cover; background-position: center center;"
+    style="background-image: url({{const.spring.image.url}});  background-size:cover; background-position: center center;"
     {% elif time_of_the_year == 'summer' %}
-    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/summer_bg.jpg' %});  background-size:cover; background-position: center center;"
+    style="background-image: url({{const.summer.image.url}});  background-size:cover; background-position: center center;"
     {% elif time_of_the_year == 'autumn' %}
-    style="background-image: url({% static 'index_app/assets/img/klaringl/bg/autumn_bg.jpg' %});  background-size:cover; background-position: center center;"
+    style="background-image: url({{const.autumn.image.url}});  background-size:cover; background-position: center center;"
     {% endif %}
 >
     <div class="container">
