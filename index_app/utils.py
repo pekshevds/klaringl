@@ -13,15 +13,15 @@ def get_current_time_of_the_year() -> str:
     months = [
         TimeOfTheYear.WINTER,
         TimeOfTheYear.WINTER,
+        TimeOfTheYear.SPRING,
+        TimeOfTheYear.SPRING,
+        TimeOfTheYear.SPRING,
+        TimeOfTheYear.SUMMER,
+        TimeOfTheYear.SUMMER,
+        TimeOfTheYear.SUMMER,
+        TimeOfTheYear.AUTUMN,
+        TimeOfTheYear.AUTUMN,
+        TimeOfTheYear.AUTUMN,
         TimeOfTheYear.WINTER,
-        TimeOfTheYear.SPRING,
-        TimeOfTheYear.SPRING,
-        TimeOfTheYear.SPRING,
-        TimeOfTheYear.SUMMER,
-        TimeOfTheYear.SUMMER,
-        TimeOfTheYear.SUMMER,
-        TimeOfTheYear.AUTUMN,
-        TimeOfTheYear.AUTUMN,
-        TimeOfTheYear.AUTUMN,
     ]
-    return months[datetime.now().month].value
+    return months[datetime.now().month - 1].value
