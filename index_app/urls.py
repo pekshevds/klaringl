@@ -18,8 +18,9 @@ from index_app.views import (
     MessageView,
     BranchOfficesView,
     LkView,
+    DownLoadView,
     LoginView,
-    LogoutView
+    LogoutView,
 )
 
 app_name = "index"
@@ -61,4 +62,5 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("lk/", LkView.as_view(), name="lk"),
+    path("lk/download/", DownLoadView.as_view(), name="lk-download"),
 ]

@@ -69,8 +69,10 @@
                             <th scope="col">Получение</th>
                             <th scope="col">Объем, м3</th>
                             <th scope="col">Вес, кг</th>
-                            <th scope="col">Стоимость, руб.</th>
+                            <th scope="col">Стоимость, руб</th>
                             <th scope="col">Статус</th>
+                            <th scope="col">Документы</th>
+                            <th scope="col">Грузополучатель</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -79,11 +81,13 @@
                             <td>{{ item.number }}</td>
                             <td>{{ item.date | parse_datetime | date:'d-m-Y' }}</td>
                             <td>{{ item.from.name }}, {{ item.region_from.name }}</td>
-                            <td>{{ item.to.name }}, {{ item.region_to.name }}</td>
+                            <td>{{ item.to.name }}, {{ item.recipient_address }}</td>
                             <td>{{ item.volume }}</td>
                             <td>{{ item.weight }}</td>
                             <td>{{ item.summ }}</td>
                             <td>{{ item.status }}</td>
+                            <td>{{ item.clients_docs }}</td>
+                            <td>{{ item.recipient.name }}</td>
                         </tr>
                         {% endfor %}
                         <tr>
@@ -98,6 +102,22 @@
                     </table>
                 </div>
             </div><!--- END COL -->
+            <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">
+                <div class="atf-section-title  text-left">
+                    <div class="contact mt-4">
+                        <div id="orderFilter" class="atf-contact-form form">                            
+                            <div class="row">
+                                <div class="form-group col-lg-4">
+                                    <button @click="getExcelFile" class="atf-themes-btn  atf-themes-btn-one">
+                                        <i class="btn-curve"></i>
+                                        <span class="btn-title">Сохранить</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% else %}
             <div class="row justify-content-center">
                 <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">
@@ -145,6 +165,9 @@
         methods: {
             getOrdersList () {
                 window.location.assign(window.location.origin + `/lk/?${new URLSearchParams(this.orderListFilterData).toString()}`)
+            },
+            getExcelFile () {
+                window.location.assign(window.location.origin + `/lk/download/?${new URLSearchParams(this.orderListFilterData).toString()}`)
             }
         }
     }

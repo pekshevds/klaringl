@@ -1,5 +1,8 @@
+import io
+import xlsxwriter
+from typing import Any
 from django.shortcuts import render, redirect
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, FileResponse
 from django.views.generic import View
 from django.core.paginator import Paginator
 from django.contrib.auth import logout
@@ -163,55 +166,156 @@ class MessageView(View):
         return redirect(request.META.get("HTTP_REFERER"))
 
 
+def _get_data(customer_id: str, date_from: str, date_to: str) -> dict[str, Any] | None:
+    result = fetch_customer_orders(
+        customer_id=customer_id, date_from=date_from, date_to=date_to
+    )
+    if not result:
+        return None
+    total_volume = 0
+    total_weight = 0
+    summ = 0
+    orders_list = result.get("orders", [])
+    for item in orders_list:
+        summ += item.get("summ", 0)
+        total_volume += item.get("volume", 0)
+        total_weight += item.get("weight", 0)
+    totals = {
+        "summ": format(summ, ".2f"),
+        "total_volume": format(total_volume, ".2f"),
+        "total_weight": format(total_weight, ".2f"),
+    }
+    return {"orders_list": orders_list, "totals": totals}
+
+
 class LkView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        if request.user.is_authenticated:
-            context = {"const": Const.info()}
-            date_from = request.GET.get(
-                "date_from",
-                (datetime.now() - timedelta(days=4)).date().strftime("%Y-%m-%d"),
-            )
-            date_to = request.GET.get(
-                "date_to", datetime.now().date().strftime("%Y-%m-%d")
-            )
-            context.update({"date_from": date_from, "date_to": date_to})
-            customer = request.user.customer
-            if customer:
-                id = request.user.customer.id
-                result = fetch_customer_orders(
-                    customer_id=id, date_from=date_from, date_to=date_to
-                )
-                total_volume = 0
-                total_weight = 0
-                summ = 0
-                if result:
-                    orders_list = result.get("orders", [])
-                    for item in orders_list:
-                        summ += item.get("summ", 0)
-                        total_volume += item.get("volume", 0)
-                        total_weight += item.get("weight", 0)
-                    totals = {
-                        "summ": format(summ, ".2f"),
-                        "total_volume": format(total_volume, ".2f"),
-                        "total_weight": format(total_weight, ".2f"),
-                    }
-                    context.update(
-                        {
-                            "orders_list": orders_list,
-                            "order_totals": totals,
-                        }
-                    )
-                else:
-                    context.update({"error": "Не верно выбран период для отбора"})
-            else:
-                context.update(
-                    {
-                        "error": "Не указан покупатель/клиент для вашего пользователя (обратитесь к администратору)"
-                    }
-                )
-            return render(request, "index_app/lk.html", context)
-        else:
+        if not request.user.is_authenticated:
             return redirect("index:login")
+        context = {"const": Const.info()}
+        customer = request.user.customer
+        if not customer:
+            context.update(
+                {
+                    "error": "Не указан покупатель/клиент для вашего пользователя (обратитесь к администратору)"
+                }
+            )
+            return render(request, "index_app/lk.html", context)
+        date_from = request.GET.get(
+            "date_from",
+            (datetime.now() - timedelta(days=4)).date().strftime("%Y-%m-%d"),
+        )
+        date_to = request.GET.get("date_to", datetime.now().date().strftime("%Y-%m-%d"))
+        context.update({"date_from": date_from, "date_to": date_to})
+        id = request.user.customer.id
+        result = _get_data(customer_id=id, date_from=date_from, date_to=date_to)
+        if not result:
+            context.update({"error": "Не верно выбран период для отбора"})
+            return render(request, "index_app/lk.html", context)
+        context.update(
+            {
+                "orders_list": result.get("orders_list"),
+                "order_totals": result.get("totals"),
+            }
+        )
+        return render(request, "index_app/lk.html", context)
+
+
+class DownLoadView(View):
+    def get(self, request: HttpRequest) -> FileResponse:
+        if not request.user.is_authenticated:
+            return redirect("index:login")
+        date_from = request.GET.get(
+            "date_from",
+            (datetime.now() - timedelta(days=4)).date().strftime("%Y-%m-%d"),
+        )
+        date_to = request.GET.get("date_to", datetime.now().date().strftime("%Y-%m-%d"))
+        id = request.user.customer.id
+        result = _get_data(customer_id=id, date_from=date_from, date_to=date_to)
+
+        file = io.BytesIO()
+        workbook = xlsxwriter.Workbook(file)
+        worksheet = workbook.add_worksheet()
+        worksheet.write("A1", "Номер")
+        worksheet.write("B1", "Дата")
+        worksheet.write("C1", "Отправление")
+        worksheet.write("D1", "Получение")
+        worksheet.write("E1", "Объем, м3")
+        worksheet.write("F1", "Вес, кг")
+        worksheet.write("G1", "Стоимость, руб")
+        worksheet.write("H1", "Статус")
+        worksheet.write("I1", "Документы")
+        worksheet.write("J1", "Грузополучатель")
+        row = 1
+        if result:
+            for item in result.get("orders_list", []):
+                worksheet.write(row, 0, item.get("number"))
+                worksheet.write(row, 1, item.get("date"))
+                worksheet.write(
+                    row,
+                    2,
+                    f"{item.get('from').get('name')}, {item.get('region_from').get('name')}",
+                )
+                worksheet.write(
+                    row,
+                    3,
+                    f"{item.get('to').get('name')}, {item.get('recipient_address')}",
+                )
+                worksheet.write(
+                    row,
+                    4,
+                    item.get("volume"),
+                )
+                worksheet.write(
+                    row,
+                    5,
+                    item.get("weight"),
+                )
+                worksheet.write(
+                    row,
+                    6,
+                    item.get("summ"),
+                )
+                worksheet.write(
+                    row,
+                    7,
+                    item.get("status"),
+                )
+                worksheet.write(
+                    row,
+                    8,
+                    item.get("clients_docs"),
+                )
+                worksheet.write(
+                    row,
+                    9,
+                    item.get("recipient").get("name"),
+                )
+                row += 1
+            worksheet.write(
+                row,
+                3,
+                "ИТОГО",
+            )
+            totals = result.get("totals", {})
+            worksheet.write(
+                row,
+                4,
+                totals.get("total_volume", 0),
+            )
+            worksheet.write(
+                row,
+                5,
+                totals.get("total_weight", 0),
+            )
+            worksheet.write(
+                row,
+                6,
+                totals.get("summ", 0),
+            )
+        workbook.close()
+        file.seek(0)
+        return FileResponse(file, as_attachment=True, filename="report.xlsx")
 
 
 class LoginView(View):
