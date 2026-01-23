@@ -237,80 +237,80 @@ class DownLoadView(View):
         workbook = xlsxwriter.Workbook(file)
         worksheet = workbook.add_worksheet()
         worksheet.write("A1", "Номер")
-        worksheet.write("B1", "Дата")
-        worksheet.write("C1", "Отправление")
-        worksheet.write("D1", "Получение")
-        worksheet.write("E1", "Объем, м3")
-        worksheet.write("F1", "Вес, кг")
-        worksheet.write("G1", "Стоимость, руб")
-        worksheet.write("H1", "Статус")
-        worksheet.write("I1", "Документы")
-        worksheet.write("J1", "Грузополучатель")
+        worksheet.write("B1", "Документы")
+        worksheet.write("C1", "Дата")
+        worksheet.write("D1", "Отправление")
+        worksheet.write("E1", "Получение")
+        worksheet.write("F1", "Грузополучатель")
+        worksheet.write("G1", "Объем, м3")
+        worksheet.write("H1", "Вес, кг")
+        worksheet.write("I1", "Стоимость, руб")
+        worksheet.write("J1", "Статус")
         row = 1
         if result:
             for item in result.get("orders_list", []):
                 worksheet.write(row, 0, item.get("number"))
-                worksheet.write(row, 1, item.get("date"))
                 worksheet.write(
                     row,
-                    2,
+                    1,
+                    item.get("clients_docs"),
+                )
+                worksheet.write(row, 2, item.get("date"))
+                worksheet.write(
+                    row,
+                    3,
                     f"{item.get('from').get('name')}, {item.get('region_from').get('name')}",
                 )
                 worksheet.write(
                     row,
-                    3,
+                    4,
                     f"{item.get('to').get('name')}, {item.get('recipient_address')}",
                 )
                 worksheet.write(
                     row,
-                    4,
-                    item.get("volume"),
-                )
-                worksheet.write(
-                    row,
                     5,
-                    item.get("weight"),
+                    item.get("recipient").get("name"),
                 )
                 worksheet.write(
                     row,
                     6,
-                    item.get("summ"),
+                    item.get("volume"),
                 )
                 worksheet.write(
                     row,
                     7,
-                    item.get("status"),
+                    item.get("weight"),
                 )
                 worksheet.write(
                     row,
                     8,
-                    item.get("clients_docs"),
+                    item.get("summ"),
                 )
                 worksheet.write(
                     row,
                     9,
-                    item.get("recipient").get("name"),
+                    item.get("status"),
                 )
                 row += 1
             worksheet.write(
                 row,
-                3,
+                5,
                 "ИТОГО",
             )
             totals = result.get("totals", {})
             worksheet.write(
                 row,
-                4,
+                6,
                 totals.get("total_volume", 0),
             )
             worksheet.write(
                 row,
-                5,
+                7,
                 totals.get("total_weight", 0),
             )
             worksheet.write(
                 row,
-                6,
+                8,
                 totals.get("summ", 0),
             )
         workbook.close()
