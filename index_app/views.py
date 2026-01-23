@@ -12,7 +12,7 @@ from index_app.utils import get_current_time_of_the_year
 from index_app.forms import GetInTouchForm, MessageForm
 from index_app.models import News, Vacancy, Document, Const, Branch, Question
 from calculator_app.models import Rate
-from order_app.services import fetch_customer_orders
+from order_app.services import fetch_customer_orders, fetch_full_marking_pdf
 
 
 class IndexView(View):
@@ -207,7 +207,7 @@ class LkView(View):
         )
         date_to = request.GET.get("date_to", datetime.now().date().strftime("%Y-%m-%d"))
         context.update({"date_from": date_from, "date_to": date_to})
-        id = request.user.customer.id
+        id = str(request.user.customer.id)
         result = _get_data(customer_id=id, date_from=date_from, date_to=date_to)
         if not result:
             context.update({"error": "Не верно выбран период для отбора"})
@@ -230,7 +230,7 @@ class DownLoadView(View):
             (datetime.now() - timedelta(days=4)).date().strftime("%Y-%m-%d"),
         )
         date_to = request.GET.get("date_to", datetime.now().date().strftime("%Y-%m-%d"))
-        id = request.user.customer.id
+        id = str(request.user.customer.id)
         result = _get_data(customer_id=id, date_from=date_from, date_to=date_to)
 
         file = io.BytesIO()
@@ -316,6 +316,19 @@ class DownLoadView(View):
         workbook.close()
         file.seek(0)
         return FileResponse(file, as_attachment=True, filename="report.xlsx")
+
+
+class FullMarkingView(View):
+    def get(self, request: HttpRequest) -> FileResponse:
+        if not request.user.is_authenticated:
+            return redirect("index:login")
+        number = request.GET.get("number", "")
+        id = str(request.user.customer.id)
+        bynary_data = fetch_full_marking_pdf(customer_id=id, number=number)
+        if not bynary_data:
+            return FileResponse(io.BytesIO(), as_attachment=True, filename="empty.pdf")
+        file = io.BytesIO(bynary_data)
+        return FileResponse(file, as_attachment=True, filename="full-marking.pdf")
 
 
 class LoginView(View):

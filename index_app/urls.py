@@ -19,6 +19,7 @@ from index_app.views import (
     BranchOfficesView,
     LkView,
     DownLoadView,
+    FullMarkingView,
     LoginView,
     LogoutView,
 )
@@ -63,4 +64,5 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("lk/", LkView.as_view(), name="lk"),
     path("lk/download/", DownLoadView.as_view(), name="lk-download"),
+    path("lk/full-marking/", FullMarkingView.as_view(), name="lk-full-marking"),
 ]

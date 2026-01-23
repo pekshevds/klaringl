@@ -53,3 +53,17 @@ def fetch_customer_orders(
     if responce.ok:
         data = responce.json()
     return data
+
+
+def fetch_full_marking_pdf(customer_id: str, number: str) -> bytes | None:
+    url = (
+        f"http://{config.ENTERPRISE_HOST}:{config.ENTERPRISE_PORT}/OLK/hs/orders/get-full-marking/\
+        ?id={customer_id}&number={number}"
+    )
+    headers = {"content-type": "application/json; charset=utf8"}
+    basic = HTTPBasicAuth(config.ENTERPRISE_USER, config.ENTERPRISE_PASSWORD)
+    responce = requests.get(url=url, headers=headers, auth=basic)
+    data = None
+    if responce.ok:
+        data = responce.content
+    return data
