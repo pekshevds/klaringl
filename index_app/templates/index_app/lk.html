@@ -21,13 +21,13 @@
 	</div>
 </div>
 
-<section id="contact_info">
+<section id="orderFilter">
     <div class="container">
         <div class="row atf-section-padding">
             <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">
                 <div class="atf-section-title  text-left">
                     <div class="contact mt-4">
-                        <div id="orderFilter" class="atf-contact-form form">
+                        <div class="atf-contact-form form">
                             <div class="row">
                                 <div class="form-group col-lg-6">
                                     <span>Дата с:</span>
@@ -64,34 +64,34 @@
                         <thead>
                         <tr>
                             <th scope="col">Номер</th>
+                            <th scope="col">Документы</th>
                             <th scope="col">Дата</th>
                             <th scope="col">Отправление</th>
                             <th scope="col">Получение</th>
+                            <th scope="col">Грузополучатель</th>
                             <th scope="col">Объем, м3</th>
                             <th scope="col">Вес, кг</th>
                             <th scope="col">Стоимость, руб</th>
                             <th scope="col">Статус</th>
-                            <th scope="col">Документы</th>
-                            <th scope="col">Грузополучатель</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for item in orders_list %}
                         <tr>
                             <td>{{ item.number }}</td>
-                            <td>{{ item.date | parse_datetime | date:'d-m-Y' }}</td>
+                            <td>{{ item.clients_docs }}</td>
+                            <td style="white-space: nowrap;">{{ item.date | parse_datetime | date:'d.m.Y' }}</td>
                             <td>{{ item.from.name }}, {{ item.region_from.name }}</td>
                             <td>{{ item.to.name }}, {{ item.recipient_address }}</td>
+                            <td>{{ item.recipient.name }}</td>
                             <td>{{ item.volume }}</td>
                             <td>{{ item.weight }}</td>
                             <td>{{ item.summ }}</td>
                             <td>{{ item.status }}</td>
-                            <td>{{ item.clients_docs }}</td>
-                            <td>{{ item.recipient.name }}</td>
                         </tr>
                         {% endfor %}
                         <tr>
-                            <td colspan="3" class="table-secondary"></td>
+                            <td colspan="5" class="table-secondary"></td>
                             <td class="table-secondary" style="text-align: right;">Итого:</td>
                             <td class="table-secondary">{{ order_totals.total_volume }}</td>
                             <td class="table-secondary">{{ order_totals.total_weight }}</td>
@@ -105,7 +105,7 @@
             <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">
                 <div class="atf-section-title  text-left">
                     <div class="contact mt-4">
-                        <div id="orderFilter" class="atf-contact-form form">                            
+                        <div class="atf-contact-form form">                            
                             <div class="row">
                                 <div class="form-group col-lg-4">
                                     <button @click="getExcelFile" class="atf-themes-btn  atf-themes-btn-one">
