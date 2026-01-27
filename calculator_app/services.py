@@ -240,6 +240,41 @@ def calculate_delivery_cost(
     return max(cost_by_weight, cost_by_volume)
 
 
+def calculate_delivery_cost2(
+    city_from_id: str,
+    city_to_id: str,
+    weight: Decimal = decimal_0,
+    volume: Decimal = decimal_0,
+    from_address: bool = False,
+    to_address: bool = False,
+) -> Decimal:
+    city_from = city_by_id(city_id=city_from_id)
+    city_to = city_by_id(city_id=city_to_id)
+    if city_from is None or city_to is None:
+        return decimal_0
+    rate = rate_by_cities(city_from=city_from, city_to=city_to)
+    if rate is None:
+        return decimal_0
+    # Расчет стоимости по весу
+    cost_by_weight = calculate_cost_by_weight(rate, weight)
+    # Расчет стоимости по объему
+    cost_by_volume = calculate_cost_by_volume(rate, volume)
+    # Расчет стоимости экспедирования по весу
+    cost_exp_by_weight = calculate_expedition_cost_by_weight(rate, weight)
+    # Расчет стоимости экспедирования по объему
+    cost_exp_by_volume = calculate_expedition_cost_by_volume(rate, volume)
+    # Если нужно экспедирование из точки забора (нужен забор по адресу)
+    if from_address:
+        cost_by_weight = cost_by_weight + cost_exp_by_weight
+        cost_by_volume = cost_by_volume + cost_exp_by_volume
+    # Если нужно экспедирование в точку доставки (нужна доставка по адресу)
+    if to_address:
+        cost_by_weight = cost_by_weight + cost_exp_by_weight
+        cost_by_volume = cost_by_volume + cost_exp_by_volume
+    cost = max(cost_by_weight, cost_by_volume)
+    return cost
+
+
 def calculate_delevery_on_time(deliver_time: time) -> Decimal:
     """
     Расчет необходимости и стоимости надбавки за ночную/вечернюю доставку"""

@@ -7,6 +7,7 @@ from calculator_app.views import (
     RateAPIView,
     ExpeditionRateAPIView,
     FastCalculateAPIView,
+    FastCalculate2APIView,
     CalculateAPIView,
 )
 from order_app.views import (
@@ -35,6 +36,11 @@ urlpatterns = [
         "calculator/fast-calculate/",
         FastCalculateAPIView.as_view(),
         name="fast-calculate",
+    ),
+    path(
+        "calculator/fast-calculate2/",
+        FastCalculate2APIView.as_view(),
+        name="fast-calculate2",
     ),
     path("calculator/calculate/", CalculateAPIView.as_view(), name="calculate"),
     path("order/cargos/", CargoAPIView.as_view(), name="cargo"),

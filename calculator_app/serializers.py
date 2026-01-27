@@ -43,6 +43,15 @@ class FastCalculateRequestSerializer(serializers.Serializer):
     volume = serializers.DecimalField(max_digits=15, decimal_places=2)
 
 
+class FastCalculateRequest2Serializer(serializers.Serializer):
+    city_from_id = serializers.UUIDField()
+    city_to_id = serializers.UUIDField()
+    weight = serializers.DecimalField(max_digits=15, decimal_places=2)
+    volume = serializers.DecimalField(max_digits=15, decimal_places=2)
+    from_address = serializers.BooleanField()
+    to_address = serializers.BooleanField()
+
+
 class CalculateResponseSerializer(serializers.Serializer):
     cost = serializers.DecimalField(max_digits=15, decimal_places=2)
 
