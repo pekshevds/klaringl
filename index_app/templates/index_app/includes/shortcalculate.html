@@ -29,6 +29,28 @@
                                             >
                                                 Обязательное поле!
                                             </p>
+                                            <div class="fast-calulate col-12">
+                                                <div class="form-check form-check-inline">
+                                                    <input 
+                                                        class="form-check-input" 
+                                                        v-model="departurePickupType" 
+                                                        :disabled="loadingStatus"
+                                                        type="radio" 
+                                                        value="1"
+                                                    >
+                                                    <label class="form-check-label">От адреса</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input 
+                                                        class="form-check-input" 
+                                                        v-model="departurePickupType" 
+                                                        :disabled="loadingStatus"
+                                                        type="radio" 
+                                                        value="2"
+                                                    >
+                                                    <label class="form-check-label">От терминала</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div> 
                                     <div class="atf-booking-form-item col-lg-6 col-md-6">
@@ -49,6 +71,28 @@
                                             >
                                                 Обязательное поле!
                                             </p>
+                                            <div class="fast-calulate col-12">
+                                                <div class="form-check form-check-inline">
+                                                    <input 
+                                                        class="form-check-input" 
+                                                        v-model="receivingType" 
+                                                        :disabled="loadingStatus"
+                                                        type="radio" 
+                                                        value="1"
+                                                    >
+                                                    <label class="form-check-label">До адреса</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input 
+                                                        class="form-check-input" 
+                                                        v-model="receivingType" 
+                                                        :disabled="loadingStatus"
+                                                        type="radio" 
+                                                        value="2"
+                                                    >
+                                                    <label class="form-check-label">До терминала</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div> 
                                     
@@ -180,6 +224,8 @@
             return {
                 volume: "",
                 weight: "",
+                departurePickupType: 1,
+                receivingType: 1,
                 errors: {},
                 price: 0,
                 serverErrors: [],
@@ -225,6 +271,8 @@
                     city_to_id: $('#receivingCity').val(),
                     weight: parseFloat(this.weight ? this.weight : 0),
                     volume: parseFloat(this.volume ? this.volume : 0),
+                    from_address: this.departurePickupType == 1,
+                    to_address: this.receivingType == 1,
                 }
                 return data
             },
@@ -232,7 +280,7 @@
                 this.price = 0
                 this.serverErrors = []
                 if (this.checkCalculateValidation()) {
-                    let url = `${window.location.origin}/api/v1/calculator/fast-calculate/`
+                    let url = `${window.location.origin}/api/v1/calculator/fast-calculate2/`
                     this.loading = true
                     await axios({
                         method: 'post',
