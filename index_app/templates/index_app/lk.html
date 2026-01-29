@@ -4,6 +4,7 @@
 
 {% block local_libraries %}
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -22,7 +23,7 @@
 </div>
 
 <section id="orderFilter">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row atf-section-padding">
             <div class="col-lg-6 aos-init aos-animate" data-aos="fade-up">
                 <div class="atf-section-title  text-left">
@@ -60,9 +61,10 @@
             {% if orders_list %}
             <div class="col-12">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table order-list-table">
                         <thead>
                         <tr>
+                            <th scope="col"></th>
                             <th scope="col">Номер</th>
                             <th scope="col">Документы</th>
                             <th scope="col">Дата</th>
@@ -76,28 +78,32 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in orders_list %}
-                        <tr>
-                            <td>{{ item.number }}</td>
-                            <td>{{ item.clients_docs }}</td>
-                            <td style="white-space: nowrap;">{{ item.date | parse_datetime | date:'d.m.Y' }}</td>
-                            <td>{{ item.from.name }}, {{ item.region_from.name }}</td>
-                            <td>{{ item.to.name }}, {{ item.recipient_address }}</td>
-                            <td>{{ item.recipient.name }}</td>
-                            <td>{{ item.volume }}</td>
-                            <td>{{ item.weight }}</td>
-                            <td>{{ item.summ }}</td>
-                            <td>{{ item.status }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr>
-                            <td colspan="5" class="table-secondary"></td>
-                            <td class="table-secondary" style="text-align: right;">Итого:</td>
-                            <td class="table-secondary">{{ order_totals.total_volume }}</td>
-                            <td class="table-secondary">{{ order_totals.total_weight }}</td>
-                            <td class="table-secondary">{{ order_totals.summ }}</td>
-                            <td class="table-secondary"></td>
-                        </tr>
+                            <tr v-for="item in ordersList" :key="item.number">
+                                {% comment %} <td @click="getOrderStatusHistory">${ item.number }$</td> {% endcomment %}
+                                <td>
+                                    <div @click="getOrderMark(item.number)" class="icon">
+                                        <i class="fas fa-print"></i>
+                                    </div>
+                                </td>
+                                <td>${ item.number }$</td>
+                                <td>${ item.clients_docs }$</td>
+                                <td>${ new Date(item.date).toLocaleDateString() }$</td>
+                                <td>${ item.from.name }$ ${ item.region_from.name }$</td>
+                                <td>${ item.to.name }$ ${ item.recipient_address }$</td>
+                                <td>${ item.recipient.name }$</td>
+                                <td>${ item.volume }$</td>
+                                <td>${ item.weight }$</td>
+                                <td>${ item.summ }$</td>
+                                <td>${ item.status }$</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" class="table-secondary"></td>
+                                <td class="table-secondary" style="text-align: right;">Итого:</td>
+                                <td class="table-secondary">{{ order_totals.total_volume }}</td>
+                                <td class="table-secondary">{{ order_totals.total_weight }}</td>
+                                <td class="table-secondary">{{ order_totals.summ }}</td>
+                                <td class="table-secondary"></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -144,11 +150,16 @@
             return {
                 dateFrom: "",
                 dateTo: "",
+                ordersList: {{ orders_list|safe }}
             }
         },
+        delimiters: ["${", "}$"],
         mounted () {
-            this.dateFrom = '{{ date_from }}'
-            this.dateTo = '{{ date_to }}'
+            this.dateFrom = '{{ date_from }}';
+            this.dateTo = '{{ date_to }}';
+            this.ordersList.forEach((item) => {
+                item.statusHistory = [];
+            });
         },
         computed: {
             orderListFilterData () {
@@ -168,6 +179,23 @@
             },
             getExcelFile () {
                 window.location.assign(window.location.origin + `/lk/download/?${new URLSearchParams(this.orderListFilterData).toString()}`)
+            },
+            getOrderStatusHistory (event) {
+                let id = event.target.innerText
+                console.log("Get order status history for order id:", id)
+                let url = `${window.location.origin}/api/v1/order/check-status/?num=${id}`
+                axios({
+                    method: 'get',
+                    url: url,
+                }).then(response => {
+                    console.log(response)
+                }).catch(error => {
+                    console.log(error)
+                }) 
+            },
+            getOrderMark (id) {
+                console.log("Get order marking for order id:", id)
+                window.location.assign(window.location.origin + `/lk/full-marking/?${new URLSearchParams({id: id}).toString()}`)
             }
         }
     }

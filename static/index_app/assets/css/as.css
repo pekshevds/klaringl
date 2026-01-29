@@ -192,3 +192,8 @@
 .remove:hover {
   color: red
 }
+
+.fast-calulate .form-check-inline label {
+    font-size: 14px;
+    color: #677a85;
+}

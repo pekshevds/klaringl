@@ -3752,6 +3752,25 @@ END TEAM DETAILS DESIGN
 	background:var(--thm-f6);
 	color:var(--thm-black);
 }
+.order-list-table .icon i {
+	cursor: pointer;
+	font-size: 14px;
+	margin-right: 10px;
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	border-radius: 3px;
+	color: var(--thm-white);
+	background: var(--thm-color);
+	text-align: center;
+	background: var(--thm-color);
+	transition:all 0.5s ease-in-out 0s;
+	-webkit-transition:all 0.5s ease-in-out 0s;
+}
+.order-list-table .icon i:hover{
+	background:var(--thm-f6);
+	color:var(--thm-black);
+}
 .atf-footer-social-icon a i {
 	font-size: 16px;
 	margin-right: 10px;
