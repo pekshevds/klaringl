@@ -64,7 +64,7 @@
                     <table class="table order-list-table">
                         <thead>
                         <tr>
-                            <th scope="col"></th>
+                            <th scope="col">Печать маркировки</th>
                             <th scope="col">Номер</th>
                             <th scope="col">Документы</th>
                             <th scope="col">Дата</th>
@@ -91,7 +91,7 @@
                                     >${ item.number }$</button>
                                 </td>
                                 <td>${ item.clients_docs }$</td>
-                                <td>${ new Date(item.date).toLocaleDateString() }$</td>
+                                <td>${ item.date }$</td>
                                 <td>${ item.from.name }$ ${ item.region_from.name }$</td>
                                 <td>${ item.to.name }$ ${ item.recipient_address }$</td>
                                 <td>${ item.recipient.name }$</td>
@@ -161,9 +161,6 @@
         mounted () {
             this.dateFrom = '{{ date_from }}';
             this.dateTo = '{{ date_to }}';
-            this.ordersList.forEach((item) => {
-                item.statusHistory = [];
-            });
         },
         computed: {
             orderListFilterData () {
@@ -211,7 +208,7 @@
                 })
             },
             getOrderMark (id) {
-                window.location.assign(window.location.origin + `/lk/full-marking/?${new URLSearchParams({id: id}).toString()}`)
+                window.location.assign(window.location.origin + `/lk/full-marking/?${new URLSearchParams({number: id}).toString()}`)
             }
         }
     }
