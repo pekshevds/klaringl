@@ -255,23 +255,16 @@ def calculate_delivery_cost2(
     rate = rate_by_cities(city_from=city_from, city_to=city_to)
     if rate is None:
         return decimal_0
-    # Расчет стоимости по весу
-    cost_by_weight = calculate_cost_by_weight(rate, weight)
-    # Расчет стоимости по объему
-    cost_by_volume = calculate_cost_by_volume(rate, volume)
-    # Расчет стоимости экспедирования по весу
-    cost_exp_by_weight = calculate_expedition_cost_by_weight(rate, weight)
-    # Расчет стоимости экспедирования по объему
-    cost_exp_by_volume = calculate_expedition_cost_by_volume(rate, volume)
-    # Если нужно экспедирование из точки забора (нужен забор по адресу)
+
+    cost = calculate_delivery_cost_by_rate(rate, weight, volume)
     if from_address:
-        cost_by_weight = cost_by_weight + cost_exp_by_weight
-        cost_by_volume = cost_by_volume + cost_exp_by_volume
-    # Если нужно экспедирование в точку доставки (нужна доставка по адресу)
+        sub_rate = expedition_rate_by_city(city_to=city_from)
+        if sub_rate:
+            cost += calculate_expedition_cost_by_rate(sub_rate, weight, volume)
     if to_address:
-        cost_by_weight = cost_by_weight + cost_exp_by_weight
-        cost_by_volume = cost_by_volume + cost_exp_by_volume
-    cost = max(cost_by_weight, cost_by_volume)
+        sub_rate = expedition_rate_by_city(city_to=city_to)
+        if sub_rate:
+            cost += calculate_expedition_cost_by_rate(sub_rate, weight, volume)
     return cost
 
 
