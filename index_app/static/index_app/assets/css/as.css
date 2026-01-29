@@ -197,3 +197,17 @@
     font-size: 14px;
     color: #677a85;
 }
+
+.order-list-table .order-status {
+    transition:all 0.5s ease-in-out 0s;
+    -webkit-transition:all 0.5s ease-in-out 0s;
+}
+
+.order-list-table .order-number {
+    cursor: pointer;
+    color: #6aa5ff;
+}
+
+.order-list-table .order-number:hover {
+    text-decoration: underline;
+}

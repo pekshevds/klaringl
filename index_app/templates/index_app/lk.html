@@ -79,13 +79,17 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in ordersList" :key="item.number">
-                                {% comment %} <td @click="getOrderStatusHistory">${ item.number }$</td> {% endcomment %}
                                 <td>
                                     <div @click="getOrderMark(item.number)" class="icon">
                                         <i class="fas fa-print"></i>
                                     </div>
                                 </td>
-                                <td>${ item.number }$</td>
+                                <td @click="getOrderStatusHistory">
+                                    <button 
+                                        title="Проверить статус заказа" 
+                                        class="order-number"
+                                    >${ item.number }$</button>
+                                </td>
                                 <td>${ item.clients_docs }$</td>
                                 <td>${ new Date(item.date).toLocaleDateString() }$</td>
                                 <td>${ item.from.name }$ ${ item.region_from.name }$</td>
@@ -182,19 +186,31 @@
             },
             getOrderStatusHistory (event) {
                 let id = event.target.innerText
-                console.log("Get order status history for order id:", id)
+                let tr = event.target.parentNode.parentNode
+                let table = tr.parentNode
+                let existingStatusRow = table.getElementsByClassName(`${id}`)[0];
+                if (existingStatusRow) {
+                    existingStatusRow.remove();
+                }
                 let url = `${window.location.origin}/api/v1/order/check-status/?num=${id}`
                 axios({
                     method: 'get',
                     url: url,
                 }).then(response => {
-                    console.log(response)
+                    let orderInfo = response.data.data[0]
+                    table.insertRow(tr.rowIndex).innerHTML = 
+                    `<td colspan="11" class="table-secondary order-status ${id}">
+                        Статус заказа ${id}: ${ orderInfo.status }
+                    </td>`;
                 }).catch(error => {
                     console.log(error)
-                }) 
+                    table.insertRow(tr.rowIndex).innerHTML = 
+                    `<td colspan="11" class="table-secondary order-status ${id}">
+                        Сервис временно недоступен, попробуйте сделать запрос позднее.
+                    </td>`;
+                })
             },
             getOrderMark (id) {
-                console.log("Get order marking for order id:", id)
                 window.location.assign(window.location.origin + `/lk/full-marking/?${new URLSearchParams({id: id}).toString()}`)
             }
         }
