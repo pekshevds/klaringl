@@ -63,7 +63,7 @@
                                                 type="radio" 
                                                 value="1"
                                             >
-                                            <label class="form-check-label">Сдать в терминале</label>
+                                            <label class="form-check-label">От терминала</label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input 
@@ -74,7 +74,7 @@
                                                 type="radio" 
                                                 value="2"
                                             >
-                                            <label class="form-check-label">Забрать по адресу</label>
+                                            <label class="form-check-label">От адреса</label>
                                         </div>
                                     </div>
                                     <Transition>
@@ -169,7 +169,7 @@
                                                 type="radio" 
                                                 value="1"
                                             >
-                                          <label class="form-check-label">Забрать в терминале</label>
+                                          <label class="form-check-label">До терминала</label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input 
@@ -180,7 +180,7 @@
                                                 type="radio" 
                                                 value="2"
                                             >
-                                            <label class="form-check-label">Доставить по адресу</label>
+                                            <label class="form-check-label">До адреса</label>
                                           </div>
                                     </div>
                                     <Transition>
@@ -1108,6 +1108,12 @@ const OrderForm = {
         cityToId () {
             return '{{ city_to_id }}'
         },
+        fromAddress () {
+            return '{{ from_address }}'
+        },
+        toAddress () {
+            return '{{ to_address }}'
+        },
         orderItemWeight () {
             return '{{ weight }}'
         },
@@ -1121,6 +1127,12 @@ const OrderForm = {
         }
         if (this.cityToId) {
             this.receivingCity = this.cityToId
+        }
+        if (this.fromAddress == 'true') {
+            this.departurePickupType = 2
+        }
+        if (this.toAddress == 'true') {
+            this.receivingType = 2
         }
         let orderItemObject = store.state.orderItems.find(el => el.id == 1)
         if (this.orderItemWeight) {

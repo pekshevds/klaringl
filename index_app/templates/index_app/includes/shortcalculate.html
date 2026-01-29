@@ -36,9 +36,9 @@
                                                         v-model="departurePickupType" 
                                                         :disabled="loadingStatus"
                                                         type="radio" 
-                                                        value="1"
+                                                        value="2"
                                                     >
-                                                    <label class="form-check-label">От адреса</label>
+                                                    <label class="form-check-label">От терминала</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
                                                     <input 
@@ -46,9 +46,9 @@
                                                         v-model="departurePickupType" 
                                                         :disabled="loadingStatus"
                                                         type="radio" 
-                                                        value="2"
+                                                        value="1"
                                                     >
-                                                    <label class="form-check-label">От терминала</label>
+                                                    <label class="form-check-label">От адреса</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -72,16 +72,7 @@
                                                 Обязательное поле!
                                             </p>
                                             <div class="fast-calulate col-12">
-                                                <div class="form-check form-check-inline">
-                                                    <input 
-                                                        class="form-check-input" 
-                                                        v-model="receivingType" 
-                                                        :disabled="loadingStatus"
-                                                        type="radio" 
-                                                        value="1"
-                                                    >
-                                                    <label class="form-check-label">До адреса</label>
-                                                </div>
+                                                
                                                 <div class="form-check form-check-inline">
                                                     <input 
                                                         class="form-check-input" 
@@ -91,6 +82,16 @@
                                                         value="2"
                                                     >
                                                     <label class="form-check-label">До терминала</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input 
+                                                        class="form-check-input" 
+                                                        v-model="receivingType" 
+                                                        :disabled="loadingStatus"
+                                                        type="radio" 
+                                                        value="1"
+                                                    >
+                                                    <label class="form-check-label">До адреса</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -224,8 +225,8 @@
             return {
                 volume: "",
                 weight: "",
-                departurePickupType: 1,
-                receivingType: 1,
+                departurePickupType: 2,
+                receivingType: 2,
                 errors: {},
                 price: 0,
                 serverErrors: [],

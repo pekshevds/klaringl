@@ -236,6 +236,12 @@ class CalcView(View):
         city_to_id = request.GET.get("city_to_id")
         if city_to_id:
             context.update({"city_to_id": city_to_id})
+        from_address = request.GET.get("from_address")
+        if from_address:
+            context.update({"from_address": from_address})
+        to_address = request.GET.get("to_address")
+        if to_address:
+            context.update({"to_address": to_address})
         weight = request.GET.get("weight")
         if weight:
             context.update({"weight": weight})
