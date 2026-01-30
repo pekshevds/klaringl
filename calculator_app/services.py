@@ -7,6 +7,7 @@ from index_app.models import Const
 
 
 decimal_0 = Decimal("0")
+decimal_1 = Decimal("1")
 
 
 def city_by_name(city_name: str) -> City | None:
@@ -339,12 +340,13 @@ def calculate_prr(weight: Decimal) -> Decimal:
     return weight * const.prr_cost
 
 
-def calculate_hard_packaging(volume: Decimal) -> Decimal:
+def calculate_hard_packaging(item_cost: Decimal) -> Decimal:
     """
     Расчет стоимости жесткой упаковки/обрешетки"""
     const = Const.info()
-    cost = volume * const.hard_packaging_cost
-    if cost < const.hard_packaging_min_cost:
+    addition = item_cost * Decimal("0.3")
+    cost = addition + const.hard_packaging_cost
+    if (item_cost + cost) < const.hard_packaging_min_cost:
         cost = const.hard_packaging_min_cost
     return cost
 
@@ -381,52 +383,77 @@ def prepare_data_before_calculate(order: dict) -> None:
 
 def calculate_order(order: dict) -> Decimal:
     """
-    Расчет стоимсоти перевозки"""
+    Расчет стоимости перевозки"""
 
     # Константа - полдень
     noon = time(12, 0, 0)
     prepare_data_before_calculate(order)
-    # Расчет базовой стоимости по общему весу, объему и тарифам
-    base_cost = calculate_base_cost(order)
-    cost = base_cost
-    # Расчет стоимости забора у двери по времени
-    if order.get("from_address", False):
-        cost += calculate_delevery_from_address(order)
-        if order.get("by_time_from", False):
-            cost += calculate_delevery_on_time(order.get("time_from", noon))
-    if order.get("to_address", False):
-        cost += calculate_delevery_to_address(order)
-        if order.get("by_time_to", False):
-            cost += calculate_delevery_on_time(order.get("time_to", noon))
+    cost = decimal_0
+
+    city_from = City.find_by_id(order.get("city_from_id"))
+    city_to = City.find_by_id(order.get("city_to_id"))
+    rate = rate_by_cities(city_from=city_from, city_to=city_to)
+    if not rate:
+        return decimal_0
+
+    k_oversize = decimal_1
+    for item in order["items"]:
+        item_weight = item.get("weight", 0)
+        item_volume = item.get("volume", 0)
+
+        from_address = order.get("from_address", False)
+        by_time_from = order.get("by_time_from", False)
+        time_from = order.get("time_from", noon)
+
+        to_address = order.get("to_address", False)
+        by_time_to = order.get("by_time_to", False)
+        time_to = order.get("time_to", noon)
+
+        item_cost = calculate_expedition_cost_by_rate(rate, item_weight, item_volume)
+        if from_address:
+            sub_rate = expedition_rate_by_city(city_to=city_from)
+            if sub_rate:
+                item_cost += calculate_expedition_cost_by_rate(
+                    sub_rate, item_weight, item_volume
+                )
+            if by_time_from:
+                item_cost += calculate_delevery_on_time(time_from)
+
+        if to_address:
+            sub_rate = expedition_rate_by_city(city_to=city_to)
+            if sub_rate:
+                item_cost += calculate_expedition_cost_by_rate(
+                    sub_rate, item_weight, item_volume
+                )
+            if by_time_to:
+                item_cost += calculate_delevery_on_time(time_to)
+        if (
+            item.get("prr_from", False)
+            and order.get("from_address", False)
+            and item_weight < Decimal("35")
+            and item_volume < Decimal("0.3")
+        ):
+            item_cost += calculate_prr(item_weight)
+        if (
+            item.get("prr_to", False)
+            and order.get("to_address", False)
+            and item_weight < Decimal("35")
+            and item_volume < Decimal("0.3")
+        ):
+            item_cost += calculate_prr(item_weight)
+        if item.get("hard_packaging", False):
+            item_cost += calculate_hard_packaging(item_cost)
+        if item.get("soft_packaging", False):
+            item_cost += calculate_soft_packaging()
+        if item.get("palletizing", False):
+            item_cost += calculate_palletizing()
+        k_oversize = max(k_oversize, calclulate_k_oversize(item))
+        cost += item_cost * k_oversize
+
     if order.get("return_docs", False):
         cost += calculate_return_docs()
     if order.get("insurance", False):
         cost += calculate_insurance((order.get("declared_cost", 0)))
-    k_oversize = decimal_0
-    for item in order["items"]:
-        if (
-            item.get("prr_from", False)
-            and order.get("from_address", False)
-            and item.get("weight", 0) < Decimal("35")
-            and item.get("volume", 0) < Decimal("0.3")
-        ):
-            cost += calculate_prr((item.get("weight", 0)))
-        if (
-            item.get("prr_to", False)
-            and order.get("to_address", False)
-            and item.get("weight", 0) < Decimal("35")
-            and item.get("volume", 0) < Decimal("0.3")
-        ):
-            cost += calculate_prr((item.get("weight", 0)))
-        if item.get("hard_packaging", False):
-            volume = item.get("volume", 0) * Decimal("1.3")
-            cost += calculate_hard_packaging(volume)
-        if item.get("soft_packaging", False):
-            cost += calculate_soft_packaging()
-        if item.get("palletizing", False):
-            cost += calculate_palletizing()
-        k_oversize = max(k_oversize, calclulate_k_oversize(item))
-        cost += base_cost * k_oversize
     return cost
 
 
