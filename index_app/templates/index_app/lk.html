@@ -161,6 +161,9 @@
         mounted () {
             this.dateFrom = '{{ date_from }}';
             this.dateTo = '{{ date_to }}';
+            this.ordersList.forEach(item => {
+                item.statusList = ""
+            })
         },
         computed: {
             orderListFilterData () {
@@ -183,11 +186,16 @@
             },
             getOrderStatusHistory (event) {
                 let id = event.target.innerText
+                let order = this.ordersList.find(item => item.number == id)
                 let tr = event.target.parentNode.parentNode
                 let table = tr.parentNode
-                let existingStatusRow = table.getElementsByClassName(`${id}`)[0];
-                if (existingStatusRow) {
-                    existingStatusRow.remove();
+                if (order.statusList) {
+                    order.statusList = ""
+                    let existingStatusRow = table.getElementsByClassName(`${id}`)[0];
+                    if (existingStatusRow) {
+                        existingStatusRow.remove();
+                    }
+                    return;
                 }
                 let url = `${window.location.origin}/api/v1/order/check-status/?num=${id}`
                 axios({
@@ -195,6 +203,11 @@
                     url: url,
                 }).then(response => {
                     let orderInfo = response.data.data[0]
+                    let existingStatusRow = table.getElementsByClassName(`${id}`)[0];
+                    if (existingStatusRow) {
+                        existingStatusRow.remove();
+                    }
+                    order.statusList = orderInfo.status
                     table.insertRow(tr.rowIndex).innerHTML = 
                     `<td colspan="11" class="table-secondary order-status ${id}">
                         Статус заказа ${id}: ${ orderInfo.status }
