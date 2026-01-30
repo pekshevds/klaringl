@@ -374,9 +374,9 @@ def calculate_base_cost(order: dict) -> Decimal:
 
 
 def prepare_data_before_calculate(order: dict) -> None:
-    for item in order["items"]:
-        if item.get("hard_packaging", False):
-            item["volume"] *= Decimal("1.3")
+    """for item in order["items"]:
+    if item.get("hard_packaging", False):
+        item["volume"] *= Decimal("1.3")"""
 
 
 def calculate_order(order: dict) -> Decimal:
@@ -419,7 +419,8 @@ def calculate_order(order: dict) -> Decimal:
         ):
             cost += calculate_prr((item.get("weight", 0)))
         if item.get("hard_packaging", False):
-            cost += calculate_hard_packaging((item.get("volume", 0)))
+            volume = item.get("volume", 0) * Decimal("1.3")
+            cost += calculate_hard_packaging(volume)
         if item.get("soft_packaging", False):
             cost += calculate_soft_packaging()
         if item.get("palletizing", False):
