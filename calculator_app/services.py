@@ -285,14 +285,7 @@ def calculate_total_weight_and_total_volume(
     items: list[dict[str, Any]],
 ) -> tuple[Decimal, Decimal]:
     total_weight = sum([item.get("weight", 0) for item in items])
-    total_volume = sum(
-        [
-            item.get("volume", 0) * Decimal("1.3")
-            if item.get("hard_packaging", False)
-            else item.get("volume", 0)
-            for item in items
-        ]
-    )
+    total_volume = sum([item.get("volume", 0) for item in items])
     return total_weight, total_volume
 
 
@@ -380,12 +373,19 @@ def calculate_base_cost(order: dict) -> Decimal:
     return calculate_delivery_cost_by_rate(rate, total_weight, total_volume)
 
 
+def prepare_data_before_calculate(order: dict) -> None:
+    for item in order["items"]:
+        if item.get("hard_packaging", False):
+            item["volume"] *= Decimal("1.3")
+
+
 def calculate_order(order: dict) -> Decimal:
     """
     Расчет стоимсоти перевозки"""
 
     # Константа - полдень
     noon = time(12, 0, 0)
+    prepare_data_before_calculate(order)
     # Расчет базовой стоимости по общему весу, объему и тарифам
     base_cost = calculate_base_cost(order)
     cost = base_cost
