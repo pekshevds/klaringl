@@ -376,9 +376,9 @@ def calculate_base_cost(order: dict) -> Decimal:
 
 
 def prepare_data_before_calculate(order: dict) -> None:
-    """for item in order["items"]:
-    if item.get("hard_packaging", False):
-        item["volume"] *= Decimal("1.3")"""
+    for item in order["items"]:
+        if item.get("hard_packaging", False):
+            item["volume"] *= Decimal("1.3")
 
 
 def calculate_order(order: dict) -> Decimal:
@@ -409,7 +409,8 @@ def calculate_order(order: dict) -> Decimal:
         by_time_to = order.get("by_time_to", False)
         time_to = order.get("time_to", noon)
 
-        item_cost = calculate_expedition_cost_by_rate(rate, item_weight, item_volume)
+        # item_cost = calculate_expedition_cost_by_rate(rate, item_weight, item_volume)
+        item_cost = calculate_delivery_cost_by_rate(rate, item_weight, item_volume)
         if from_address:
             sub_rate = expedition_rate_by_city(city_to=city_from)
             if sub_rate:
