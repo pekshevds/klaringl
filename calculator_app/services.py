@@ -344,7 +344,7 @@ def calculate_hard_packaging(item_volume: Decimal) -> Decimal:
     """
     Расчет стоимости жесткой упаковки/обрешетки"""
     const = Const.info()
-    if item_volume < Decimal("0.43"):
+    if item_volume < Decimal("0.47"):
         return const.hard_packaging_min_cost
     return item_volume * const.hard_packaging_cost
 
