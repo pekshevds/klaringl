@@ -340,15 +340,13 @@ def calculate_prr(weight: Decimal) -> Decimal:
     return weight * const.prr_cost
 
 
-def calculate_hard_packaging(item_cost: Decimal) -> Decimal:
+def calculate_hard_packaging(item_volume: Decimal) -> Decimal:
     """
     Расчет стоимости жесткой упаковки/обрешетки"""
     const = Const.info()
-    addition = item_cost * Decimal("0.3")
-    cost = addition + const.hard_packaging_cost
-    if (item_cost + cost) < const.hard_packaging_min_cost:
-        cost = const.hard_packaging_min_cost
-    return cost
+    if item_volume < Decimal("0.43"):
+        return const.hard_packaging_min_cost
+    return item_volume * const.hard_packaging_cost
 
 
 def calculate_soft_packaging() -> Decimal:
@@ -372,6 +370,8 @@ def calculate_base_cost(order: dict) -> Decimal:
     city_from = City.find_by_id(order.get("city_from_id"))
     city_to = City.find_by_id(order.get("city_to_id"))
     rate = rate_by_cities(city_from=city_from, city_to=city_to)
+    if not rate:
+        return decimal_0
     return calculate_delivery_cost_by_rate(rate, total_weight, total_volume)
 
 
@@ -398,8 +398,8 @@ def calculate_order(order: dict) -> Decimal:
 
     k_oversize = decimal_1
     for item in order["items"]:
-        item_weight = item.get("weight", 0)
-        item_volume = item.get("volume", 0)
+        item_weight = item.get("weight", decimal_0)
+        item_volume = item.get("volume", decimal_0)
 
         from_address = order.get("from_address", False)
         by_time_from = order.get("by_time_from", False)
@@ -442,7 +442,7 @@ def calculate_order(order: dict) -> Decimal:
         ):
             item_cost += calculate_prr(item_weight)
         if item.get("hard_packaging", False):
-            item_cost += calculate_hard_packaging(item_cost)
+            item_cost += calculate_hard_packaging(item_volume)
         if item.get("soft_packaging", False):
             item_cost += calculate_soft_packaging()
         if item.get("palletizing", False):
@@ -453,7 +453,7 @@ def calculate_order(order: dict) -> Decimal:
     if order.get("return_docs", False):
         cost += calculate_return_docs()
     if order.get("insurance", False):
-        cost += calculate_insurance((order.get("declared_cost", 0)))
+        cost += calculate_insurance((order.get("declared_cost", decimal_0)))
     return cost
 
 
