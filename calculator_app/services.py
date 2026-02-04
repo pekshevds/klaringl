@@ -81,10 +81,10 @@ def calculate_cost_by_volume(rate: Rate, volume: Decimal) -> Decimal:
         return decimal_0
     cost_by_volume = decimal_0
     if decimal_0 < volume <= Decimal("0.1"):
-        cost_by_volume = rate.cost_by_volume_0_01 * volume
+        cost_by_volume = rate.cost_by_volume_0_01
 
     if Decimal("0.1") < volume <= Decimal("0.2"):
-        cost_by_volume = rate.cost_by_volume_01_02 * volume
+        cost_by_volume = rate.cost_by_volume_01_02
 
     if Decimal("0.2") < volume <= Decimal("0.6"):
         cost_by_volume = rate.cost_by_volume_02_06 * volume
