@@ -78,28 +78,41 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in ordersList" :key="item.number">
-                                <td>
-                                    <div @click="getOrderMark(item.number)" class="icon">
-                                        <i class="fas fa-print"></i>
-                                    </div>
-                                </td>
-                                <td @click="getOrderStatusHistory">
-                                    <button 
-                                        title="Проверить статус заказа" 
-                                        class="order-number"
-                                    >${ item.number }$</button>
-                                </td>
-                                <td>${ item.clients_docs }$</td>
-                                <td>${ item.date }$</td>
-                                <td>${ item.from.name }$ ${ item.region_from.name }$</td>
-                                <td>${ item.to.name }$ ${ item.recipient_address }$</td>
-                                <td>${ item.recipient.name }$</td>
-                                <td>${ item.volume }$</td>
-                                <td>${ item.weight }$</td>
-                                <td>${ item.summ }$</td>
-                                <td>${ item.status }$</td>
-                            </tr>
+                            <template v-for="item in ordersList" :key="item.number">
+                                <tr>
+                                    <td>
+                                        <div @click="getOrderMark(item.number)" class="icon">
+                                            <i class="fas fa-print"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button 
+                                            title="Проверить статус заказа" 
+                                            class="order-number"
+                                            @click="getOrderStatusHistory(item.number)"
+                                        >${ item.number }$</button>
+                                    </td>
+                                    <td>${ item.clients_docs }$</td>
+                                    <td>${ item.date }$</td>
+                                    <td>${ item.from.name }$ ${ item.region_from.name }$</td>
+                                    <td>${ item.to.name }$ ${ item.recipient_address }$</td>
+                                    <td>${ item.recipient.name }$</td>
+                                    <td>${ item.volume }$</td>
+                                    <td>${ item.weight }$</td>
+                                    <td>${ item.summ }$</td>
+                                    <td>${ item.status }$</td>
+                                </tr>
+                                <tr
+                                    v-if="loadingStatusByOrder[item.number] || statusByOrder[item.number] || statusErrorByOrder[item.number]"
+                                    :key="`${item.number}-status`"
+                                >
+                                    <td colspan="11" class="table-secondary order-status">
+                                        <span v-if="loadingStatusByOrder[item.number]">Загрузка статуса заказа...</span>
+                                        <span v-else-if="statusByOrder[item.number]">Статус заказа ${ item.number }$: ${ statusByOrder[item.number] }$</span>
+                                        <span v-else>${ statusErrorByOrder[item.number] }$</span>
+                                    </td>
+                                </tr>
+                            </template>
                             <tr>
                                 <td colspan="6" class="table-secondary"></td>
                                 <td class="table-secondary" style="text-align: right;">Итого:</td>
@@ -154,16 +167,16 @@
             return {
                 dateFrom: "",
                 dateTo: "",
-                ordersList: {{ orders_list|safe }}
+                ordersList: '{{ orders_list|safe }}',
+                statusByOrder: {},
+                statusErrorByOrder: {},
+                loadingStatusByOrder: {},
             }
         },
         delimiters: ["${", "}$"],
         mounted () {
             this.dateFrom = '{{ date_from }}';
             this.dateTo = '{{ date_to }}';
-            this.ordersList.forEach(item => {
-                item.statusList = ""
-            })
         },
         computed: {
             orderListFilterData () {
@@ -178,50 +191,39 @@
             },
         },
         methods: {
+            getQueryString (data) {
+                return new URLSearchParams(data).toString()
+            },
             getOrdersList () {
-                window.location.assign(window.location.origin + `/lk/?${new URLSearchParams(this.orderListFilterData).toString()}`)
+                window.location.assign(window.location.origin + `/lk/?${this.getQueryString(this.orderListFilterData)}`)
             },
             getExcelFile () {
-                window.location.assign(window.location.origin + `/lk/download/?${new URLSearchParams(this.orderListFilterData).toString()}`)
+                window.location.assign(window.location.origin + `/lk/download/?${this.getQueryString(this.orderListFilterData)}`)
             },
-            getOrderStatusHistory (event) {
-                let id = event.target.innerText
-                let order = this.ordersList.find(item => item.number == id)
-                let tr = event.target.parentNode.parentNode
-                let table = tr.parentNode
-                if (order.statusList) {
-                    order.statusList = ""
-                    let existingStatusRow = table.getElementsByClassName(`${id}`)[0];
-                    if (existingStatusRow) {
-                        existingStatusRow.remove();
-                    }
-                    return;
+            async getOrderStatusHistory (id) {
+                if (this.statusByOrder[id] || this.statusErrorByOrder[id]) {
+                    delete this.statusByOrder[id]
+                    delete this.statusErrorByOrder[id]
+                    return
                 }
-                let url = `${window.location.origin}/api/v1/order/check-status/?num=${id}`
-                axios({
-                    method: 'get',
-                    url: url,
-                }).then(response => {
-                    let orderInfo = response.data.data[0]
-                    let existingStatusRow = table.getElementsByClassName(`${id}`)[0];
-                    if (existingStatusRow) {
-                        existingStatusRow.remove();
-                    }
-                    order.statusList = orderInfo.status
-                    table.insertRow(tr.rowIndex).innerHTML = 
-                    `<td colspan="11" class="table-secondary order-status ${id}">
-                        Статус заказа ${id}: ${ orderInfo.status }
-                    </td>`;
-                }).catch(error => {
+
+                const url = `${window.location.origin}/api/v1/order/check-status/?num=${id}`
+                this.loadingStatusByOrder[id] = true
+                delete this.statusErrorByOrder[id]
+
+                try {
+                    const response = await axios.get(url)
+                    const orderInfo = response?.data?.data?.[0]
+                    this.statusByOrder[id] = orderInfo?.status || "Статус не найден"
+                } catch (error) {
                     console.log(error)
-                    table.insertRow(tr.rowIndex).innerHTML = 
-                    `<td colspan="11" class="table-secondary order-status ${id}">
-                        Сервис временно недоступен, попробуйте сделать запрос позднее.
-                    </td>`;
-                })
+                    this.statusErrorByOrder[id] = "Сервис временно недоступен, попробуйте сделать запрос позднее."
+                } finally {
+                    delete this.loadingStatusByOrder[id]
+                }
             },
             getOrderMark (id) {
-                window.location.assign(window.location.origin + `/lk/full-marking/?${new URLSearchParams({number: id}).toString()}`)
+                window.location.assign(window.location.origin + `/lk/full-marking/?${this.getQueryString({number: id})}`)
             }
         }
     }
